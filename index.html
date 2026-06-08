@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lorenzo | Portfolio</title>
+    <meta name="description" content="Portfolio personale di Lorenzo. Scopri i miei progetti e le mie competenze.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <header class="navbar">
+        <div class="container nav-container">
+            <a href="#" class="logo">Lorenzo<span>.</span></a>
+            <nav class="nav-links">
+                <a href="#about">Chi Sono</a>
+                <a href="#projects">Progetti</a>
+                <a href="#contact" class="btn btn-outline">Contattami</a>
+            </nav>
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero container">
+            <div class="hero-content">
+                <p class="subtitle fade-in">Benvenuto nel mio spazio creativo</p>
+                <h1 class="fade-in">Ciao, sono <span class="highlight">Lorenzo</span>. <br>Costruisco esperienze web.</h1>
+                <p class="description fade-in">Appassionato di design e sviluppo, creo interfacce digitali moderne, accessibili e performanti.</p>
+                <div class="hero-actions fade-in">
+                    <a href="#projects" class="btn btn-primary">Vedi i Progetti</a>
+                    <a href="#about" class="btn btn-secondary">Scopri di più</a>
+                </div>
+            </div>
+            <div class="hero-visual fade-in">
+                <div class="glass-card main-card">
+                    <div class="card-header">
+                        <div class="dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="skeleton-line full"></div>
+                        <div class="skeleton-line half"></div>
+                        <div class="skeleton-box"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="about container">
+            <h2 class="section-title reveal">Chi Sono</h2>
+            <div class="about-grid">
+                <div class="about-text reveal">
+                    <p>Sono uno sviluppatore con una forte passione per il front-end e l'UI/UX design. Mi piace trasformare idee complesse in interfacce semplici, belle e intuitive.</p>
+                    <p>Utilizzo le migliori tecnologie moderne per garantire che ogni progetto sia non solo esteticamente premium, ma anche veloce e scalabile.</p>
+                </div>
+                <div class="skills-container reveal">
+                    <div class="skill-tag">HTML & CSS</div>
+                    <div class="skill-tag">JavaScript</div>
+                    <div class="skill-tag">React / Vue</div>
+                    <div class="skill-tag">UI/UX Design</div>
+                    <div class="skill-tag">Figma</div>
+                    <div class="skill-tag">Git / GitHub</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="projects container">
+            <h2 class="section-title reveal">I Miei Progetti</h2>
+            <div class="projects-grid">
+                <!-- Progetto 1 -->
+                <article class="project-card glass-card reveal">
+                    <div class="project-image">
+                        <div class="placeholder-img"></div>
+                    </div>
+                    <div class="project-info">
+                        <h3>E-Commerce Dashboard</h3>
+                        <p>Una dashboard amministrativa per la gestione di ordini e prodotti, con focus sull'analisi dei dati.</p>
+                        <div class="project-tags">
+                            <span>React</span><span>CSS Modules</span>
+                        </div>
+                        <a href="#" class="project-link">Visualizza progetto &rarr;</a>
+                    </div>
+                </article>
+
+                <!-- Progetto 2 -->
+                <article class="project-card glass-card reveal">
+                    <div class="project-image">
+                        <div class="placeholder-img alt-1"></div>
+                    </div>
+                    <div class="project-info">
+                        <h3>App Gestione Eventi</h3>
+                        <p>Piattaforma per l'esplorazione e la prenotazione di eventi locali con integrazione mappe.</p>
+                        <div class="project-tags">
+                            <span>JavaScript</span><span>API</span>
+                        </div>
+                        <a href="#" class="project-link">Visualizza progetto &rarr;</a>
+                    </div>
+                </article>
+
+                <!-- Progetto 3 -->
+                <article class="project-card glass-card reveal">
+                    <div class="project-image">
+                        <div class="placeholder-img alt-2"></div>
+                    </div>
+                    <div class="project-info">
+                        <h3>Landing Page SaaS</h3>
+                        <p>Sito vetrina ad alta conversione per un software as a service con animazioni scroll-driven.</p>
+                        <div class="project-tags">
+                            <span>HTML</span><span>CSS</span>
+                        </div>
+                        <a href="#" class="project-link">Visualizza progetto &rarr;</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="contact" class="contact container">
+            <div class="contact-box glass-card reveal">
+                <h2>Lavoriamo insieme?</h2>
+                <p>Sono sempre aperto a nuove sfide e collaborazioni. Se hai un'idea o un progetto in mente, parliamone!</p>
+                <a href="mailto:ciao@example.com" class="btn btn-primary">Scrivimi un'email</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <p>&copy; <span id="year"></span> Lorenzo. Tutti i diritti riservati.</p>
+            <div class="social-links">
+                <a href="#">GitHub</a>
+                <a href="#">LinkedIn</a>
+                <a href="#">Twitter</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
