@@ -3,26 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lorenzo | Portfolio</title>
-    <meta name="description" content="Portfolio personale di Lorenzo. Scopri i miei progetti e le mie competenze.">
+    <title>Lorenzo Mocci — UX/UI Designer</title>
+    <meta name="description" content="Lorenzo Mocci, UX/UI designer. Progetto esperienze con metodo e le costruisco con workflow AI-assisted. Case study: Libraccio e Nite.">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400;1,9..144,600&family=Instrument+Sans:wght@400;500;600&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-
-    <header class="navbar">
-        <div class="container nav-container">
-            <a href="#" class="logo">Lorenzo<span>.</span></a>
-            <nav class="nav-links">
-                <a href="#about">Chi Sono</a>
-                <a href="#projects">Progetti</a>
-                <a href="#contact" class="btn btn-outline">Contattami</a>
+    <header class="nav">
+        <div class="container nav-inner">
+            <a href="#" class="nav-logo">Lorenzo Mocci<span>.</span></a>
+            <nav class="nav-links" id="nav-links" aria-label="Navigazione principale">
+                <a href="#progetti">Progetti</a>
+                <a href="#chi-sono">Chi sono</a>
+                <a href="#come-lavoro">Come lavoro</a>
+                <a href="#contatti" class="btn btn-ghost">Scrivimi</a>
             </nav>
-            <button class="hamburger" id="hamburger" aria-label="Menu">
+            <button class="nav-toggle" id="nav-toggle" aria-label="Apri il menu" aria-expanded="false" aria-controls="nav-links">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -32,116 +30,194 @@
 
     <main>
         <section class="hero container">
-            <div class="hero-content">
-                <p class="subtitle fade-in">Benvenuto nel mio spazio creativo</p>
-                <h1 class="fade-in">Ciao, sono <span class="highlight">Lorenzo</span>. <br>Costruisco esperienze web.</h1>
-                <p class="description fade-in">Appassionato di design e sviluppo, creo interfacce digitali moderne, accessibili e performanti.</p>
-                <div class="hero-actions fade-in">
-                    <a href="#projects" class="btn btn-primary">Vedi i Progetti</a>
-                    <a href="#about" class="btn btn-secondary">Scopri di più</a>
-                </div>
+            <p class="kicker fade-in">Lorenzo Mocci — UX/UI Designer</p>
+            <h1 class="hero-title fade-in" style="--d: 0.1s">
+                Progetto esperienze con metodo.
+                <span class="accent-line">Le costruisco con l&rsquo;AI.</span>
+            </h1>
+            <p class="lead hero-sub fade-in" style="--d: 0.2s">
+                Lavoro con il processo classico — ricerca, insight, design — e con workflow
+                AI-assisted che mi permettono di passare dal concept a un prodotto funzionante.
+            </p>
+            <div class="hero-actions fade-in" style="--d: 0.3s">
+                <a href="#progetti" class="btn btn-solid">Guarda i progetti</a>
+                <a href="#contatti" class="btn btn-ghost">Scrivimi</a>
             </div>
-            <div class="hero-visual fade-in">
-                <div class="glass-card main-card">
-                    <div class="card-header">
-                        <div class="dots">
-                            <span></span><span></span><span></span>
+
+            <nav class="hero-toc fade-in" style="--d: 0.4s" aria-label="Indice dei case study">
+                <a href="libraccio.html" class="toc-row">
+                    <span class="toc-num">01</span>
+                    <span class="toc-name">Libraccio</span>
+                    <span class="toc-desc">Redesign del flusso di vendita — prova di metodo</span>
+                    <span class="toc-arrow" aria-hidden="true">&rarr;</span>
+                </a>
+                <a href="nite.html" class="toc-row">
+                    <span class="toc-num">02</span>
+                    <span class="toc-name">Nite</span>
+                    <span class="toc-desc">Web app funzionante, AI-assisted — prova di innovazione</span>
+                    <span class="toc-arrow" aria-hidden="true">&rarr;</span>
+                </a>
+            </nav>
+        </section>
+
+        <section id="progetti" class="section">
+            <div class="container">
+                <div class="section-head reveal">
+                    <span class="section-num">01</span>
+                    <h2 class="section-title">Progetti selezionati</h2>
+                    <p class="section-sub">Due progetti, due modi di lavorare: processo strutturato e sperimentazione AI-assisted.</p>
+                </div>
+
+                <article class="project-card reveal">
+                    <div class="project-visual" aria-hidden="true">
+                        <div class="visual-books">
+                            <span class="spine"></span>
+                            <span class="spine"></span>
+                            <span class="spine"></span>
+                            <span class="spine"></span>
+                            <span class="spine"></span>
+                            <span class="spine"></span>
+                            <span class="spine"></span>
                         </div>
+                        <p class="visual-note">placeholder — sostituire con mockup</p>
                     </div>
-                    <div class="card-body">
-                        <div class="skeleton-line full"></div>
-                        <div class="skeleton-line half"></div>
-                        <div class="skeleton-box"></div>
+                    <div class="project-body">
+                        <div class="project-tags">
+                            <span class="tag tag-green">UX Research</span>
+                            <span class="tag">Redesign</span>
+                            <span class="tag">Project work</span>
+                        </div>
+                        <h3>Libraccio — Ridisegnare la vendita di libri usati</h3>
+                        <p>Da una ricerca con 9 interviste e 161 risposte al questionario a un flusso di vendita C2B trasparente e mobile-first.</p>
+                        <a href="libraccio.html" class="project-link">Leggi il case study &rarr;</a>
+                    </div>
+                </article>
+
+                <article class="project-card reveal">
+                    <div class="project-visual" aria-hidden="true">
+                        <div class="visual-nite">
+                            <div class="chip-row">
+                                <span class="chip">Luogo</span>
+                                <span class="chip chip-active">Musica</span>
+                                <span class="chip">Budget</span>
+                            </div>
+                            <div class="chip-row">
+                                <span class="chip">Gruppo</span>
+                                <span class="chip">Affollamento</span>
+                            </div>
+                        </div>
+                        <p class="visual-note">placeholder — sostituire con mockup</p>
+                    </div>
+                    <div class="project-body">
+                        <div class="project-tags">
+                            <span class="tag tag-accent">AI-assisted</span>
+                            <span class="tag">Personal project</span>
+                            <span class="tag">Web app funzionante</span>
+                        </div>
+                        <h3>Nite — L&rsquo;app che trova la serata giusta per te</h3>
+                        <p>Dal problema alla web app installabile: progettata in Figma, costruita con Claude Code e Antigravity. Funziona davvero.</p>
+                        <a href="nite.html" class="project-link">Leggi il case study &rarr;</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="chi-sono" class="section section-alt">
+            <div class="container">
+                <div class="section-head reveal">
+                    <span class="section-num">02</span>
+                    <h2 class="section-title">Chi sono</h2>
+                </div>
+                <div class="about-grid">
+                    <div class="bio reveal">
+                        <p class="lead">Sono un UX/UI designer con una formazione in user-centered design <mark class="todo">[DA INSERIRE: percorso formativo]</mark> e una naturale attitudine da smanettone: quando un&rsquo;idea mi convince, non mi fermo al mockup.</p>
+                        <p>Uso il processo classico — ricerca, insight, prototipazione, test — e lo integro con strumenti AI come Claude Code e Perplexity per arrivare più velocemente a qualcosa di reale da mettere in mano alle persone.</p>
+                        <p>Mi interessa il punto in cui il design incontra il prodotto: capire un problema, dargli forma e verificarla.</p>
+                    </div>
+                    <div class="pillars reveal">
+                        <div class="pillar">
+                            <span class="pillar-num">A</span>
+                            <div>
+                                <h3>Metodo</h3>
+                                <p>Ricerca utenti, expert review, personas, user flow: il processo prima dei pixel.</p>
+                            </div>
+                        </div>
+                        <div class="pillar">
+                            <span class="pillar-num">B</span>
+                            <div>
+                                <h3>Esecuzione</h3>
+                                <p>Prototipo in Figma, costruzione AI-assisted: dalle idee a prodotti utilizzabili.</p>
+                            </div>
+                        </div>
+                        <div class="pillar">
+                            <span class="pillar-num">C</span>
+                            <div>
+                                <h3>Autonomia</h3>
+                                <p>Progetti personali end-to-end, dalla ricerca al deploy.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="about" class="about container">
-            <h2 class="section-title reveal">Chi Sono</h2>
-            <div class="about-grid">
-                <div class="about-text reveal">
-                    <p>Sono uno sviluppatore con una forte passione per il front-end e l'UI/UX design. Mi piace trasformare idee complesse in interfacce semplici, belle e intuitive.</p>
-                    <p>Utilizzo le migliori tecnologie moderne per garantire che ogni progetto sia non solo esteticamente premium, ma anche veloce e scalabile.</p>
+        <section id="come-lavoro" class="section">
+            <div class="container">
+                <div class="section-head reveal">
+                    <span class="section-num">03</span>
+                    <h2 class="section-title">Come lavoro</h2>
+                    <p class="section-sub">Stesso processo, due velocità: tradizionale quando serve profondità, AI-assisted quando serve costruire.</p>
                 </div>
-                <div class="skills-container reveal">
-                    <div class="skill-tag">HTML & CSS</div>
-                    <div class="skill-tag">JavaScript</div>
-                    <div class="skill-tag">React / Vue</div>
-                    <div class="skill-tag">UI/UX Design</div>
-                    <div class="skill-tag">Figma</div>
-                    <div class="skill-tag">Git / GitHub</div>
+                <div class="process-grid">
+                    <article class="process-card reveal">
+                        <p class="kicker">Processo</p>
+                        <h3>Il metodo prima dei pixel</h3>
+                        <p class="process-flow">
+                            <strong>Discovery</strong> desk research, interviste, survey, expert review<br>
+                            <strong>Definizione</strong> insight, personas, user flow<br>
+                            <strong>Design</strong> wireframe, UI, prototipo<br>
+                            <strong>Validazione</strong> test, iterazione
+                        </p>
+                        <p class="process-proof">Applicato per intero nel progetto <a href="libraccio.html">Libraccio</a>.</p>
+                    </article>
+                    <article class="process-card reveal">
+                        <p class="kicker">AI nel processo</p>
+                        <h3>Strumento, non scorciatoia</h3>
+                        <p>Perplexity per la desk research, Claude Code e Antigravity per trasformare i prototipi Figma in prodotti funzionanti e testabili con utenti reali.</p>
+                        <p class="process-proof">Applicato end-to-end nel progetto <a href="nite.html">Nite</a>.</p>
+                    </article>
+                </div>
+                <div class="tools-strip reveal">
+                    <span class="tools-label">Strumenti</span>
+                    <span class="tag">Figma</span>
+                    <span class="tag">Interviste &amp; survey</span>
+                    <span class="tag">Expert review</span>
+                    <span class="tag tag-accent">Claude Code</span>
+                    <span class="tag tag-accent">Antigravity</span>
+                    <span class="tag tag-accent">Perplexity</span>
+                    <span class="tag"><mark class="todo">[DA INSERIRE: altri strumenti]</mark></span>
                 </div>
             </div>
         </section>
 
-        <section id="projects" class="projects container">
-            <h2 class="section-title reveal">I Miei Progetti</h2>
-            <div class="projects-grid">
-                <!-- Progetto 1 -->
-                <article class="project-card glass-card reveal">
-                    <div class="project-image">
-                        <div class="placeholder-img"></div>
-                    </div>
-                    <div class="project-info">
-                        <h3>E-Commerce Dashboard</h3>
-                        <p>Una dashboard amministrativa per la gestione di ordini e prodotti, con focus sull'analisi dei dati.</p>
-                        <div class="project-tags">
-                            <span>React</span><span>CSS Modules</span>
-                        </div>
-                        <a href="#" class="project-link">Visualizza progetto &rarr;</a>
-                    </div>
-                </article>
-
-                <!-- Progetto 2 -->
-                <article class="project-card glass-card reveal">
-                    <div class="project-image">
-                        <div class="placeholder-img alt-1"></div>
-                    </div>
-                    <div class="project-info">
-                        <h3>App Gestione Eventi</h3>
-                        <p>Piattaforma per l'esplorazione e la prenotazione di eventi locali con integrazione mappe.</p>
-                        <div class="project-tags">
-                            <span>JavaScript</span><span>API</span>
-                        </div>
-                        <a href="#" class="project-link">Visualizza progetto &rarr;</a>
-                    </div>
-                </article>
-
-                <!-- Progetto 3 -->
-                <article class="project-card glass-card reveal">
-                    <div class="project-image">
-                        <div class="placeholder-img alt-2"></div>
-                    </div>
-                    <div class="project-info">
-                        <h3>Landing Page SaaS</h3>
-                        <p>Sito vetrina ad alta conversione per un software as a service con animazioni scroll-driven.</p>
-                        <div class="project-tags">
-                            <span>HTML</span><span>CSS</span>
-                        </div>
-                        <a href="#" class="project-link">Visualizza progetto &rarr;</a>
-                    </div>
-                </article>
-            </div>
-        </section>
-
-        <section id="contact" class="contact container">
-            <div class="contact-box glass-card reveal">
-                <h2>Lavoriamo insieme?</h2>
-                <p>Sono sempre aperto a nuove sfide e collaborazioni. Se hai un'idea o un progetto in mente, parliamone!</p>
-                <a href="mailto:ciao@example.com" class="btn btn-primary">Scrivimi un'email</a>
+        <section id="contatti" class="section section-alt">
+            <div class="container contact-box reveal">
+                <p class="kicker">04 — Contatti</p>
+                <h2>Parliamone</h2>
+                <p>Sto cercando un&rsquo;opportunità come UX/UI designer junior. Se il mio modo di lavorare ti sembra interessante, scrivimi.</p>
+                <a href="mailto:lorenzomocci03@gmail.com" class="contact-email">lorenzomocci03@gmail.com</a>
+                <div class="contact-links">
+                    <a href="#" aria-label="Profilo LinkedIn di Lorenzo Mocci">LinkedIn <mark class="todo">[URL]</mark></a>
+                    <a href="#" aria-label="Scarica il CV di Lorenzo Mocci">CV (PDF) <mark class="todo">[link]</mark></a>
+                </div>
             </div>
         </section>
     </main>
 
-    <footer>
-        <div class="container footer-content">
-            <p>&copy; <span id="year"></span> Lorenzo. Tutti i diritti riservati.</p>
-            <div class="social-links">
-                <a href="#">GitHub</a>
-                <a href="#">LinkedIn</a>
-                <a href="#">Twitter</a>
-            </div>
+    <footer class="footer">
+        <div class="container footer-inner">
+            <p>&copy; <span id="year"></span> Lorenzo Mocci — UX/UI Designer</p>
+            <p>Progettato con metodo, costruito con l&rsquo;AI.</p>
         </div>
     </footer>
 

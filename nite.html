@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nite — Case study | Lorenzo Mocci</title>
+    <meta name="description" content="Nite, la web app che trova la serata giusta per te. Personal project end-to-end: ricerca, design in Figma, costruzione AI-assisted con Claude Code e Antigravity. Case study di Lorenzo Mocci.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400;1,9..144,600&family=Instrument+Sans:wght@400;500;600&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="nav">
+        <div class="container nav-inner">
+            <a href="index.html" class="nav-logo">Lorenzo Mocci<span>.</span></a>
+            <nav class="nav-links" id="nav-links" aria-label="Navigazione principale">
+                <a href="index.html#progetti">Progetti</a>
+                <a href="index.html#chi-sono">Chi sono</a>
+                <a href="libraccio.html">Case study: Libraccio</a>
+                <a href="index.html#contatti" class="btn btn-ghost">Scrivimi</a>
+            </nav>
+            <button class="nav-toggle" id="nav-toggle" aria-label="Apri il menu" aria-expanded="false" aria-controls="nav-links">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section class="case-hero container">
+            <p class="kicker fade-in">Case study 02 — Personal project</p>
+            <h1 class="fade-in" style="--d: 0.1s">Nite — Trova la tua serata</h1>
+            <p class="lead fade-in" style="--d: 0.2s">Personal project · Web app funzionante · Design AI-assisted</p>
+
+            <div class="hero-actions fade-in" style="--d: 0.25s">
+                <a href="#" class="btn btn-solid">Prova Nite &rarr; <mark class="todo">[URL live]</mark></a>
+            </div>
+
+            <dl class="case-meta fade-in" style="--d: 0.3s; margin-top: 2rem;">
+                <div class="meta-item">
+                    <dt>Tipo</dt>
+                    <dd>Personal project, end-to-end</dd>
+                </div>
+                <div class="meta-item">
+                    <dt>Cosa</dt>
+                    <dd>Web app installabile (PWA) per trovare la serata adatta a te</dd>
+                </div>
+                <div class="meta-item">
+                    <dt>Ruolo</dt>
+                    <dd>Tutto — ricerca, design, costruzione</dd>
+                </div>
+                <div class="meta-item">
+                    <dt>Strumenti</dt>
+                    <dd>Figma, Claude Code, Antigravity, Perplexity</dd>
+                </div>
+                <div class="meta-item">
+                    <dt>Stato</dt>
+                    <dd>Funzionante e installabile dal browser</dd>
+                </div>
+            </dl>
+        </section>
+
+        <div class="container">
+            <div class="stat-strip reveal">
+                <div class="stat">
+                    <p class="stat-value">5</p>
+                    <p class="stat-label">Interviste</p>
+                </div>
+                <div class="stat">
+                    <p class="stat-value">35</p>
+                    <p class="stat-label">Risposte al sondaggio</p>
+                </div>
+                <div class="stat">
+                    <p class="stat-value">10</p>
+                    <p class="stat-label">Insight di ricerca</p>
+                </div>
+                <div class="stat">
+                    <p class="stat-value">1</p>
+                    <p class="stat-label">Web app funzionante</p>
+                </div>
+            </div>
+        </div>
+
+        <section class="case-section">
+            <div class="container">
+                <div class="section-head reveal">
+                    <span class="section-num">01</span>
+                    <h2 class="section-title">Contesto</h2>
+                </div>
+                <blockquote class="pull-quote reveal">
+                    &laquo;Ok, stasera usciamo. Ma&hellip; che cosa facciamo?&raquo;
+                </blockquote>
+                <div class="prose reveal">
+                    <p>La ricerca della serata passa da Instagram, passaparola e scroll infinito: le informazioni si perdono e non esiste un posto pensato per questo. La ricerca della serata diventa più faticosa della serata stessa.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="case-section section-alt">
+            <div class="container">
+                <div class="section-head reveal">
+                    <span class="section-num">02</span>
+                    <h2 class="section-title">Problema</h2>
+                </div>
+                <div class="card-grid reveal">
+                    <article class="info-card">
+                        <span class="card-num">P.01</span>
+                        <h3>Informazioni frammentate</h3>
+                        <p>Le serate vivono tra storie Instagram, chat e passaparola: qualcuno ti passa un&rsquo;informazione, ma poi non riesci più a ritrovarla.</p>
+                    </article>
+                    <article class="info-card">
+                        <span class="card-num">P.02</span>
+                        <h3>Il mismatch musicale</h3>
+                        <p>Dalla ricerca è emerso un problema concreto: il genere musicale dichiarato da un locale spesso non corrisponde a quello che viene davvero suonato.</p>
+                    </article>
+                    <article class="info-card">
+                        <span class="card-num">P.03</span>
+                        <h3>Nessuno parte dalla persona</h3>
+                        <p>Gli strumenti esistenti partono dall&rsquo;offerta dei locali, non dalle preferenze di chi esce.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="case-section">
+            <div class="container">
+                <div class="section-head reveal">
+                    <span class="section-num">03</span>
+                    <h2 class="section-title">Obiettivi</h2>
+                </div>
+                <div class="prose reveal">
+                    <ul>
+                        <li>Far trovare la serata giusta senza scroll infinito.</li>
+                        <li>Far decidere l&rsquo;utente con tutte le informazioni in una schermata.</li>
+                        <li>Verificare l&rsquo;idea costruendo un prodotto reale, non solo un prototipo.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="case-section section-alt">
+            <div class="container">
+                <div class="section-head reveal">
+                    <span class="section-num">04</span>
+                    <h2 class="section-title">Ricerca</h2>
+                </div>
+                <div class="prose reveal">
+                    <p>5 interviste, 35 risposte al sondaggio, desk research: 10 insight per capire come le persone scelgono davvero dove passare la serata.</p>
+                    <p><mark class="todo">[DA INSERIRE: 2&ndash;3 insight specifici emersi dalla ricerca, oltre al mismatch musicale]</mark></p>
+                </div>
+            </div>
+        </section>
+
+        <section class="case-section">
+            <div class="container">
+                <div class="section-head reveal">
+                    <span class="section-num">05</span>
+                    <h2 class="section-title">Processo</h2>
+                    <p class="section-sub">Il doppio binario: processo UX classico per pensare, workflow AI per costruire.</p>
+                </div>
+
+                <div class="workflow-strip reveal">
+                    <div class="workflow-step">
+                        <span class="card-num">Fase 1</span>
+                        <h3>Discovery</h3>
+                        <p>Interviste e sondaggio; desk research su mercato, competitor e comportamenti.</p>
+                        <span class="workflow-tools">Perplexity</span>
+                    </div>
+                    <div class="workflow-step">
+                        <span class="card-num">Fase 2</span>
+                        <h3>Design</h3>
+                        <p>Information architecture, user flow e UI. Il quiz a 5 domande nasce qui, come risposta diretta al problema dello scroll.</p>
+                        <span class="workflow-tools">Figma</span>
+                    </div>
+                    <div class="workflow-step">
+                        <span class="card-num">Fase 3</span>
+                        <h3>Build AI-assisted</h3>
+                        <p>Dal design Figma alla web app reale. <mark class="todo">[DA INSERIRE: come ha funzionato davvero il workflow]</mark></p>
+                        <span class="workflow-tools">Claude Code · Antigravity</span>
+                    </div>
+                    <div class="workflow-step">
+                        <span class="card-num">Fase 4</span>
+                        <h3>Iterazione sul prodotto</h3>
+                        <p>Testare sul telefono, non sul prototipo. <mark class="todo">[DA INSERIRE: una decisione cambiata dopo il test reale]</mark></p>
+                        <span class="workflow-tools">PWA</span>
+                    </div>
+                </div>
+
+                <blockquote class="pull-quote reveal">
+                    L&rsquo;AI non ha disegnato Nite. Mi ha permesso di costruirla.
+                </blockquote>
+            </div>
+        </section>
+
+        <section class="case-section section-alt">
+            <div class="container">
+                <div class="section-head reveal">
+                    <span class="section-num">06</span>
+                    <h2 class="section-title">Soluzione</h2>
+                    <p class="section-sub">Tutto quello che serve per decidere, in una schermata.</p>
+                </div>
+
+                <div class="solution-row reveal">
+                    <div class="solution-text">
+                        <span class="card-num">S.01</span>
+                        <h3>Quiz &laquo;Trova la tua serata&raquo;</h3>
+                        <p>Dalla home, cinque domande essenziali — luogo, attività, gruppo, budget, affollamento — costruiscono la proposta più adatta in pochi secondi. Zero fatica.</p>
+                    </div>
+                    <figure class="figure-ph">
+                        <p>[DA INSERIRE: GIF/video del quiz completato in pochi secondi]</p>
+                    </figure>
+                </div>
+
+                <div class="solution-row reveal">
+                    <div class="solution-text">
+                        <span class="card-num">S.02</span>
+                        <h3>Matching musicale</h3>
+                        <p>Collegando Spotify o Apple Music, il sistema confronta i gusti reali dell&rsquo;utente con la musica dell&rsquo;evento. La musica non mente: risposta diretta all&rsquo;insight sul mismatch musicale.</p>
+                    </div>
+                    <figure class="figure-ph">
+                        <p>[DA INSERIRE: screenshot del collegamento playlist]</p>
+                    </figure>
+                </div>
+
+                <div class="solution-row reveal">
+                    <div class="solution-text">
+                        <span class="card-num">S.03</span>
+                        <h3>La sezione &laquo;Per te&raquo;</h3>
+                        <p>Gli eventi più compatibili con le risposte al quiz. Già dalla card si leggono tag e segnali rapidi — genere, affollamento, data — con filtri e ordinamento per affinare la proposta.</p>
+                    </div>
+                    <figure class="figure-ph">
+                        <p>[DA INSERIRE: screenshot della sezione &laquo;Per te&raquo;]</p>
+                    </figure>
+                </div>
+
+                <div class="solution-row reveal">
+                    <div class="solution-text">
+                        <span class="card-num">S.04</span>
+                        <h3>Dentro l&rsquo;evento</h3>
+                        <p>Mood musicale raccontato dalla playlist, affollamento previsto, persone presenti, pagamento: tutto per decidere senza uscire dalla schermata.</p>
+                    </div>
+                    <figure class="figure-ph">
+                        <p>[DA INSERIRE: screenshot della pagina evento]</p>
+                    </figure>
+                </div>
+
+                <div class="solution-row reveal">
+                    <div class="solution-text">
+                        <span class="card-num">S.05</span>
+                        <h3>Eventi creati dagli utenti</h3>
+                        <p>Chiunque crea una serata: decide chi invitare, se renderla gratuita, a pagamento o con spesa condivisa, e la condivide con una card dedicata. I locali pubblicano tramite abbonamento — il modello di business.</p>
+                    </div>
+                    <figure class="figure-ph">
+                        <p>[DA INSERIRE: screenshot della creazione serata e della card di condivisione]</p>
+                    </figure>
+                </div>
+
+                <div class="solution-row reveal">
+                    <div class="solution-text">
+                        <span class="card-num">S.06</span>
+                        <h3>Distribuita come PWA</h3>
+                        <p>Niente App Store: si installa direttamente dal browser alla schermata Home, a tutto schermo come una vera app.</p>
+                    </div>
+                    <figure class="figure-ph">
+                        <p>[DA INSERIRE: QR code funzionante — il reviewer prova Nite sul proprio telefono durante la lettura]</p>
+                    </figure>
+                </div>
+            </div>
+        </section>
+
+        <section class="case-section">
+            <div class="container">
+                <div class="section-head reveal">
+                    <span class="section-num">07</span>
+                    <h2 class="section-title">Outcome</h2>
+                </div>
+                <div class="prose reveal">
+                    <ul>
+                        <li>Una web app funzionante e installabile, non un mockup. <mark class="todo">[DA INSERIRE: stato attuale — utenti, feedback raccolti]</mark></li>
+                        <li>Un workflow ripetibile design &rarr; AI build che riduce la distanza tra idea e verifica.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="case-section section-alt">
+            <div class="container">
+                <div class="section-head reveal">
+                    <span class="section-num">08</span>
+                    <h2 class="section-title">Learnings</h2>
+                </div>
+                <div class="prose reveal">
+                    <ul>
+                        <li>Costruire il prodotto vero cambia le decisioni di design: cose che in Figma funzionano, in mano alle persone no. <mark class="todo">[DA INSERIRE: esempio concreto]</mark></li>
+                        <li>L&rsquo;AI accelera l&rsquo;esecuzione solo se il design è già chiaro: il pensiero di prodotto resta il lavoro del designer.</li>
+                        <li><mark class="todo">[DA INSERIRE: learning su limiti/sorprese del workflow con Claude Code e Antigravity]</mark></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <aside class="case-next">
+            <div class="container">
+                <a href="libraccio.html">
+                    <span class="kicker">Prossimo case study &rarr;</span>
+                    <h2>Libraccio — Ridisegnare la vendita di libri usati</h2>
+                    <p>Project work · UX research · Redesign del flusso C2B</p>
+                </a>
+            </div>
+        </aside>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-inner">
+            <p>&copy; <span id="year"></span> Lorenzo Mocci — UX/UI Designer</p>
+            <p><a href="index.html">Torna alla home</a></p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
