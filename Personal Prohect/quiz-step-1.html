@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="immagini/icon-180.png">
+<link rel="icon" type="image/png" href="immagini/icon-180.png">
+<meta name="apple-mobile-web-app-title" content="Nite">
+<title>Trova la serata — 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root {
+    --neutral-900: #100d12;
+    --primary-600: #c22b00;
+    --primary-700: #942000;
+    --primary-850: #4d1100;
+    --brand-sec:   #7a3000;
+    --brand-sec-h: #c24c00;
+    --brand-sec-p: #943a00;
+    --border:      #231f26;
+    --text-primary:#f7f6f8;
+    --text-sec:    #edeced;
+    --text-tertiary:#c4c2c7;
+    --attention:   #e8b432;
+  }
+
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{background:#0a080c}
+  body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0a080c;font-family:'Plus Jakarta Sans',sans-serif}
+
+  .phone{
+    width:390px;height:844px;background:var(--neutral-900);
+    border-radius:44px;overflow:hidden;display:flex;flex-direction:column;
+    padding:0 24px;
+    box-shadow:0 0 0 10px #1a1a1a,0 32px 80px rgba(0,0,0,.8);
+  }
+
+  /* ── Status bar ── */
+  .status-bar{display:flex;justify-content:space-between;align-items:center;padding:21px 0 0;flex-shrink:0}
+  .status-bar__time{font-family:system-ui,-apple-system,sans-serif;font-size:17px;font-weight:590;color:#fff;letter-spacing:-.3px;width:100px}
+  .status-bar__icons{display:flex;align-items:center;gap:6px;justify-content:flex-end;width:100px}
+  .status-bar__icons i{color:#fff;line-height:1}
+  .icon-cellular{font-size:14px}.icon-wifi{font-size:14px}.icon-battery{font-size:18px}
+
+  /* ── Top nav ── */
+  .top-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 0 0;flex-shrink:0}
+  .btn-back{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s}
+  .btn-back:hover{background:rgba(255,255,255,.12)}
+  .btn-back:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px}
+  .btn-back i{font-size:18px;color:rgba(255,255,255,.7)}
+
+  /* ── Progress ── */
+  .progress-segs{display:flex;gap:4px;margin:14px 0 0;flex-shrink:0}
+  .seg{flex:1;height:3px;border-radius:99px;background:rgba(255,255,255,.10)}
+  .seg.done{background:var(--primary-600)}
+  .seg.active{background:linear-gradient(to right,var(--primary-600) 60%,rgba(255,255,255,.10) 60%)}
+
+  /* ── Scroll area ── */
+  .scroll-area{flex:1;overflow-y:auto;scrollbar-width:none;padding:0 0 24px}
+  .scroll-area::-webkit-scrollbar{display:none}
+
+  /* ── Question ── */
+  .question-block{margin-top:28px;margin-bottom:28px}
+  .question-text{font-family:'DM Serif Display',serif;font-size:30px;line-height:38px;color:var(--text-primary)}
+  .question-sub{margin-top:8px;font-size:14px;line-height:20px;color:rgba(255,255,255,.55)}
+
+  /* ── GPS button — PRIMARY ── */
+  .btn-gps{
+    width:100%;height:52px;border-radius:40px;
+    background:#c24c00;border:1px solid #943a00;cursor:pointer;
+    font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:600;color:#fff;
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    transition:background .15s,border-color .15s,transform .1s;
+  }
+  .btn-gps:hover{background:#c44e00;border-color:#b53700}
+  .btn-gps:active{background:#943a00;border-color:#6b1800;transform:scale(.98)}
+  .btn-gps:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px}
+  .btn-gps i{font-size:18px}
+
+  /* ── GPS spinner (replaces button while loading) ── */
+  .spinner-wrap{display:none;align-items:center;justify-content:center;gap:10px;height:52px;font-size:14px;color:rgba(255,255,255,.55);font-weight:500}
+  .spinner-wrap.active{display:flex}
+  .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.10);border-top-color:var(--primary-600);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ── Divider ── */
+  .divider{display:flex;align-items:center;gap:12px;margin:20px 0}
+  .divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.07)}
+  .divider span{font-size:12px;color:rgba(255,255,255,.30);font-weight:500;white-space:nowrap}
+
+  /* ── Section label ── */
+  .section-label{font-size:11px;font-weight:600;letter-spacing:.6px;color:rgba(255,255,255,.40);text-transform:uppercase;display:block;margin-bottom:10px}
+
+  /* ── City chips ── */
+  .saved-chips{display:flex;flex-wrap:wrap;gap:8px}
+  .saved-chip{
+    display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 14px;
+    border-radius:17px;cursor:pointer;
+    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);
+    font-size:13px;font-weight:500;color:rgba(255,255,255,.65);
+    font-family:'Plus Jakarta Sans',sans-serif;
+    transition:background .15s,border-color .15s,color .15s;
+  }
+  .saved-chip:hover{background:rgba(255,255,255,.08);color:#fff}
+  .saved-chip:active{transform:scale(.96);background:rgba(255,255,255,.10)}
+  .saved-chip.selected{background:rgba(194,76,0,.14);border-color:rgba(194,76,0,.55);color:#fff;font-weight:600}
+  .saved-chip i{font-size:14px;color:rgba(255,255,255,.35);transition:color .15s}
+  .saved-chip.selected i{color:#e05500}
+  .added-chip__remove{background:none;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:2px;margin-left:2px;border-radius:50%;width:14px;height:14px;transition:background .15s}
+  .added-chip__remove:hover{background:rgba(255,255,255,.15)}
+  .added-chip__remove i{font-size:10px;color:rgba(255,255,255,.45)}
+
+  /* ── Search ── */
+  .search-wrap{position:relative;margin-top:12px}
+  .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;color:rgba(255,255,255,.28);pointer-events:none;z-index:1;transition:color .2s}
+  .search-input{width:100%;height:38px;border-radius:19px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:0 14px 0 38px;font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;color:var(--text-primary);outline:none;caret-color:var(--primary-600);transition:border-color .2s,background .2s}
+  .search-input::placeholder{color:rgba(255,255,255,.28)}
+  .search-input:focus{border-color:rgba(194,76,0,.45);background:rgba(255,255,255,.06)}
+  .search-wrap:focus-within .search-icon{color:var(--primary-600)}
+  .nearby-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;min-height:0}
+  .nearby-chip{display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 12px;border-radius:15px;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-size:12px;font-weight:500;color:rgba(255,255,255,.60);font-family:'Plus Jakarta Sans',sans-serif;transition:background .15s,color .15s}
+  .nearby-chip:hover{background:rgba(255,255,255,.09);color:#fff}
+  .nearby-chip:active{transform:scale(.95);background:rgba(255,255,255,.12)}
+  .nearby-chip i{font-size:13px;color:rgba(255,255,255,.30)}
+
+  /* ── Phase B: radius + map (hidden until location chosen) ── */
+  .phase-b{
+    overflow:hidden;max-height:0;opacity:0;
+    transition:max-height .55s cubic-bezier(.4,0,.2,1),opacity .4s ease;
+    flex-shrink:0;
+  }
+  .phase-b.visible{max-height:500px;opacity:1}
+  .phase-b-inner{padding-top:24px;display:flex;flex-direction:column;gap:12px}
+
+  .radius-pills{display:flex;gap:6px}
+  .radius-pill{
+    flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+    padding:11px 6px;border-radius:16px;
+    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);
+    cursor:pointer;transition:background .2s,border-color .2s,transform .1s;user-select:none;
+  }
+  .radius-pill:active{transform:scale(.95);background:rgba(255,255,255,.08)}
+  .radius-pill.selected{background:rgba(194,76,0,.14);border-color:rgba(194,76,0,.55)}
+  .radius-pill__km{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:600;line-height:1;color:rgba(255,255,255,.72);transition:color .2s;white-space:nowrap}
+  .radius-pill.selected .radius-pill__km{color:#fff}
+  .radius-pill__label{font-size:9px;font-weight:500;color:rgba(255,255,255,.55);transition:color .2s;text-transform:uppercase;letter-spacing:.3px}
+  .radius-pill.selected .radius-pill__label{color:rgba(255,255,255,.65)}
+
+  .map-container{border-radius:16px;overflow:hidden;border:1px solid var(--border);height:0;opacity:0;transition:height .45s cubic-bezier(.4,0,.2,1),opacity .3s ease}
+  .map-container.visible{height:164px;opacity:1}
+  #radiusMap{width:100%;height:164px}
+  .leaflet-control-attribution{display:none}
+  .leaflet-tile-pane{filter:brightness(.82) saturate(.55)}
+
+  /* ── Footer ── */
+  .footer{background:var(--neutral-900);padding:12px 0 32px;border-top:1px solid rgba(255,255,255,.05);flex-shrink:0}
+  .btn-continue{width:100%;height:52px;border-radius:40px;background:#c24c00;border:1px solid #943a00;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:600;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,border-color .15s,transform .1s}
+  .btn-continue i{font-size:18px}
+  .btn-continue:hover:not(:disabled){background:#c44e00;border-color:#b53700}
+  .btn-continue:active:not(:disabled){background:#943a00;border-color:#6b1800;transform:scale(.98)}
+  .btn-continue:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px}
+  .btn-continue:disabled{background:rgba(255,255,255,.05);border-color:transparent;color:#9c9a9f;cursor:not-allowed;transform:none}
+
+  @media(prefers-reduced-motion:reduce){.spinner{animation:none;opacity:.6}.phase-b{transition:none}.map-container{transition:none}}
+
+@media (max-width: 430px) {
+  html, body { background: #0f0d12; }
+  body { align-items: flex-start; }
+  .phone {
+    width: 100%;
+    height: calc(100svh + env(safe-area-inset-top));
+    border-radius: 0;
+    box-shadow: none;
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-top: env(safe-area-inset-top);
+  }
+  .status-bar { display: none; }
+  /* fade above nav bar */
+  .nav-wrap { position: relative; }
+  .nav-wrap::before {
+    content: '';
+    position: absolute;
+    top: -52px; left: 0; right: 0; height: 52px;
+    background: linear-gradient(to bottom, transparent, #100d12);
+    pointer-events: none;
+    z-index: 4;
+  }
+}
+@media (max-width: 430px){ .footer{ padding-bottom: 8px; } }
+</style>
+<script>
+  // Velo d'ingresso: copre l'arrivo quando si proviene da una pagina con slide-out
+  (function() {
+    if (new URLSearchParams(window.location.search).has('slide'))
+      document.write('<style id="pageVeil">body::after{content:"";position:fixed;inset:0;background:#0a080c;z-index:999;pointer-events:none;opacity:1;transition:opacity .34s ease}body.page-entered::after{opacity:0}</style>');
+  })();
+</script>
+</head>
+<body>
+<div class="phone">
+
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <i class="ph-fill ph-cell-signal-full icon-cellular" aria-hidden="true"></i>
+      <i class="ph-fill ph-wifi-high icon-wifi" aria-hidden="true"></i>
+      <i class="ph-fill ph-battery-full icon-battery" aria-hidden="true"></i>
+    </div>
+  </div>
+
+  <div class="top-nav">
+    <button class="btn-back" onclick="goBack()" aria-label="Torna indietro"><i class="ph ph-arrow-left" aria-hidden="true"></i></button>
+    <button class="btn-back" onclick="smoothExit('event-card.html?slide=from-left')" aria-label="Chiudi quiz"><i class="ph ph-x" aria-hidden="true"></i></button>
+  </div>
+
+  <div class="progress-segs">
+    <div class="seg active"></div>
+    <div class="seg"></div><div class="seg"></div>
+    <div class="seg"></div><div class="seg"></div>
+    <div class="seg"></div>
+  </div>
+
+  <div class="scroll-area">
+
+    <div class="question-block">
+      <h1 class="question-text">Dove sei<br>stasera?</h1>
+      <p class="question-sub">Scegli da dove cercare gli eventi intorno a te.</p>
+    </div>
+
+    <!-- PRIMARY: GPS -->
+    <div class="spinner-wrap" id="spinner">
+      <div class="spinner"></div>
+      Ricerca posizione…
+    </div>
+    <button class="btn-gps" id="btnGps" onclick="requestLocation()">
+      <i class="ph-fill ph-navigation-arrow" aria-hidden="true"></i>
+      Usa la mia posizione
+    </button>
+
+    <div class="divider"><span>oppure</span></div>
+
+    <!-- SECONDARY: saved cities -->
+    <span class="section-label">Le tue città</span>
+    <div class="saved-chips" id="locationChips"></div>
+
+    <div class="search-wrap">
+      <i class="ph ph-magnifying-glass search-icon" aria-hidden="true"></i>
+      <input class="search-input" id="citySearch" type="text"
+        placeholder="Cerca un'altra città…" autocomplete="off"
+        oninput="filterNearby(this.value)">
+    </div>
+    <div class="nearby-chips" id="nearbyChips"></div>
+
+    <!-- PHASE B: appears after location chosen -->
+    <div class="phase-b" id="phaseB">
+      <div class="phase-b-inner">
+        <span class="section-label">Raggio di ricerca</span>
+        <div class="radius-pills">
+          <div class="radius-pill" role="button" tabindex="0"
+            onclick="selectRadius(this,5000)"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">
+            <span class="radius-pill__km">5 km</span>
+            <span class="radius-pill__label">Quartiere</span>
+          </div>
+          <div class="radius-pill" role="button" tabindex="0"
+            onclick="selectRadius(this,10000)"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">
+            <span class="radius-pill__km">10 km</span>
+            <span class="radius-pill__label">Città</span>
+          </div>
+          <div class="radius-pill" role="button" tabindex="0"
+            onclick="selectRadius(this,25000)"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">
+            <span class="radius-pill__km">25 km</span>
+            <span class="radius-pill__label">Provincia</span>
+          </div>
+          <div class="radius-pill" role="button" tabindex="0"
+            onclick="selectRadius(this,50000)"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">
+            <span class="radius-pill__km">50 km+</span>
+            <span class="radius-pill__label">Regione</span>
+          </div>
+        </div>
+        <div class="map-container" id="mapContainer">
+          <div id="radiusMap"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /scroll-area -->
+
+  <div class="footer">
+    <button class="btn-continue" id="btnContinue" disabled onclick="window.location.href='quiz-step-price.html'">
+      Continua <i class="ph ph-arrow-right" aria-hidden="true"></i>
+    </button>
+  </div>
+
+</div>
+<script>
+const NEARBY = {
+  'Milano':  ['Monza','Bergamo','Brescia','Como','Varese','Pavia','Lodi'],
+  'Roma':    ['Tivoli','Frascati','Ostia','Velletri','Viterbo','Latina'],
+  'Firenze': ['Prato','Pistoia','Siena','Arezzo','Pisa','Livorno'],
+  'Napoli':  ['Caserta','Salerno','Pozzuoli','Ercolano','Castellammare'],
+  'Torino':  ['Moncalieri','Chieri','Cuneo','Asti','Alessandria'],
+  'Bologna': ['Modena','Ferrara','Imola','Faenza','Reggio Emilia'],
+  'Bari':    ['Taranto','Brindisi','Lecce','Foggia','Altamura'],
+};
+
+let userCoords = [45.4664,9.1840];
+let map = null, marker = null, circle = null;
+let selectedRadius = null;
+let activeLocation = null;
+let addedCities = ['Milano','Torino'];
+let gpsCoords = null;
+let gpsCity = null;
+let phaseBOpen = false;
+
+const CITY_COORDS = {
+  'Milano': [45.4654,9.1859], 'Torino': [45.0703,7.6869],
+  'Monza': [45.5845,9.2735], 'Bergamo': [45.6983,9.6773], 'Como': [45.8081,9.0852],
+  'Roma': [41.9028,12.4964], 'Napoli': [40.8518,14.2681],
+  'Prato': [43.8777,11.1022], 'Siena': [43.3188,11.3308],
+  'Caserta': [41.0730,14.3312], 'Salerno': [40.6780,14.7594],
+  'Varese': [45.8195,8.8250], 'Brescia': [45.5416,10.2118],
+  'Pavia': [45.1850,9.1596], 'Lodi': [45.3139,9.5032],
+  'Cagliari': [39.2278,9.1111],
+};
+
+/* ── GPS flow ── */
+function requestLocation() {
+  document.getElementById('btnGps').style.display = 'none';
+  document.getElementById('spinner').classList.add('active');
+
+  const fallback = setTimeout(() => resolveLocation(45.4664, 9.1840), 2200);
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      pos => { clearTimeout(fallback); resolveLocation(pos.coords.latitude, pos.coords.longitude); },
+      ()  => { clearTimeout(fallback); resolveLocation(45.4664, 9.1840); },
+      { timeout: 2000 }
+    );
+  } else {
+    clearTimeout(fallback);
+    resolveLocation(45.4664, 9.1840);
+  }
+}
+
+async function resolveLocation(lat, lon) {
+  gpsCoords = [lat, lon];
+  userCoords = [lat, lon];
+
+  let label = 'La mia posizione';
+  try {
+    const r = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`,
+      { headers: { 'Accept-Language': 'it' } }
+    );
+    const d = await r.json();
+    const a = d.address || {};
+    const sub  = a.suburb || a.quarter || a.neighbourhood || a.village;
+    const city = a.city || a.town || a.municipality || 'Milano';
+    label = sub ? `${sub}, ${city}` : city;
+  } catch(_) {}
+
+  document.getElementById('spinner').classList.remove('active');
+  if (gpsCity && gpsCity !== label) addedCities = addedCities.filter(c => c !== gpsCity);
+  gpsCity = label;
+  if (!addedCities.includes(label)) addedCities.unshift(label);
+  selectLocation(label);
+}
+
+/* ── Phase B reveal ── */
+function revealPhaseB() {
+  const phaseB = document.getElementById('phaseB');
+  phaseB.classList.add('visible');
+
+  if (!phaseBOpen) {
+    phaseBOpen = true;
+    phaseB.addEventListener('transitionend', function onEnd(e) {
+      if (e.propertyName !== 'max-height') return;
+      phaseB.removeEventListener('transitionend', onEnd);
+      openMap();
+    });
+  } else if (map) {
+    marker.setLatLng(userCoords);
+    if (selectedRadius) updateCircle(selectedRadius);
+    map.invalidateSize();
+  }
+}
+
+function openMap() {
+  const container = document.getElementById('mapContainer');
+  container.classList.add('visible');
+  container.addEventListener('transitionend', function onEnd() {
+    container.removeEventListener('transitionend', onEnd);
+    if (!map) initMap();
+    if (selectedRadius) updateCircle(selectedRadius);
+  });
+}
+
+function initMap() {
+  map = L.map('radiusMap', {
+    zoomControl: false, attributionControl: false,
+    dragging: true, scrollWheelZoom: false, doubleClickZoom: false
+  }).setView(userCoords, 12);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom:19 }).addTo(map);
+  marker = L.circleMarker(userCoords, {
+    radius:7, fillColor:'#942000', color:'#fff', weight:2.5, fillOpacity:1, interactive:false
+  }).addTo(map);
+}
+
+function updateCircle(meters) {
+  if (!map) return;
+  marker.setLatLng(userCoords);
+  if (circle) map.removeLayer(circle);
+  circle = L.circle(userCoords, {
+    radius: meters, color:'#942000', fillColor:'#c22b00',
+    fillOpacity:0.10, weight:1.5, dashArray:'5 5', interactive:false
+  }).addTo(map);
+  map.flyToBounds(circle.getBounds(), { padding:[24,24], duration:0.6, maxZoom:14 });
+}
+
+/* ── Radius ── */
+function selectRadius(pill, meters) {
+  document.querySelectorAll('.radius-pill').forEach(p => p.classList.remove('selected'));
+  pill.classList.add('selected');
+  selectedRadius = meters;
+  if (map) {
+    updateCircle(meters);
+  } else {
+    const container = document.getElementById('mapContainer');
+    if (!container.classList.contains('visible')) {
+      container.classList.add('visible');
+      container.addEventListener('transitionend', function onEnd() {
+        container.removeEventListener('transitionend', onEnd);
+        initMap(); updateCircle(meters);
+      });
+    }
+  }
+  updateContinue();
+}
+
+/* ── Location selection ── */
+function selectLocation(city) {
+  activeLocation = city;
+  userCoords = city === gpsCity ? (gpsCoords || userCoords) : (CITY_COORDS[city] || CITY_COORDS['Milano']);
+  renderLocationChips();
+  revealPhaseB();
+  updateContinue();
+}
+
+function removeLocation(event, city) {
+  event.stopPropagation();
+  addedCities = addedCities.filter(c => c !== city);
+  if (activeLocation === city) {
+    activeLocation = addedCities[0] || null;
+    if (city === gpsCity) gpsCity = null;
+  if (activeLocation) userCoords = activeLocation === gpsCity ? gpsCoords : (CITY_COORDS[activeLocation] || CITY_COORDS['Milano']);
+  }
+  renderLocationChips();
+  if (activeLocation && selectedRadius && map) updateCircle(selectedRadius);
+  updateContinue();
+}
+
+function renderLocationChips() {
+  document.getElementById('locationChips').innerHTML = addedCities.map(city => {
+    const sel   = activeLocation === city;
+    const isGps = city === gpsCity;
+    const icon  = isGps ? 'ph-fill ph-navigation-arrow' : (sel ? 'ph-fill ph-map-pin' : 'ph ph-map-pin');
+    const isCustom = !['Milano','Torino'].includes(city);
+    return `<div class="saved-chip${sel ? ' selected' : ''}"
+      onclick="selectLocation('${city}')" role="button" tabindex="0"
+      onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">
+      <i class="${icon}" aria-hidden="true"></i>
+      <span>${city}</span>
+      ${isCustom ? `<button class="added-chip__remove" onclick="removeLocation(event,'${city}')" aria-label="Rimuovi ${city}"><i class="ph ph-x"></i></button>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function renderNearby(list) {
+  document.getElementById('nearbyChips').innerHTML = list.length
+    ? list.map(c => `<div class="nearby-chip" onclick="addCity('${c}')"><i class="ph ph-map-pin" aria-hidden="true"></i>${c}</div>`).join('')
+    : '';
+}
+
+function filterNearby(val) {
+  const center = ['Milano','Torino','Roma','Napoli','Firenze','Bologna','Bari'].includes(activeLocation) ? activeLocation : 'Milano';
+  const all = NEARBY[center] || [];
+  renderNearby(val.trim() ? all.filter(c => c.toLowerCase().startsWith(val.trim().toLowerCase())) : []);
+}
+
+function addCity(name) {
+  if (!addedCities.includes(name)) addedCities.push(name);
+  document.getElementById('citySearch').value = '';
+  renderNearby([]);
+  selectLocation(name);
+}
+
+function updateContinue() {
+  document.getElementById('btnContinue').disabled = !(activeLocation && selectedRadius);
+}
+
+function goBack() { history.back(); }
+
+window.addEventListener('DOMContentLoaded', () => {
+  renderLocationChips();
+  const s = document.getElementById('citySearch');
+  s.addEventListener('focus', () => filterNearby(s.value));
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.search-wrap') && !e.target.closest('.nearby-chips')) renderNearby([]);
+  });
+});
+
+// ── Transizioni fluide tra pagine ──
+function smoothExit(url) {
+  const st = document.createElement('style');
+  st.textContent = 'body::after{content:"";position:fixed;inset:0;background:#0a080c;z-index:999;pointer-events:none;opacity:0;transition:opacity .22s ease}body.page-exit::after{opacity:1}';
+  document.head.appendChild(st);
+  requestAnimationFrame(() => document.body.classList.add('page-exit'));
+  setTimeout(() => { window.location.href = url; }, 230);
+}
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('pageVeil'))
+    requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.add('page-entered')));
+});
+window.addEventListener('pageshow', (e) => {
+  if (e.persisted) document.body.classList.remove('page-exit');
+});
+window.addEventListener('load', () => {
+  const u = new URL(window.location);
+  if (u.searchParams.has('slide')) {
+    u.searchParams.delete('slide');
+    history.replaceState(null, '', u.pathname + u.search);
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Diventa Organizzatore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+  :root{--neutral-900:#100d12;--primary-600:#c22b00;--brand-sec-h:#c24c00;--brand-sec-p:#943a00;--text-primary:#f7f6f8;--text-sec:#edeced;--attention:#e8b432;}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{background:#0a080c;}
+  body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0a080c;font-family:'Plus Jakarta Sans',sans-serif;}
+
+  .phone{width:390px;height:844px;background:var(--neutral-900);border-radius:44px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 0 0 10px #1a1a1a,0 32px 80px rgba(0,0,0,.8);position:relative;}
+
+  /* ── Status bar ── */
+  .status-bar{display:flex;justify-content:space-between;align-items:center;padding:21px 24px 0;flex-shrink:0;position:relative;z-index:2}
+  .status-bar__time{font-family:system-ui,sans-serif;font-size:17px;font-weight:590;color:#fff;letter-spacing:-.3px;}
+  .status-bar__icons{display:flex;align-items:center;gap:6px}
+  .status-bar__icons i{color:#fff}
+  .icon-cellular,.icon-wifi{font-size:14px}.icon-battery{font-size:18px}
+
+  /* ── Shared screen wrapper ── */
+  .screen{position:absolute;inset:0;display:flex;flex-direction:column;transition:opacity .3s,transform .3s;will-change:transform,opacity}
+  .screen.hidden{opacity:0;pointer-events:none}
+  .screen.slide-out{transform:translateX(-40px);opacity:0}
+  .screen.slide-in{transform:translateX(40px);opacity:0}
+
+  /* ════════════════════════════════
+     SCREEN 1 — Plan selection
+  ════════════════════════════════ */
+  #screenPlan{background:var(--neutral-900)}
+
+  /* Hero gradient */
+  .hero-gradient{position:absolute;top:0;left:0;right:0;height:320px;background:radial-gradient(ellipse 90% 100% at 50% -10%,rgba(194,76,0,.40) 0%,rgba(194,43,0,.10) 55%,transparent 100%);pointer-events:none;z-index:0}
+
+  .plan-scroll{flex:1;overflow-y:auto;scrollbar-width:none;padding:0 24px 24px;position:relative;z-index:1}
+  .plan-scroll::-webkit-scrollbar{display:none}
+
+  /* Close */
+  .btn-close{position:absolute;top:64px;right:24px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;transition:background .15s}
+  .btn-close:hover{background:rgba(255,255,255,.14)}
+  .btn-close i{font-size:16px;color:rgba(255,255,255,.70)}
+
+  /* Crown icon */
+  .hero-icon{width:72px;height:72px;border-radius:22px;background:linear-gradient(135deg,#c24c00,#6b1800);display:flex;align-items:center;justify-content:center;margin:72px auto 0;box-shadow:0 8px 32px rgba(194,76,0,.45),0 0 0 1px rgba(255,255,255,.06)}
+  .hero-icon i{font-size:36px;color:#fff}
+
+  .hero-eyebrow{text-align:center;font-size:11px;font-weight:700;letter-spacing:1px;color:var(--attention);text-transform:uppercase;margin-top:20px}
+  .hero-title{font-family:'DM Serif Display',serif;font-size:28px;line-height:34px;color:var(--text-primary);text-align:center;margin-top:8px}
+  .hero-sub{font-size:13px;color:rgba(255,255,255,.50);text-align:center;margin-top:8px;line-height:19px}
+
+  /* Social proof */
+  .social-proof{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px}
+  .stars{display:flex;gap:2px}
+  .stars i{font-size:12px;color:var(--attention)}
+  .social-text{font-size:12px;font-weight:500;color:rgba(255,255,255,.45)}
+  .social-dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.20);flex-shrink:0}
+
+  /* Features */
+  .features{display:flex;flex-direction:column;gap:0;margin-top:24px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:20px;overflow:hidden}
+  .feat{display:flex;align-items:center;gap:14px;padding:14px 16px}
+  .feat+.feat{border-top:1px solid rgba(255,255,255,.05)}
+  .feat__icon{width:36px;height:36px;border-radius:11px;background:rgba(194,76,0,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .feat__icon i{font-size:18px;color:#e05500}
+  .feat__body{flex:1}
+  .feat__title{font-size:13px;font-weight:600;color:var(--text-primary)}
+  .feat__desc{font-size:11px;color:rgba(255,255,255,.40);margin-top:2px}
+
+  /* Pricing toggle */
+  .pricing-section{margin-top:24px}
+  .toggle-wrap{display:flex;background:rgba(255,255,255,.06);border-radius:12px;padding:3px;gap:3px}
+  .toggle-opt{flex:1;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:600;color:rgba(255,255,255,.45);cursor:pointer;transition:background .18s,color .18s;user-select:none}
+  .toggle-opt.active{background:rgba(255,255,255,.10);color:#fff}
+  .toggle-opt .badge{font-size:10px;font-weight:700;color:var(--attention);background:rgba(232,180,50,.15);border-radius:6px;padding:1px 5px}
+
+  /* Price card */
+  .price-card{margin-top:12px;border-radius:20px;padding:18px 20px;border:1.5px solid rgba(194,76,0,.40);background:rgba(194,76,0,.07);display:flex;align-items:center;gap:12px}
+  .price-amount{flex:1}
+  .price-big{font-family:'DM Serif Display',serif;font-size:32px;color:#fff;line-height:1}
+  .price-period{font-size:12px;color:rgba(255,255,255,.45);margin-top:4px}
+  .price-save{background:rgba(232,180,50,.18);border:1px solid rgba(232,180,50,.25);border-radius:8px;padding:4px 8px;font-size:11px;font-weight:700;color:var(--attention);white-space:nowrap}
+
+  /* CTA */
+  .cta-wrap{margin-top:20px}
+  .btn-cta{width:100%;height:52px;border-radius:40px;background:#c24c00;border:1px solid #943a00;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,transform .1s,box-shadow .15s}
+  .btn-cta:hover{background:#d45500;box-shadow:0 0 32px rgba(194,76,0,.40)}
+  .btn-cta:active{background:#943a00;border-color:#6b1800;transform:scale(.98)}
+  .btn-cta i{font-size:18px}
+  .cta-micro{text-align:center;font-size:11px;color:rgba(255,255,255,.35);margin-top:10px}
+  .btn-skip{display:block;width:100%;text-align:center;margin-top:14px;font-size:13px;font-weight:500;color:rgba(255,255,255,.35);background:none;border:none;cursor:pointer;transition:color .15s;font-family:'Plus Jakarta Sans',sans-serif}
+  .btn-skip:hover{color:rgba(255,255,255,.60)}
+
+  /* ════════════════════════════════
+     SCREEN 2 — Payment
+  ════════════════════════════════ */
+  #screenPay{background:var(--neutral-900)}
+
+  .pay-header{display:flex;align-items:center;gap:12px;padding:72px 24px 0;flex-shrink:0}
+  .btn-back-pay{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .15s}
+  .btn-back-pay:hover{background:rgba(255,255,255,.12)}
+  .btn-back-pay i{font-size:18px;color:rgba(255,255,255,.70)}
+  .pay-header-text{flex:1}
+  .pay-title{font-size:18px;font-weight:700;color:#fff}
+  .pay-sub{font-size:12px;color:rgba(255,255,255,.40);margin-top:2px}
+
+  /* Plan recap chip */
+  .plan-recap{margin:20px 24px 0;display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:rgba(194,76,0,.08);border:1px solid rgba(194,76,0,.25)}
+  .plan-recap__icon{width:32px;height:32px;border-radius:9px;background:rgba(194,76,0,.20);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .plan-recap__icon i{font-size:16px;color:#e05500}
+  .plan-recap__info{flex:1}
+  .plan-recap__name{font-size:13px;font-weight:600;color:#fff}
+  .plan-recap__price{font-size:11px;color:rgba(255,255,255,.45);margin-top:1px}
+  .plan-recap__trial{font-size:11px;font-weight:600;color:var(--attention)}
+
+  /* Payment form */
+  .pay-form{padding:24px 24px 0;flex:1;overflow-y:auto;scrollbar-width:none}
+  .pay-form::-webkit-scrollbar{display:none}
+  .field-group{margin-bottom:14px}
+  .field-label{font-size:11px;font-weight:600;color:rgba(255,255,255,.40);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
+  .field-input{width:100%;height:50px;border-radius:14px;background:#1c181f;border:1px solid #2e2b32;padding:0 16px;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;color:#fff;outline:none;caret-color:#c24c00;transition:border-color .15s}
+  .field-input:focus{border-color:rgba(194,76,0,.60)}
+  .field-input::placeholder{color:rgba(255,255,255,.20)}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+  /* Card brand row */
+  .card-input-wrap{position:relative}
+  .card-brands{position:absolute;right:14px;top:50%;transform:translateY(-50%);display:flex;gap:4px;align-items:center}
+  .card-brand{height:20px;border-radius:4px;background:#fff;display:flex;align-items:center;justify-content:center;padding:0 5px;font-size:9px;font-weight:800;letter-spacing:.3px}
+  .card-brand.visa{color:#1a1f71}
+  .card-brand.mc{color:#eb001b}
+
+  /* Security note */
+  .security-note{display:flex;align-items:center;gap:6px;margin-top:6px}
+  .security-note i{font-size:13px;color:rgba(255,255,255,.25)}
+  .security-note span{font-size:11px;color:rgba(255,255,255,.25)}
+
+  /* Pay CTA */
+  .pay-footer{padding:16px 24px 32px;flex-shrink:0}
+  .btn-pay{width:100%;height:52px;border-radius:40px;background:#c24c00;border:1px solid #943a00;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,transform .1s,box-shadow .15s}
+  .btn-pay:hover{background:#d45500;box-shadow:0 0 32px rgba(194,76,0,.40)}
+  .btn-pay:active{background:#943a00;border-color:#6b1800;transform:scale(.98)}
+  .btn-pay i{font-size:18px}
+  .pay-terms{text-align:center;font-size:10px;color:rgba(255,255,255,.25);margin-top:10px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- Status bar (shared, absolute) -->
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <i class="ph-fill ph-cell-signal-full icon-cellular" aria-hidden="true"></i>
+      <i class="ph-fill ph-wifi-high icon-wifi" aria-hidden="true"></i>
+      <i class="ph-fill ph-battery-full icon-battery" aria-hidden="true"></i>
+    </div>
+  </div>
+
+  <!-- ════ SCREEN 1: Plan ════ -->
+  <div class="screen" id="screenPlan">
+    <div class="hero-gradient"></div>
+
+    <button class="btn-close" onclick="window.location.href='event-card.html'" aria-label="Chiudi">
+      <i class="ph ph-x" aria-hidden="true"></i>
+    </button>
+
+    <div class="plan-scroll">
+      <!-- Hero -->
+      <div class="hero-icon"><i class="ph-fill ph-crown" aria-hidden="true"></i></div>
+      <p class="hero-eyebrow">Organizzatore Pro</p>
+      <h1 class="hero-title">Crea serate,<br>raduna persone</h1>
+      <p class="hero-sub">Tutto ciò che serve per organizzare<br>eventi indimenticabili.</p>
+
+      <!-- Social proof -->
+      <div class="social-proof">
+        <div class="stars">
+          <i class="ph-fill ph-star" aria-hidden="true"></i>
+          <i class="ph-fill ph-star" aria-hidden="true"></i>
+          <i class="ph-fill ph-star" aria-hidden="true"></i>
+          <i class="ph-fill ph-star" aria-hidden="true"></i>
+          <i class="ph-fill ph-star-half" aria-hidden="true"></i>
+        </div>
+        <span class="social-text">4.8</span>
+        <div class="social-dot"></div>
+        <span class="social-text">11.240 organizzatori attivi</span>
+      </div>
+
+      <!-- Features -->
+      <div class="features">
+        <div class="feat">
+          <div class="feat__icon"><i class="ph-duotone ph-infinity" aria-hidden="true"></i></div>
+          <div class="feat__body">
+            <div class="feat__title">Eventi illimitati</div>
+            <div class="feat__desc">Crea quante serate vuoi, senza restrizioni</div>
+          </div>
+        </div>
+        <div class="feat">
+          <div class="feat__icon"><i class="ph-duotone ph-chart-line-up" aria-hidden="true"></i></div>
+          <div class="feat__body">
+            <div class="feat__title">Statistiche in tempo reale</div>
+            <div class="feat__desc">Visualizzazioni, RSVP e dati sul pubblico</div>
+          </div>
+        </div>
+        <div class="feat">
+          <div class="feat__icon"><i class="ph-duotone ph-seal-check" aria-hidden="true"></i></div>
+          <div class="feat__body">
+            <div class="feat__title">Badge organizzatore</div>
+            <div class="feat__desc">Più visibilità e credibilità nella home</div>
+          </div>
+        </div>
+        <div class="feat">
+          <div class="feat__icon"><i class="ph-duotone ph-megaphone" aria-hidden="true"></i></div>
+          <div class="feat__body">
+            <div class="feat__title">Promozione prioritaria</div>
+            <div class="feat__desc">I tuoi eventi in cima ai risultati locali</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pricing -->
+      <div class="pricing-section">
+        <div class="toggle-wrap">
+          <div class="toggle-opt" id="optMensile" onclick="setPlan('mensile')">Mensile</div>
+          <div class="toggle-opt active" id="optAnnuale" onclick="setPlan('annuale')">
+            Annuale <span class="badge">–40%</span>
+          </div>
+        </div>
+        <div class="price-card" id="priceCard">
+          <div class="price-amount">
+            <div class="price-big" id="priceBig">€5,99<span style="font-size:16px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:500;color:rgba(255,255,255,.50)">/mese</span></div>
+            <div class="price-period" id="pricePeriod">Fatturato €71,88/anno · 7 giorni gratis</div>
+          </div>
+          <div class="price-save" id="priceSave">Risparmi €48</div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-wrap">
+        <button class="btn-cta" onclick="goToPay()">
+          Inizia 7 giorni gratis <i class="ph ph-arrow-right" aria-hidden="true"></i>
+        </button>
+        <p class="cta-micro" id="ctaMicro">Poi €5,99/mese · Annulla quando vuoi</p>
+        <button class="btn-skip" onclick="window.location.href='event-card.html'">Forse dopo</button>
+      </div>
+    </div>
+  </div><!-- /screenPlan -->
+
+  <!-- ════ SCREEN 2: Payment ════ -->
+  <div class="screen hidden slide-in" id="screenPay">
+    <div class="pay-header">
+      <button class="btn-back-pay" onclick="goToPlan()" aria-label="Torna indietro">
+        <i class="ph ph-arrow-left" aria-hidden="true"></i>
+      </button>
+      <div class="pay-header-text">
+        <div class="pay-title">Completa il pagamento</div>
+        <div class="pay-sub">Nessun addebito durante la prova</div>
+      </div>
+    </div>
+
+    <!-- Plan recap -->
+    <div class="plan-recap">
+      <div class="plan-recap__icon"><i class="ph-fill ph-crown" aria-hidden="true"></i></div>
+      <div class="plan-recap__info">
+        <div class="plan-recap__name" id="recapName">Piano Annuale · Organizzatore Pro</div>
+        <div class="plan-recap__price" id="recapPrice">€71,88/anno · poi €5,99/mese</div>
+      </div>
+      <div class="plan-recap__trial">7 gg gratis</div>
+    </div>
+
+    <!-- Form -->
+    <div class="pay-form">
+      <div class="field-group">
+        <div class="field-label">Numero carta</div>
+        <div class="card-input-wrap">
+          <input class="field-input" type="tel" inputmode="numeric" placeholder="0000  0000  0000  0000" maxlength="19" oninput="formatCard(this)">
+          <div class="card-brands">
+            <div class="card-brand visa">VISA</div>
+            <div class="card-brand mc">MC</div>
+          </div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <div class="field-label">Scadenza</div>
+          <input class="field-input" type="tel" inputmode="numeric" placeholder="MM / AA" maxlength="7" oninput="formatExpiry(this)">
+        </div>
+        <div class="field-group">
+          <div class="field-label">CVV</div>
+          <input class="field-input" type="tel" inputmode="numeric" placeholder="•••" maxlength="3">
+        </div>
+      </div>
+      <div class="field-group">
+        <div class="field-label">Nome sulla carta</div>
+        <input class="field-input" type="text" placeholder="Mario Rossi" autocomplete="cc-name">
+      </div>
+      <div class="security-note">
+        <i class="ph-fill ph-lock" aria-hidden="true"></i>
+        <span>Pagamento sicuro con crittografia SSL 256-bit</span>
+      </div>
+    </div>
+
+    <div class="pay-footer">
+      <button class="btn-pay" onclick="window.location.href='create-event-step-1.html'">
+        <i class="ph ph-lock" aria-hidden="true"></i> Attiva piano gratuito
+      </button>
+      <p class="pay-terms">Nessun addebito per 7 giorni. Puoi disdire in qualsiasi momento<br>dalle impostazioni del tuo account.</p>
+    </div>
+  </div><!-- /screenPay -->
+
+</div><!-- /phone -->
+
+<script>
+let currentPlan = 'annuale';
+
+function setPlan(plan) {
+  currentPlan = plan;
+  document.getElementById('optMensile').classList.toggle('active', plan === 'mensile');
+  document.getElementById('optAnnuale').classList.toggle('active', plan === 'annuale');
+
+  const big    = document.getElementById('priceBig');
+  const period = document.getElementById('pricePeriod');
+  const save   = document.getElementById('priceSave');
+  const micro  = document.getElementById('ctaMicro');
+
+  if (plan === 'annuale') {
+    big.innerHTML    = '€5,99<span style="font-size:16px;font-family:\'Plus Jakarta Sans\',sans-serif;font-weight:500;color:rgba(255,255,255,.50)">/mese</span>';
+    period.textContent = 'Fatturato €71,88/anno · 7 giorni gratis';
+    save.textContent = 'Risparmi €48';
+    save.style.display = '';
+    micro.textContent = 'Poi €5,99/mese · Annulla quando vuoi';
+  } else {
+    big.innerHTML    = '€9,99<span style="font-size:16px;font-family:\'Plus Jakarta Sans\',sans-serif;font-weight:500;color:rgba(255,255,255,.50)">/mese</span>';
+    period.textContent = '7 giorni gratis, poi mensile';
+    save.style.display = 'none';
+    micro.textContent = 'Poi €9,99/mese · Annulla quando vuoi';
+  }
+}
+
+function goToPay() {
+  const recap = document.getElementById('recapName');
+  const price = document.getElementById('recapPrice');
+  if (currentPlan === 'annuale') {
+    recap.textContent = 'Piano Annuale · Organizzatore Pro';
+    price.textContent = '€71,88/anno · poi €5,99/mese';
+  } else {
+    recap.textContent = 'Piano Mensile · Organizzatore Pro';
+    price.textContent = '€9,99/mese';
+  }
+
+  const plan = document.getElementById('screenPlan');
+  const pay  = document.getElementById('screenPay');
+  plan.classList.add('slide-out');
+  setTimeout(() => { plan.classList.add('hidden'); }, 280);
+  pay.classList.remove('hidden');
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => { pay.classList.remove('slide-in'); });
+  });
+}
+
+function goToPlan() {
+  const plan = document.getElementById('screenPlan');
+  const pay  = document.getElementById('screenPay');
+  pay.classList.add('slide-in');
+  setTimeout(() => { pay.classList.add('hidden'); }, 280);
+  plan.classList.remove('hidden', 'slide-out');
+}
+
+function formatCard(el) {
+  let v = el.value.replace(/\D/g, '').slice(0, 16);
+  el.value = v.replace(/(.{4})/g, '$1  ').trim();
+}
+
+function formatExpiry(el) {
+  let v = el.value.replace(/\D/g, '').slice(0, 4);
+  if (v.length >= 3) v = v.slice(0, 2) + ' / ' + v.slice(2);
+  el.value = v;
+}
+</script>
+</body>
+</html>

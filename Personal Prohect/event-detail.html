@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="immagini/icon-180.png">
+<link rel="icon" type="image/png" href="immagini/icon-180.png">
+<meta name="apple-mobile-web-app-title" content="Nite">
+<title>Marco's House Party</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+  :root {
+    --neutral-900:   #100d12;
+    --primary-600:   #c22b00;
+    --primary-700:   #942000;
+    --primary-850:   #4d1100;
+    --brand-primary: #7b1b00;
+    --brand-sec:     #7a3000;
+    --brand-sec-h:   #c24c00;
+    --brand-sec-p:   #943a00;
+    --border:        #231f26;
+    --text-primary:  #f7f6f8;
+    --text-sec:      #edeced;
+    --text-tertiary: #c4c2c7;
+    --attention:     #e8b432;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: #0a080c; }
+  body {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    background: #0a080c; font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /* ── Phone shell ── */
+  .phone {
+    width: 390px; height: 844px;
+    background: var(--neutral-900);
+    border-radius: 44px; overflow: hidden;
+    display: flex; flex-direction: column;
+    box-shadow: 0 0 0 10px #1a1a1a, 0 32px 80px rgba(0,0,0,.8);
+    position: relative;
+  }
+
+  .page-content {
+    flex: 1; display: flex; flex-direction: column;
+    min-height: 0; width: 100%;
+    will-change: transform;
+    position: relative; z-index: 1;
+    overflow: hidden;
+  }
+
+  /* ── Status bar ── */
+  .status-bar {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 20;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 21px 24px 16px;
+  }
+  .status-bar__time { font-family: system-ui,-apple-system,sans-serif; font-size: 17px; font-weight: 590; color: #fff; letter-spacing: -.3px; width: 100px; }
+  .status-bar__icons { display: flex; align-items: center; gap: 6px; justify-content: flex-end; width: 100px; }
+  .status-bar__icons i { color: #fff; line-height: 1; }
+  .icon-cellular { font-size: 14px; } .icon-wifi { font-size: 14px; } .icon-battery { font-size: 18px; }
+
+  /* ── Scroll area ── */
+  .scroll-area {
+    flex: 1; overflow-y: auto; scrollbar-width: none;
+    position: relative;
+  }
+  .scroll-area::-webkit-scrollbar { display: none; }
+
+  /* ── Hero ── */
+  .hero {
+    position: relative; width: 100%; height: 340px;
+    flex-shrink: 0; overflow: hidden;
+  }
+  .hero__img {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block;
+  }
+  .hero__gradient {
+    position: absolute; inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(16,13,18,0.18) 0%,
+      rgba(16,13,18,0.0) 35%,
+      rgba(16,13,18,0.55) 70%,
+      rgba(16,13,18,1.0) 100%
+    );
+    pointer-events: none;
+  }
+  .hero__tint {
+    position: absolute; inset: 0;
+    background: linear-gradient(-52.83deg, rgba(0,0,0,0) 50%, var(--primary-850) 120%);
+    pointer-events: none; opacity: 0.5;
+  }
+
+  /* ── Floating top bar ── */
+  .top-bar {
+    position: absolute; top: 64px; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; z-index: 1000;
+  }
+  .top-btn {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(16,13,18,0.55); backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.12);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background .15s, transform .1s;
+    flex-shrink: 0;
+  }
+  .top-btn:hover { background: rgba(16,13,18,0.75); }
+  .top-btn:active { transform: scale(.90); }
+  .top-btn i { font-size: 19px; color: var(--text-primary); }
+  .top-btn.liked i { color: var(--primary-700); }
+  .top-actions { display: flex; gap: 10px; }
+
+  /* ── Hero bottom ── */
+  .hero__bottom {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 0 20px 16px;
+  }
+  .hero__title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px; line-height: 34px;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  /* ── Body content ── */
+  .body-content { padding: 16px 20px 0; }
+
+  /* ── Gruppo data + tag ── */
+  .event-meta-group { margin-bottom: 20px; }
+
+  /* ── Date pills (glass) ── */
+  .date-pill-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .date-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 34px; padding: 0 14px; border-radius: 9999px;
+    background: rgba(148,32,0,0.46);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(16,13,18,0.55);
+    font-size: 13px; font-weight: 500; color: var(--text-sec);
+  }
+  .countdown-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 34px; padding: 0 14px; border-radius: 9999px;
+    background: rgba(255,255,255,0.09);
+    border: 1px solid rgba(255,255,255,0.13);
+    font-size: 13px; font-weight: 500; color: rgba(255,255,255,.60);
+  }
+  .date-pill i, .countdown-pill i { font-size: 13px; }
+
+  /* ── Body tags (deduced from description) ── */
+  .body-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 0; }
+  .body-tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 10px; border-radius: 9999px;
+    font-size: 11px; font-weight: 600;
+  }
+  .body-tag i { font-size: 12px; }
+  .body-tag--orange {
+    background: rgba(194,76,0,0.20); border: 1px solid rgba(194,76,0,0.35);
+    color: #ff8040;
+  }
+  .body-tag--party {
+    background: rgba(245,160,35,0.20); border: 1px solid rgba(245,160,35,0.34);
+    color: #f5b040;
+  }
+  .body-tag--blue {
+    background: rgba(80,140,255,0.15); border: 1px solid rgba(80,140,255,0.30);
+    color: #7eb3ff;
+  }
+  .body-tag--green {
+    background: rgba(52,211,153,0.15); border: 1px solid rgba(52,211,153,0.28);
+    color: #34d399;
+  }
+  .body-tag--night {
+    background: rgba(130,100,220,0.18); border: 1px solid rgba(130,100,220,0.30);
+    color: #a990f5;
+  }
+
+  /* ── Crowd meter ── */
+  .crowd-meter {
+    display: flex; align-items: center; gap: 10px; margin-top: 10px;
+  }
+  .crowd-meter__bar-wrap {
+    flex: 1; height: 4px; border-radius: 99px;
+    background: rgba(255,255,255,0.08); overflow: hidden;
+  }
+  .crowd-meter__bar {
+    height: 100%; border-radius: 99px; width: 68%;
+    background: linear-gradient(90deg, #c24c00, #ff6020);
+  }
+  .crowd-meter__label {
+    font-size: 11px; font-weight: 500; color: var(--text-tertiary);
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .crowd-meter__label strong { color: var(--text-primary); font-weight: 600; }
+
+  /* ── Section ── */
+  .section { margin-bottom: 24px; }
+  .section__label {
+    font-size: 11px; font-weight: 700; letter-spacing: .8px;
+    text-transform: uppercase; color: var(--text-tertiary);
+    margin-bottom: 10px;
+  }
+  .section__hint {
+    font-size: 13px; line-height: 18px;
+    color: var(--text-tertiary);
+    margin: -4px 0 12px;
+  }
+
+  /* ── Location card ── */
+  .location-card {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 16px; border-radius: 12px;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    cursor: pointer; transition: background .15s;
+  }
+  .location-card:hover { background: rgba(255,255,255,0.07); }
+  .location-card:active { background: rgba(255,255,255,0.09); }
+  .location-icon-plain { font-size: 22px; color: #e05500; flex-shrink: 0; }
+  .location-info { flex: 1; min-width: 0; }
+  .location-name { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+  .location-addr { font-size: 12px; color: var(--text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .location-card > .ph { font-size: 18px; color: rgba(255,255,255,0.30); flex-shrink: 0; }
+
+  /* ── Map thumbnail ── */
+  .map-thumb {
+    width: 100%; height: 160px; border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-top: 10px; overflow: hidden; position: relative;
+  }
+  #venueMap { width: 100%; height: 160px; }
+  .map-info-badge {
+    position: absolute; bottom: 10px; right: 10px; z-index: 999;
+    padding: 4px 10px; border-radius: 8px;
+    background: rgba(16,13,18,0.92); border: 1px solid #231f26;
+    font-size: 9.5px; font-weight: 500; color: #c4c2c7; white-space: nowrap;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    pointer-events: none;
+  }
+
+  /* ── Friends ── */
+  .friends-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .av-stack { display: flex; align-items: center; }
+  .av {
+    width: 38px; height: 38px; border-radius: 50%; overflow: hidden;
+    margin-right: -8px; border: 2px solid var(--neutral-900);
+    box-shadow: 1px 0 4px rgba(0,0,0,0.25); flex-shrink: 0;
+  }
+  .av img { width: 100%; height: 100%; object-fit: cover; }
+  .av:nth-child(1) { z-index: 5; }
+  .av:nth-child(2) { z-index: 4; }
+  .av:nth-child(3) { z-index: 3; }
+  .av-more {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(255,255,255,0.10); border: 2px solid var(--neutral-900);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: var(--text-primary);
+    box-shadow: 1px 0 4px rgba(0,0,0,0.25); flex-shrink: 0; z-index: 2;
+  }
+  .friends-text { flex: 1; min-width: 0; }
+  .friends-text__main { font-size: 14px; font-weight: 500; color: var(--text-primary); line-height: 1.4; }
+  .friends-text__main strong { font-weight: 600; }
+  .friends-text__sub { font-size: 12px; color: var(--text-tertiary); margin-top: 1px; }
+
+  /* ── Friend list ── */
+  .friend-list { display: flex; flex-direction: column; }
+  .friend-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .friend-item:last-child { border-bottom: none; }
+  .friend-av { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+  .friend-av img { width: 100%; height: 100%; object-fit: cover; }
+  .friend-info { flex: 1; min-width: 0; }
+  .friend-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .friend-sub  { font-size: 12px; color: var(--text-tertiary); margin-top: 1px; }
+  .friend-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 9px; border-radius: 9999px;
+    font-size: 11px; font-weight: 600; flex-shrink: 0;
+  }
+  .friend-badge--going    { background: rgba(52,211,153,0.15); color: #34d399; }
+  .friend-badge--interest { background: rgba(232,180,50,0.15); color: var(--attention); }
+
+  /* ── Description ── */
+  .desc-text {
+    font-size: 15px; font-weight: 400; line-height: 22px;
+    color: var(--text-sec);
+  }
+  .desc-text.clamped { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .desc-toggle {
+    margin-top: 8px; background: none; border: none; padding: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600;
+    color: var(--brand-sec-h); cursor: pointer;
+    text-decoration: underline; text-underline-offset: 2px;
+    transition: color .15s;
+  }
+  .desc-toggle:hover { color: var(--primary-600); }
+
+  /* ── Organizer ── */
+  .organizer-card {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 16px; border-radius: 12px;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  }
+  .org-av { width: 46px; height: 46px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+  .org-av img { width: 100%; height: 100%; object-fit: cover; }
+  .org-info { flex: 1; min-width: 0; }
+  .org-name { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+  .org-role { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
+  .btn-follow {
+    height: 32px; padding: 0 14px; border-radius: 9999px;
+    background: transparent; border: 1px solid var(--brand-sec);
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 600;
+    color: var(--brand-sec-h); cursor: pointer; flex-shrink: 0;
+    transition: background .15s, border-color .15s, transform .1s;
+  }
+  .btn-follow:hover { background: rgba(122,48,0,0.18); }
+  .btn-follow:active { transform: scale(.95); }
+  .btn-follow.following { background: rgba(122,48,0,0.22); border-color: var(--brand-sec-h); }
+
+  /* ── Divider ── */
+  .divider { height: 1px; background: rgba(255,255,255,0.07); margin: 4px 0 24px; }
+
+  /* ── Bottom action bar ── */
+  .action-bar {
+    flex-shrink: 0;
+    padding: 14px 20px 32px;
+    background: linear-gradient(to bottom, transparent, var(--neutral-900) 28%);
+    position: relative; z-index: 10;
+  }
+  .action-bar__inner { display: flex; align-items: center; gap: 10px; }
+  .btn-secondary {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background .15s, transform .1s; flex-shrink: 0;
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,0.12); }
+  .btn-secondary:active { transform: scale(.92); }
+  .btn-secondary i { font-size: 20px; color: var(--text-tertiary); }
+  .btn-cta {
+    flex: 1; height: 48px; border-radius: 9999px;
+    background: var(--brand-sec-h); border: 1px solid var(--brand-sec-p);
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 600;
+    color: #fff; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: background .15s, border-color .15s, color .15s, box-shadow .15s, transform .1s;
+    box-shadow: 0 4px 24px rgba(194,76,0,0.28);
+  }
+  .btn-cta:hover { background: #c44e00; border-color: #b53700; }
+  .btn-cta:active { transform: scale(.98); }
+  .btn-cta i { font-size: 22px; }
+
+  /* ── Music / Playlist ── */
+  .music-card { background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .music-header { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,.06); }
+  .music-header__art { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: rgba(29,185,84,.10); display: flex; align-items: center; justify-content: center; }
+  .music-header__meta { flex: 1; min-width: 0; }
+  .music-header__name { font-size: 14px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .music-header__sub { font-size: 11px; color: rgba(255,255,255,.40); margin-top: 2px; display: flex; align-items: center; gap: 5px; }
+  .music-scroll { max-height: 264px; overflow-y: auto; scrollbar-width: none; }
+  .music-scroll::-webkit-scrollbar { display: none; }
+  .track-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.04); }
+  .track-row:last-child { border-bottom: none; }
+  .track-num { font-size: 11px; font-weight: 500; color: rgba(255,255,255,.22); width: 16px; text-align: center; flex-shrink: 0; line-height: 1; }
+  .track-meta { flex: 1; min-width: 0; }
+  .track-title { font-size: 13px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .track-artist { font-size: 11px; color: rgba(255,255,255,.40); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .track-dur { font-size: 11px; color: rgba(255,255,255,.28); flex-shrink: 0; }
+  .track-row.playing {
+    background: rgba(194,76,0,.12);
+    border-radius: 10px;
+    border-bottom: none;
+  }
+  .track-row.playing .track-title { color: #ff6020; }
+  .track-row.playing .track-num { width: 42px; padding: 0; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .viz-bars { display: inline-flex; align-items: center; gap: 2px; height: 20px; vertical-align: middle; }
+  .viz-bar  { width: 4px; height: 18px; border-radius: 3px; background: linear-gradient(to bottom, #ff6020, #942000); transform-origin: center; will-change: transform; }
+  .track-row.no-preview { opacity: .45; cursor: default; }
+  .track-row:not(.no-preview) { cursor: pointer; }
+  .track-row:not(.no-preview):active { background: rgba(255,255,255,.04); }
+
+  /* ── Service cards ── */
+  .service-card{
+    display:flex;align-items:center;justify-content:center;gap:12px;
+    padding:16px;border-radius:20px;border:1.5px solid rgba(255,255,255,.07);
+    cursor:pointer;user-select:none;background:rgba(255,255,255,.03);
+    transition:border-color .18s,background .18s,transform .1s;
+    margin: 16px 14px;
+  }
+  .service-card:active{transform:scale(.96)}
+  .service-card:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px}
+  .service-logo{width:36px;height:36px;border-radius:10px;overflow:hidden;flex-shrink:0}
+  .service-logo img{width:100%;height:100%;object-fit:cover;display:block}
+  .svc-name{font-size:14px;font-weight:600;color:#fff;transition:color .15s}
+
+  /* ── Playlist rows (quiz-step-3 style) ── */
+  .playlist-row {
+    display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+    border-radius: 14px; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
+    cursor: pointer; user-select: none;
+    transition: background .18s, border-color .18s, transform .1s;
+    margin-bottom: 8px;
+  }
+  .playlist-row:last-child { margin-bottom: 0; }
+  .playlist-row:active { transform: scale(.985); }
+  .playlist-row:focus-visible { outline: 2px solid rgba(255,255,255,.7); outline-offset: 2px; }
+  .playlist-row:hover { background: rgba(255,255,255,.06); }
+  .pl-cover {
+    width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0;
+    object-fit: cover; background: rgba(255,255,255,.08);
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  .pl-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pl-info { flex: 1; min-width: 0; }
+  .pl-name {
+    font-size: 14px; font-weight: 600; color: rgba(255,255,255,.80);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color .15s;
+  }
+  .pl-meta { font-size: 11px; color: rgba(255,255,255,.40); margin-top: 3px; }
+  .pl-arrow { font-size: 18px; color: rgba(255,255,255,.25); flex-shrink: 0; transition: color .15s; }
+  .playlist-row:hover .pl-name { color: #fff; }
+  .playlist-row:hover .pl-arrow { color: rgba(255,255,255,.50); }
+
+  /* ── Scroll spacer ── */
+  .scroll-bottom-pad { height: 20px; }
+
+  /* ── Focus-visible ── */
+  .top-btn:focus-visible        { outline: 2px solid rgba(255,255,255,0.7); outline-offset: 2px; }
+  .btn-secondary:focus-visible  { outline: 2px solid rgba(255,255,255,0.7); outline-offset: 2px; }
+  .btn-cta:focus-visible        { outline: 2px solid rgba(255,255,255,0.7); outline-offset: 2px; }
+  .btn-follow:focus-visible     { outline: 2px solid rgba(255,255,255,0.7); outline-offset: 2px; }
+  .desc-toggle:focus-visible    { outline: 2px solid rgba(255,255,255,0.7); outline-offset: 2px; }
+  .location-card:focus-visible  { outline: 2px solid rgba(255,255,255,0.7); outline-offset: 2px; }
+
+  /* ── Reduced motion ── */
+  @media (prefers-reduced-motion: reduce) {
+    .top-btn, .btn-cta, .btn-secondary, .btn-follow { transition: none !important; }
+  }
+
+  /* ── Mobile full screen ── */
+  @media (max-width: 430px) {
+    html, body { background: #0f0d12; }
+    body { align-items: flex-start; }
+    .phone {
+      width: 100%; height: calc(100svh + env(safe-area-inset-top));
+      border-radius: 0; box-shadow: none;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .status-bar { display: none; }
+    .top-bar { top: calc(env(safe-area-inset-top) + 4px); }
+  }
+
+  /* ── View Transitions (hero ↔ browse card) ── */
+  @view-transition { navigation: auto; }
+  .hero { view-transition-name: card-container; }
+  ::view-transition-group(card-container) {
+    animation-duration: 520ms;
+    animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  }
+  ::view-transition-old(card-container) { animation: vt-fade-out 380ms ease forwards; }
+  ::view-transition-new(card-container) { animation: vt-fade-in  380ms ease forwards; }
+  ::view-transition-old(root) { animation: vt-fade-out 260ms ease forwards; }
+  ::view-transition-new(root) { animation: vt-fade-in  400ms ease forwards; }
+  @keyframes vt-fade-in  { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes vt-fade-out { from { opacity: 1; } to { opacity: 0; } }
+@media (max-width: 430px){ .action-bar{ padding-bottom: 8px; } }
+</style>
+<script>
+  (function() {
+    const s = new URLSearchParams(window.location.search).get('slide');
+    if (s === 'from-left')  document.write('<style>.page-content{transform:translateX(-100%)}</style>');
+    if (s === 'from-right') document.write('<style>.page-content{transform:translateX(100%)}</style>');
+  })();
+</script>
+</head>
+<body>
+<div class="phone">
+  <div class="page-content" id="pageContent">
+
+    <!-- Status bar (floating) -->
+    <div class="status-bar" aria-hidden="true">
+      <span class="status-bar__time">9:41</span>
+      <div class="status-bar__icons">
+        <i class="ph-fill ph-cell-signal-full icon-cellular"></i>
+        <i class="ph-fill ph-wifi-high icon-wifi"></i>
+        <i class="ph-fill ph-battery-full icon-battery"></i>
+      </div>
+    </div>
+
+    <!-- Floating top bar -->
+    <div class="top-bar">
+      <button class="top-btn" aria-label="Torna indietro" onclick="slideBack()">
+        <i class="ph ph-arrow-left"></i>
+      </button>
+      <div class="top-actions">
+        <button class="top-btn" aria-label="Condividi" onclick="handleShare()">
+          <i class="ph ph-share-network"></i>
+        </button>
+        <button class="top-btn" id="likeBtn" aria-label="Salva evento" onclick="toggleLike()">
+          <i class="ph ph-heart"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Scrollable body -->
+    <div class="scroll-area">
+
+      <!-- Hero -->
+      <div class="hero">
+        <img class="hero__img"
+          src="immagini/456ed706d66dd4ee3da6dcaf299dcbd3.jpg"
+          alt="Marco's House Party">
+        <div class="hero__tint"></div>
+        <div class="hero__gradient"></div>
+        <div class="hero__bottom">
+          <h1 class="hero__title">Marco's House Party</h1>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="body-content">
+
+        <!-- Gruppo: quando + che tipo di evento -->
+        <div class="event-meta-group">
+          <div class="date-pill-row">
+            <div class="date-pill"><i class="ph ph-calendar-blank"></i> Sabato 17 Giugno · 23:00</div>
+            <div class="countdown-pill"><i class="ph ph-hourglass"></i> 4 giorni</div>
+          </div>
+          <div class="body-tags">
+            <span class="body-tag body-tag--party"><i class="ph-fill ph-house"></i> House Party</span>
+            <span class="body-tag body-tag--blue"><i class="ph ph-buildings"></i> Terrazza</span>
+            <span class="body-tag body-tag--green"><i class="ph ph-music-note"></i> Pop · R&amp;B</span>
+            <span class="body-tag body-tag--night"><i class="ph ph-moon"></i> Tarda notte</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Gruppo: chi partecipa -->
+        <div class="section">
+          <div class="section__label">Partecipano</div>
+          <div class="friends-row">
+            <div class="av-stack">
+              <div class="av"><img src="https://www.figma.com/api/mcp/asset/ae12e70c-d27b-4057-a06f-21d16332cc61" alt="Giulia"></div>
+              <div class="av"><img src="https://www.figma.com/api/mcp/asset/c08fdc84-628a-41db-b884-b61ab49b0e81" alt="Luca"></div>
+              <div class="av"><img src="https://www.figma.com/api/mcp/asset/042a454b-975e-4ac2-b171-c0abc593a5fa" alt="Sara"></div>
+              <div class="av-more">+5</div>
+            </div>
+            <div class="friends-text">
+              <div class="friends-text__main"><strong>Giulia, Luca</strong> e altri 6 amici</div>
+              <div class="friends-text__sub">già confermati</div>
+            </div>
+          </div>
+          <div class="crowd-meter">
+            <div class="crowd-meter__bar-wrap"><div class="crowd-meter__bar"></div></div>
+            <span class="crowd-meter__label"><strong>~30</strong> persone · abbastanza affollato</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Location -->
+        <div class="section">
+          <div class="section__label">Dove</div>
+          <div class="location-card" role="button" tabindex="0"
+               onclick="openMaps()" onkeydown="if(event.key==='Enter'){openMaps()}">
+            <i class="ph-fill ph-map-pin location-icon-plain"></i>
+            <div class="location-info">
+              <div class="location-name">Via Corsico, 14</div>
+              <div class="location-addr">Navigli, Milano · 1.2 km da te</div>
+            </div>
+            <i class="ph ph-arrow-square-out"></i>
+          </div>
+          <div class="map-thumb" role="img" aria-label="Percorso verso Via Corsico, 14 — 1.2 km">
+            <div id="venueMap"></div>
+            <div class="map-info-badge">&#128694;&nbsp;1.2 km · 14 min</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Playlist -->
+        <div class="section" id="musicSection">
+          <div class="section__label">Mood musicale</div>
+          <div class="section__hint">Un assaggio dell'atmosfera che troverai — non la scaletta esatta della serata.</div>
+          <div id="playlistList">
+
+            <!-- Playlist header row -->
+            <div class="playlist-row" role="button" tabindex="0" id="mainPlaylistRow"
+                 onclick="openSpotifyPlaylist()"
+                 onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"
+                 style="margin-bottom:12px">
+              <div class="pl-cover" id="plArt" style="background:none">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30" fill="#1db954"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+              </div>
+              <div class="pl-info">
+                <div class="pl-name" id="plName">Late Night Moods</div>
+                <div class="pl-meta" id="plSub">Caricamento…</div>
+              </div>
+              <i class="ph ph-arrow-square-out pl-arrow" aria-hidden="true"></i>
+            </div>
+
+            <!-- Track list -->
+            <div class="music-scroll" id="trackList">
+              <div class="track-row no-preview">
+                <span class="track-num">·</span>
+                <div class="track-meta"><div class="track-title" style="color:rgba(255,255,255,.35)">Caricamento tracce…</div></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Description -->
+        <div class="section">
+          <div class="section__label">Info</div>
+          <p class="desc-text clamped" id="descText">Vi aspetto sul mio terrazzo ai Navigli per una serata come si deve. Musica pop e R&B, luci basse, una trentina di persone — niente caos, solo belle persone. Si inizia tardi e si finisce quando si vuole. Drink e snack inclusi. Dress code: come ti senti quella sera.</p>
+          <button class="desc-toggle" id="descToggle" onclick="toggleDesc()">Leggi di più</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Organizer -->
+        <div class="section">
+          <div class="section__label">Organizzato da</div>
+          <div class="organizer-card">
+            <div class="org-av">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" alt="Marco B.">
+            </div>
+            <div class="org-info">
+              <div class="org-name">Marco B.</div>
+              <div class="org-role">Host · 12 eventi organizzati</div>
+            </div>
+            <button class="btn-follow" id="followBtn" onclick="toggleFollow()">Segui</button>
+          </div>
+        </div>
+
+        <div class="scroll-bottom-pad"></div>
+      </div><!-- /body-content -->
+    </div><!-- /scroll-area -->
+
+    <!-- Bottom action bar -->
+    <div class="action-bar">
+      <div class="action-bar__inner">
+        <button class="btn-cta" id="ctaBtn" onclick="handleRSVP()">
+          <i class="ph ph-credit-card"></i> Partecipa alla serata
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /page-content -->
+</div><!-- /phone -->
+
+<script>
+/* ── Navigation ── */
+function slideBack() {
+  if (history.length > 1) {
+    history.back();
+  } else {
+    window.location.href = 'events-browse.html';
+  }
+}
+
+/* ── Like ── */
+let liked = false;
+function toggleLike() {
+  liked = !liked;
+  const btn = document.getElementById('likeBtn');
+  btn.querySelector('i').className = liked ? 'ph-fill ph-heart' : 'ph ph-heart';
+  btn.querySelector('i').style.color = liked ? 'var(--primary-700)' : '';
+}
+
+/* ── Follow ── */
+let following = false;
+function toggleFollow() {
+  following = !following;
+  const btn = document.getElementById('followBtn');
+  btn.classList.toggle('following', following);
+  btn.textContent = following ? 'Seguito ✓' : 'Segui';
+}
+
+/* ── RSVP ── */
+let going = false;
+function handleRSVP() {
+  going = !going;
+  const btn = document.getElementById('ctaBtn');
+  if (going) {
+    btn.innerHTML = '<i class="ph-fill ph-check-circle"></i> Sei dentro!';
+    btn.style.background = 'rgba(52,211,153,0.20)';
+    btn.style.borderColor = 'rgba(52,211,153,0.40)';
+    btn.style.color = '#34d399';
+    btn.style.boxShadow = '0 4px 24px rgba(52,211,153,0.12)';
+  } else {
+    btn.innerHTML = '<i class="ph ph-credit-card"></i> Partecipa alla serata';
+    btn.style.cssText = '';
+  }
+}
+
+/* ── Share ── */
+function handleShare() {
+  if (navigator.share) navigator.share({ title: "Marco's House Party", url: window.location.href }).catch(() => {});
+}
+
+/* ── Maps ── */
+function openMaps() {
+  window.open('https://maps.google.com/?q=Via+Corsico+14+Milano', '_blank');
+}
+
+/* ── Description expand ── */
+let descExpanded = false;
+function toggleDesc() {
+  descExpanded = !descExpanded;
+  document.getElementById('descText').classList.toggle('clamped', !descExpanded);
+  document.getElementById('descToggle').textContent = descExpanded ? 'Leggi meno' : 'Leggi di più';
+}
+
+/* ── Spotify ── */
+const HARDCODED_PLAYLIST    = '31aTChbbcTbY3Sei4kb3nu';
+
+let audio = null;
+let playingRow = null;
+
+function fmtMs(ms) {
+  const s = Math.round(ms / 1000);
+  return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+}
+
+async function getSpotifyToken() {
+  return localStorage.getItem('spotify_token');
+}
+
+async function spotifyGet(path) {
+  const token = await getSpotifyToken();
+  if (!token) return null;
+  const r = await fetch('https://api.spotify.com/v1' + path, {
+    headers: { Authorization: 'Bearer ' + token },
+  });
+  if (r.status === 401) {
+    localStorage.removeItem('spotify_token');
+    return null;
+  }
+  if (!r.ok) return null;
+  return r.json();
+}
+
+/* ── Waveform visualiser — JS RAF su div, no Web Audio, no CORS ── */
+let vizRaf = null;
+let vizEntranceTimer = null;
+let vizGeneration = 0;
+
+// 3 frequenze + 3 fasi per barra → pattern non ripetitivo e organico
+const VIZ_P = [
+  { f:[1.7, 3.1, 0.8], p:[0.0, 1.2, 2.4] },
+  { f:[2.3, 1.1, 3.7], p:[1.1, 0.5, 1.9] },
+  { f:[3.3, 2.1, 1.3], p:[2.3, 1.7, 0.3] },
+  { f:[1.5, 3.5, 2.7], p:[0.7, 2.1, 1.3] },
+  { f:[2.9, 1.3, 3.1], p:[1.8, 0.9, 2.7] },
+];
+
+/* play → 1 piece → all bars */
+function startViz(numEl) {
+  stopViz();
+  numEl._collapseMarker = null; // cancel any in-flight collapse on this element
+  const gen = ++vizGeneration;
+
+  numEl.style.transition = 'opacity 40ms ease';
+  numEl.style.opacity = '0';
+
+  setTimeout(() => {
+    if (vizGeneration !== gen) return;
+    numEl.innerHTML = '';
+    numEl.style.transition = '';
+    numEl.style.opacity = '1';
+
+    const wrap = document.createElement('div');
+    wrap.className = 'viz-bars';
+    const CENTER = 2, STAGGER = 35, DUR = 160;
+
+    const bars = Array.from({ length: 5 }, (_, i) => {
+      const b = document.createElement('span');
+      b.className = 'viz-bar';
+      if (i === CENTER) {
+        b.style.cssText = `opacity:0;transform:scaleX(2.8) scaleY(0.16);transition:transform ${DUR}ms cubic-bezier(0.34,1.56,0.64,1),opacity 45ms ease`;
+      } else {
+        const delay = Math.abs(i - CENTER) * STAGGER;
+        b.style.cssText = `opacity:0;transform:scaleY(0.05);transition:transform ${DUR}ms cubic-bezier(0.34,1.56,0.64,1) ${delay}ms,opacity 70ms ease ${delay}ms`;
+      }
+      wrap.appendChild(b);
+      return b;
+    });
+    numEl.appendChild(wrap);
+    void wrap.offsetWidth;
+
+    bars[CENTER].style.opacity = '1';
+    bars[CENTER].style.transform = 'scaleX(1) scaleY(0.68)';
+
+    setTimeout(() => {
+      if (vizGeneration !== gen) return;
+      bars.forEach((b, i) => {
+        if (i !== CENTER) { b.style.opacity = '1'; b.style.transform = 'scaleY(0.68)'; }
+      });
+    }, 30);
+
+    vizEntranceTimer = setTimeout(() => {
+      if (vizGeneration !== gen) return;
+      vizEntranceTimer = null;
+      bars.forEach(b => { b.style.transition = 'none'; });
+
+      function frame(ts) {
+        if (vizGeneration !== gen) return;
+        vizRaf = requestAnimationFrame(frame);
+        const t = ts / 1000;
+        for (let i = 0; i < 5; i++) {
+          const { f, p } = VIZ_P[i];
+          const v = 0.22 + 0.32 * Math.abs(Math.sin(t * f[0] + p[0]))
+                       + 0.26 * Math.abs(Math.sin(t * f[1] + p[1]))
+                       + 0.20 * Math.abs(Math.sin(t * f[2] + p[2]));
+          bars[i].style.transform = `scaleY(${Math.min(1, v).toFixed(3)})`;
+        }
+      }
+      requestAnimationFrame(frame);
+    }, DUR + STAGGER * 2 + 30);
+  }, 45);
+}
+
+function stopViz() {
+  vizGeneration++;
+  if (vizEntranceTimer) { clearTimeout(vizEntranceTimer); vizEntranceTimer = null; }
+  if (vizRaf) { cancelAnimationFrame(vizRaf); vizRaf = null; }
+}
+
+/* all bars → collapse to center piece → piece morphs back to play shape → restore */
+function collapseViz(numEl, restoreHTML) {
+  const bars = numEl ? Array.from(numEl.querySelectorAll('.viz-bar')) : [];
+  if (!bars.length) { if (numEl) numEl.innerHTML = restoreHTML; return; }
+  const marker = {};
+  numEl._collapseMarker = marker;
+  const CENTER = 2;
+  bars.forEach((b, i) => {
+    const dist = Math.abs(i - CENTER);
+    const delay = (2 - dist) * 25;
+    b.style.transition = `transform 110ms ease ${delay}ms, opacity 90ms ease ${delay + 20}ms`;
+    if (i !== CENTER) { b.style.transform = 'scaleY(0.04)'; b.style.opacity = '0'; }
+    else              { b.style.transform = 'scaleX(2.8) scaleY(0.16)'; }
+  });
+  setTimeout(() => {
+    if (numEl._collapseMarker !== marker) return;
+    bars[CENTER].style.transition = 'opacity 65ms ease';
+    bars[CENTER].style.opacity = '0';
+    setTimeout(() => {
+      if (numEl._collapseMarker !== marker) return;
+      numEl.innerHTML = restoreHTML;
+      delete numEl._collapseMarker;
+    }, 70);
+  }, 165);
+}
+
+/* ── Preview playback ── */
+const previewCache = {};
+async function playPreview(row, name, artists, numEl, providedUrl) {
+  // Toggle play/pause on same row
+  if (playingRow === row) {
+    if (audio.paused) {
+      audio.play();
+      startViz(numEl);
+      row.classList.add('playing');
+    } else {
+      audio.pause();
+      stopViz();
+      collapseViz(numEl, '<i class="ph-fill ph-play" style="font-size:13px;color:#e05500"></i>');
+      row.classList.remove('playing');
+    }
+    return;
+  }
+
+  // Fetch preview URL if needed
+  let url = providedUrl || previewCache[name + artists];
+  if (!url) {
+    numEl.innerHTML = '<i class="ph ph-circle-notch" style="font-size:13px;animation:spin .7s linear infinite;display:inline-block"></i>';
+    const q = encodeURIComponent(name + ' ' + artists.split(',')[0]);
+    try {
+      const res = await fetch(`https://itunes.apple.com/search?term=${q}&entity=song&limit=1`);
+      const d   = await res.json();
+      if (d.results?.[0]?.previewUrl) {
+        url = d.results[0].previewUrl;
+        previewCache[name + artists] = url;
+      }
+    } catch(e) {}
+  }
+
+  if (!url) {
+    numEl.innerHTML = '<i class="ph-fill ph-x" style="font-size:12px;color:#ff4444"></i>';
+    setTimeout(() => { if (playingRow !== row) numEl.textContent = row.dataset.num; }, 2000);
+    return;
+  }
+
+  // Stop previous
+  stopViz();
+  if (audio) audio.pause();
+  if (playingRow) {
+    playingRow.classList.remove('playing');
+    collapseViz(playingRow.querySelector('.track-num'), playingRow.dataset.num);
+  }
+
+  audio = new Audio(url);
+  audio.volume = 0.8;
+
+  audio.play().catch(() => {
+    numEl.innerHTML = '<i class="ph-fill ph-x" style="font-size:12px;color:#ff4444"></i>';
+    setTimeout(() => { if (playingRow !== row) numEl.textContent = row.dataset.num; }, 2000);
+  });
+
+  playingRow = row;
+  row.classList.add('playing');
+  startViz(numEl);
+
+  audio.addEventListener('ended', () => {
+    row.classList.remove('playing');
+    playingRow = null;
+    stopViz();
+    collapseViz(numEl, row.dataset.num);
+  }, { once: true });
+}
+
+let currentPlaylistUrl = null;
+
+function openSpotifyPlaylist() {
+  if (currentPlaylistUrl) window.open(currentPlaylistUrl, '_blank');
+}
+
+const DEMO_TRACKS = [
+  {name:'Blinding Lights',              artists:'The Weeknd',              dur:'3:20'},
+  {name:'Levitating',                   artists:'Dua Lipa',                dur:'3:23'},
+  {name:'As It Was',                    artists:'Harry Styles',            dur:'2:37'},
+  {name:'Stay',                         artists:'The Kid LAROI, Justin Bieber', dur:'2:21'},
+  {name:'Montero (Call Me By Your Name)',artists:'Lil Nas X',              dur:'2:18'},
+  {name:'good 4 u',                     artists:'Olivia Rodrigo',          dur:'2:58'},
+  {name:'Watermelon Sugar',             artists:'Harry Styles',            dur:'2:54'},
+  {name:'Peaches',                      artists:'Justin Bieber',           dur:'3:18'},
+  {name:'Kiss Me More',                 artists:'Doja Cat',                dur:'3:38'},
+  {name:'Positions',                    artists:'Ariana Grande',           dur:'2:52'},
+];
+
+function renderDemoTracks() {
+  const list = document.getElementById('trackList');
+  list.innerHTML = '';
+  DEMO_TRACKS.forEach((t, i) => {
+    const row = document.createElement('div');
+    row.className = 'track-row';
+    row.dataset.num = i + 1;
+    row.innerHTML = `<span class="track-num">${i + 1}</span><div class="track-meta"><div class="track-title">${t.name}</div><div class="track-artist">${t.artists}</div></div><span class="track-dur">${t.dur}</span>`;
+    const numEl = row.querySelector('.track-num');
+    row.addEventListener('click', () => playPreview(row, t.name, t.artists, numEl, null));
+    list.appendChild(row);
+  });
+}
+
+async function loadSpotifyPlaylist() {
+  const plId = localStorage.getItem('create_event_playlist_id') || HARDCODED_PLAYLIST;
+  document.getElementById('plName').textContent = localStorage.getItem('create_event_playlist_name') || 'Late Night Moods';
+  document.getElementById('plSub').textContent  = 'Caricamento…';
+  currentPlaylistUrl = 'https://open.spotify.com/playlist/' + plId;
+
+  const [tracks, pl] = await Promise.all([
+    spotifyGet('/playlists/' + plId + '/tracks?limit=50&fields=items(track(name,artists,duration_ms,preview_url))'),
+    spotifyGet('/playlists/' + plId + '?fields=name,images,tracks.total,owner.display_name,external_urls'),
+  ]);
+
+  if (pl) {
+    if (pl.name) document.getElementById('plName').textContent = pl.name;
+    const owner = pl.owner?.display_name;
+    const total = pl.tracks?.total;
+    document.getElementById('plSub').textContent =
+      (owner ? 'di ' + owner : '') + (total ? ' · ' + total + ' brani' : '');
+    if (pl.external_urls?.spotify) currentPlaylistUrl = pl.external_urls.spotify;
+    if (pl.images?.[0]?.url) {
+      const artEl = document.getElementById('plArt');
+      artEl.style.background = 'none';
+      artEl.innerHTML = `<img src="${pl.images[0].url}" alt="">`;
+    }
+  }
+
+  if (!tracks?.items?.length) { renderDemoTracks(); return; }
+
+  const list = document.getElementById('trackList');
+  list.innerHTML = '';
+  let idx = 0;
+  tracks.items.forEach(item => {
+    const t = item?.track;
+    if (!t) return;
+    idx++;
+    const artists = t.artists.map(a => a.name).join(', ');
+    const row = document.createElement('div');
+    row.className = 'track-row';
+    row.dataset.num = idx;
+    row.innerHTML = `<span class="track-num">${idx}</span><div class="track-meta"><div class="track-title">${t.name}</div><div class="track-artist">${artists}</div></div><span class="track-dur">${fmtMs(t.duration_ms)}</span>`;
+    const numEl = row.querySelector('.track-num');
+    row.addEventListener('click', () => playPreview(row, t.name, artists, numEl, t.preview_url));
+    list.appendChild(row);
+  });
+}
+
+/* ── Map (Leaflet + OSRM real walking route) ── */
+async function initMap() {
+  if (!window.L || !document.getElementById('venueMap')) return;
+
+  const venueLL = [45.4545, 9.1728];  // Via Corsico 14, Navigli, Milano
+  const userLL  = [45.4442, 9.1618];  // posizione simulata ~1.2 km a sud-ovest
+
+  const map = L.map('venueMap', {
+    zoomControl: false, attributionControl: false,
+    dragging: false, scrollWheelZoom: false,
+    doubleClickZoom: false, touchZoom: false, keyboard: false
+  });
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    maxZoom: 19
+  }).addTo(map);
+
+  map.fitBounds(L.latLngBounds([venueLL, userLL]), { padding: [32, 32] });
+
+  function addMarkers() {
+    /* marker utente */
+    L.circleMarker(userLL, {
+      radius: 7, fillColor: '#ff6020', color: '#fff', weight: 2.5, fillOpacity: 1, interactive: false
+    }).addTo(map);
+    L.marker(userLL, {
+      icon: L.divIcon({
+        className: '',
+        html: '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:9px;font-weight:600;color:#f7f6f8;background:rgba(18,16,26,0.94);border:1px solid rgba(55,46,65,0.85);border-radius:5px;padding:3px 8px;white-space:nowrap;pointer-events:none">Tu</div>',
+        iconSize: 'auto',
+        iconAnchor: [14, 28]
+      }), interactive: false
+    }).addTo(map);
+
+    /* marker venue */
+    L.circleMarker(venueLL, {
+      radius: 8, fillColor: '#c22b00', color: '#fff', weight: 2.5, fillOpacity: 1, interactive: false
+    }).addTo(map);
+    L.marker(venueLL, {
+      icon: L.divIcon({
+        className: '',
+        html: '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:9px;font-weight:600;color:#f7f6f8;background:rgba(18,16,26,0.94);border:1px solid rgba(55,46,65,0.85);border-radius:5px;padding:3px 8px;white-space:nowrap;pointer-events:none">Via Corsico, 14</div>',
+        iconSize: 'auto',
+        iconAnchor: [44, 30]
+      }), interactive: false
+    }).addTo(map);
+  }
+
+  /* percorso reale a piedi via OSRM — poi marker sopra */
+  try {
+    const osrm = `https://router.project-osrm.org/route/v1/foot/` +
+      `${userLL[1]},${userLL[0]};${venueLL[1]},${venueLL[0]}` +
+      `?overview=full&geometries=geojson`;
+    const data = await fetch(osrm).then(r => r.json());
+    if (data.routes && data.routes[0]) {
+      const latlngs = data.routes[0].geometry.coordinates.map(([lng, lat]) => [lat, lng]);
+      L.polyline(latlngs, { color: '#c24c00', weight: 8, opacity: 0.22, interactive: false }).addTo(map);
+      L.polyline(latlngs, { color: '#c24c00', weight: 3, opacity: 0.95, interactive: false }).addTo(map);
+      map.fitBounds(L.latLngBounds(latlngs), { padding: [32, 32] });
+    }
+  } catch (_) {
+    L.polyline([userLL, venueLL], {
+      color: '#c24c00', weight: 3, dashArray: '7 5', opacity: 0.95, interactive: false
+    }).addTo(map);
+  }
+
+  /* marker sempre in cima alla linea */
+  addMarkers();
+}
+
+/* ── Slide-in on load ── */
+document.addEventListener('DOMContentLoaded', async () => {
+  requestAnimationFrame(initMap);
+  const params = new URLSearchParams(window.location.search);
+  setTimeout(() => {
+    loadSpotifyPlaylist();
+  }, 450);
+  const slide = params.get('slide');
+  const c = document.getElementById('pageContent');
+  document.body.style.overflowX = 'hidden';
+
+  if (slide === 'from-left') {
+    c.style.transition = 'none'; c.style.transform = 'translateX(-100%)';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      c.style.transition = 'transform .34s cubic-bezier(.22,.61,.36,1)';
+      c.style.transform = 'translateX(0)';
+    }));
+  } else if (slide === 'from-right') {
+    c.style.transition = 'none'; c.style.transform = 'translateX(100%)';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      c.style.transition = 'transform .34s cubic-bezier(.22,.61,.36,1)';
+      c.style.transform = 'translateX(0)';
+    }));
+  }
+});
+
+// ── Transizioni fluide: reset bfcache + pulizia parametro slide ──
+window.addEventListener('pageshow', (e) => {
+  if (e.persisted) {
+    const c = document.querySelector('.page-content');
+    if (c) { c.style.transition = 'none'; c.style.transform = 'translateX(0)'; }
+  }
+});
+window.addEventListener('load', () => {
+  const u = new URL(window.location);
+  if (u.searchParams.has('slide')) {
+    u.searchParams.delete('slide');
+    history.replaceState(null, '', u.pathname + u.search);
+  }
+});
+</script>
+</body>
+</html>

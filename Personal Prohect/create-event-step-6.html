@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="immagini/icon-180.png">
+<link rel="icon" type="image/png" href="immagini/icon-180.png">
+<meta name="apple-mobile-web-app-title" content="Nite">
+<title>Crea serata — 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+:root{--neutral-900:#100d12;--primary-600:#c22b00;--primary-700:#942000;--brand-sec:#7a3000;--brand-sec-h:#c24c00;--brand-sec-p:#943a00;--text-primary:#f7f6f8;--text-sec:#edeced;--attention:#e8b432;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{background:#0a080c;}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0a080c;font-family:'Plus Jakarta Sans',sans-serif;}
+.phone{width:390px;height:844px;background:var(--neutral-900);border-radius:44px;overflow:hidden;display:flex;flex-direction:column;padding:0 24px 0;box-shadow:0 0 0 10px #1a1a1a,0 32px 80px rgba(0,0,0,.8);}
+.status-bar{display:flex;justify-content:space-between;align-items:center;padding:21px 0 19px}
+.status-bar__time{font-family:system-ui,-apple-system,sans-serif;font-size:17px;font-weight:590;color:#fff;letter-spacing:-.3px;width:100px}
+.status-bar__icons{display:flex;align-items:center;gap:6px;justify-content:flex-end;width:100px}
+.status-bar__icons i{color:#fff;line-height:1}
+.icon-cellular,.icon-wifi{font-size:14px}.icon-battery{font-size:18px}
+.top-nav{position:relative;display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.btn-back{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s}
+.btn-back:hover{background:rgba(255,255,255,.12)}
+.btn-back:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px;}
+.btn-back i{font-size:18px;color:rgba(255,255,255,.7)}
+.top-nav__right{display:flex;align-items:center;gap:10px}
+.step-label{font-size:12px;font-weight:500;color:rgba(255,255,255,.65)}
+.step-label span{color:var(--brand-sec-h);font-weight:600}
+.nav-brand{position:absolute;left:50%;transform:translateX(-50%);font-family:'DM Serif Display',serif;font-size:22px;line-height:1;color:var(--text-primary);pointer-events:none}
+.nav-brand span{font-size:.6em;color:var(--brand-sec-h);position:relative;top:-.35em;margin-left:1px}
+.progress-segs{display:flex;gap:4px;margin-top:14px}
+.seg{flex:1;height:3px;border-radius:99px;background:rgba(255,255,255,.10)}
+.seg.done{background:var(--primary-600)}
+.seg.active{background:linear-gradient(to right,var(--primary-600) 60%,rgba(255,255,255,.10) 60%)}
+.scroll-area{flex:1;overflow-y:auto;scrollbar-width:none;padding-bottom:8px}
+.scroll-area::-webkit-scrollbar{display:none}
+.page-header{margin-top:28px}
+.page-eyebrow{font-size:11px;font-weight:600;letter-spacing:.8px;color:var(--attention);text-transform:uppercase;margin-bottom:10px}
+.page-title{font-family:'DM Serif Display',serif;font-size:26px;line-height:33px;color:var(--text-primary)}
+.page-sub{margin-top:8px;font-size:13px;line-height:19px;color:rgba(255,255,255,.65)}
+.field-group{margin-top:22px}
+.field-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px}
+.field-label{font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:rgba(255,255,255,.70)}
+.option-row{display:flex;align-items:center;gap:14px;padding:16px;border-radius:24px;background:#322f35;border:1px solid #413e44;cursor:pointer;transition:background .15s,border-color .18s;margin-bottom:10px}
+.option-row:last-child{margin-bottom:0}
+.option-row:active{transform:scale(.985);background:#282530}
+.option-row.selected{background:rgba(194,76,0,.18);border-color:#c24c00}
+.option-icon{width:42px;height:42px;border-radius:11px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px;color:rgba(255,255,255,.65);transition:background .18s,color .18s}
+.option-row.selected .option-icon{background:rgba(194,76,0,.20);color:#e05500}
+.option-body{flex:1}
+.option-title{font-size:15px;font-weight:500;color:rgba(255,255,255,.65);transition:color .18s;line-height:1.3}
+.option-row.selected .option-title{color:var(--text-primary)}
+.option-desc{font-size:12px;line-height:18px;color:rgba(255,255,255,.55);margin-top:4px;transition:color .18s}
+.option-row.selected .option-desc{color:rgba(255,255,255,.42)}
+.radio-ring{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:border-color .18s}
+.option-row.selected .radio-ring{border-color:#c24c00}
+.radio-dot{width:10px;height:10px;border-radius:50%;background:#942000;transform:scale(0);transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+.option-row.selected .radio-dot{transform:scale(1)}
+
+/* Connected Playlist Panel */
+.expand-box{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1)}
+.expand-box.open{max-height:560px}
+.playlist-panel{padding-top:14px;display:flex;flex-direction:column;gap:12px}
+.btn-spotify{width:100%;height:48px;border-radius:12px;background:#1db954;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;color:#fff;transition:background .15s,border-color .15s,transform .1s}
+.btn-spotify:hover{background:#1ed760}
+.btn-spotify:active{transform:scale(.98)}
+.btn-spotify i{font-size:20px}
+
+/* Playlist preview card */
+.playlist-card{background:rgba(29,185,84,.06);border:1px solid rgba(29,185,84,.25);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;position:relative}
+.playlist-card__info{display:flex;align-items:center;gap:12px}
+.playlist-card__art{width:48px;height:48px;border-radius:8px;object-fit:cover}
+.playlist-card__meta{flex:1;min-width:0}
+.playlist-card__name{font-size:14px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.playlist-card__author{font-size:11px;color:rgba(255,255,255,.70);margin-top:2px}
+.playlist-card__songs-count{font-size:11px;color:#1db954;font-weight:500;margin-top:2px}
+.playlist-card__tracks{display:flex;flex-direction:column;gap:8px;border-top:1px solid rgba(255,255,255,.06);padding-top:10px}
+.track-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.track-info{flex:1;min-width:0;display:flex;align-items:center;gap:8px}
+.track-img{width:28px;height:28px;border-radius:4px;object-fit:cover;flex-shrink:0}
+.track-detail{min-width:0}
+.track-title{font-size:12px;font-weight:500;color:rgba(255,255,255,.8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.track-artist{font-size:10px;color:rgba(255,255,255,.65);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.track-play{color:rgba(255,255,255,.60);font-size:14px;cursor:pointer}
+.track-play:hover{color:#fff}
+
+.spoti-badge{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;background:rgba(29,185,84,.08);border:1px solid rgba(29,185,84,.20);margin-bottom:10px}
+.spoti-badge__user{flex:1;font-size:13px;font-weight:600;color:#fff}
+.spoti-disconnect{font-size:11px;font-weight:600;color:rgba(255,255,255,.38);background:none;border:none;cursor:pointer;padding:0;font-family:'Plus Jakarta Sans',sans-serif;flex-shrink:0}
+.spoti-disconnect:hover{color:rgba(255,255,255,.65)}
+.mode-tabs{display:flex;gap:3px;background:rgba(255,255,255,.04);border-radius:10px;padding:3px;margin-bottom:10px}
+.mode-tab{flex:1;height:30px;border-radius:7px;border:none;background:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;color:rgba(255,255,255,.38);cursor:pointer;transition:background .15s,color .15s}
+.mode-tab.active{background:rgba(255,255,255,.10);color:#fff}
+.playlist-scroll{max-height:190px;overflow-y:auto;scrollbar-width:none;display:flex;flex-direction:column;gap:5px}
+.playlist-scroll::-webkit-scrollbar{display:none}
+.plist-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;border:1px solid transparent;cursor:pointer;transition:background .15s,border-color .15s}
+.plist-item:hover{background:rgba(255,255,255,.05)}
+.plist-item.active{background:rgba(29,185,84,.10);border-color:rgba(29,185,84,.28)}
+.plist-art{width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,.06)}
+.plist-meta{flex:1;min-width:0}
+.plist-name{font-size:13px;font-weight:600;color:rgba(255,255,255,.80);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plist-tracks{font-size:11px;color:rgba(255,255,255,.38);margin-top:1px}
+.plist-check{font-size:18px;color:#1db954;flex-shrink:0;opacity:0;transition:opacity .15s}
+.plist-item.active .plist-check{opacity:1}
+.plist-msg{display:flex;align-items:center;justify-content:center;gap:8px;padding:18px;color:rgba(255,255,255,.35);font-size:13px}
+.create-section{display:flex;flex-direction:column;gap:10px;padding:2px 0}
+.create-hint{font-size:12px;line-height:18px;color:rgba(255,255,255,.48)}
+.create-actions{display:flex;gap:8px}
+.btn-open-spotify{flex:1;height:38px;border-radius:10px;background:#1db954;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;color:#fff;display:flex;align-items:center;justify-content:center;gap:7px;transition:background .15s}
+.btn-open-spotify:hover{background:#1ed760}
+.btn-refresh{height:38px;padding:0 14px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;color:rgba(255,255,255,.50);transition:background .15s,color .15s;white-space:nowrap}
+.btn-refresh:hover{background:rgba(255,255,255,.10);color:#fff}
+.btn-change{background:none;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:rgba(255,255,255,.38);cursor:pointer;text-decoration:underline;text-underline-offset:2px;padding:4px 0 10px;display:block}
+.btn-change:hover{color:rgba(255,255,255,.65)}
+/* Toggle panel */
+.collab-panel{border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px 16px;background:rgba(255,255,255,.025);display:flex;align-items:center;justify-content:space-between}
+.collab-text{flex:1;padding-right:12px}
+.collab-title{font-size:13px;font-weight:600;color:var(--text-primary)}
+.collab-sub{font-size:11px;color:rgba(255,255,255,.60);margin-top:2px;line-height:15px}
+
+/* Toggle Switch Style */
+.switch{position:relative;display:inline-block;width:40px;height:24px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;inset:0;background-color:rgba(255,255,255,.1);transition:.3s;border-radius:24px}
+.slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background-color:rgba(255,255,255,.7);transition:.3s;border-radius:50%}
+input:checked + .slider{background-color:#c24c00}
+input:checked + .slider:before{transform:translateX(16px);background-color:#fff}
+
+.footer{position:sticky;bottom:0;background:var(--neutral-900);padding:20px 0 32px}
+.btn-continue{width:100%;height:52px;border-radius:40px;background:#c24c00;border:1px solid #943a00;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:600;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,border-color .15s,transform .1s}
+.btn-continue i{font-size:18px}
+.btn-continue:hover{background:#c44e00;border-color:#b53700}
+.btn-continue:active{background:#943a00;border-color:#6b1800;transform:scale(.98)}
+.btn-continue:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px;}
+.spin{animation:spin .8s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.spin{animation:none;opacity:.6}}
+
+@media (max-width: 430px) {
+  html, body { background: #0f0d12; }
+  body { align-items: flex-start; }
+  .phone {
+    width: 100%;
+    height: calc(100svh + env(safe-area-inset-top));
+    border-radius: 0;
+    box-shadow: none;
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-top: env(safe-area-inset-top);
+  }
+  .status-bar { display: none; }
+  /* fade above nav bar */
+  .nav-wrap { position: relative; }
+  .nav-wrap::before {
+    content: '';
+    position: absolute;
+    top: -52px; left: 0; right: 0; height: 52px;
+    background: linear-gradient(to bottom, transparent, #100d12);
+    pointer-events: none;
+    z-index: 4;
+  }
+}
+@media (max-width: 430px){ .footer{ padding-bottom: 8px; } }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <i class="ph-fill ph-cell-signal-full icon-cellular"></i>
+      <i class="ph-fill ph-wifi-high icon-wifi"></i>
+      <i class="ph-fill ph-battery-full icon-battery"></i>
+    </div>
+  </div>
+  <div class="top-nav">
+    <button class="btn-back" aria-label="Torna indietro" onclick="history.back()"><i class="ph ph-arrow-left" aria-hidden="true"></i></button>
+    <span class="nav-brand" aria-hidden="true">N<span>+</span></span>
+    <div class="top-nav__right"><span class="step-label">Step <span>6</span> di 8</span><button class="btn-back" aria-label="Chiudi" onclick="window.location.href='event-card.html'"><i class="ph ph-x" aria-hidden="true"></i></button></div>
+  </div>
+  <div class="progress-segs">
+    <div class="seg done"></div><div class="seg done"></div><div class="seg done"></div>
+    <div class="seg done"></div><div class="seg done"></div>
+    <div class="seg active"></div>
+    <div class="seg"></div><div class="seg"></div>
+  </div>
+  <div class="scroll-area">
+    <div class="page-header">
+      <p class="page-eyebrow">Musica</p>
+      <h1 class="page-title">C'è della musica?</h1>
+      <p class="page-sub">Collega una playlist Spotify o Apple Music per accompagnare l'evento.</p>
+    </div>
+
+    <div class="field-group">
+      <div class="option-row selected" id="optNoMusic" role="button" tabindex="0" onclick="selectMusic(this,'none')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+        <div class="option-body">
+          <div class="option-title">Nessuna playlist</div>
+          <div class="option-desc">Sceglierai la musica sul momento</div>
+        </div>
+        <div class="radio-ring"><div class="radio-dot"></div></div>
+      </div>
+
+      <div class="option-row" id="optSpotify" role="button" tabindex="0" onclick="selectMusic(this,'spotify')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" fill="#1db954" style="flex-shrink:0"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+        <div class="option-body">
+          <div class="option-title">Collega Spotify</div>
+          <div class="option-desc">Associa una playlist pubblica o collaborativa</div>
+        </div>
+        <div class="radio-ring"><div class="radio-dot"></div></div>
+      </div>
+
+      <div class="expand-box" id="spotifyBox">
+        <div class="playlist-panel">
+
+          <!-- A: non collegato -->
+          <div id="panelConnect">
+            <div id="authError" style="display:none;margin-bottom:10px;padding:10px 12px;border-radius:10px;background:rgba(255,80,80,.10);border:1px solid rgba(255,80,80,.25);font-size:12px;color:rgba(255,150,150,.9);line-height:17px"></div>
+            <button class="btn-spotify" onclick="startSpotifyAuth()">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="#fff"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+              Collega account Spotify
+            </button>
+          </div>
+
+          <!-- B: collegato — scegli o crea -->
+          <div id="panelChoose" style="display:none">
+            <div class="spoti-badge">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="#1db954"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+              <span class="spoti-badge__user" id="spotiBadgeName">Spotify</span>
+              <button class="spoti-disconnect" onclick="disconnectSpotify()">Scollega</button>
+            </div>
+            <div class="mode-tabs">
+              <button class="mode-tab active" id="tabExisting" onclick="setMode('existing')">Scegli playlist</button>
+              <button class="mode-tab" id="tabCreate" onclick="setMode('create')">Crea nuova</button>
+            </div>
+            <div id="modeExisting">
+              <div class="playlist-scroll" id="playlistScroll"></div>
+            </div>
+            <div id="modeCreate" style="display:none">
+              <div class="create-section">
+                <p class="create-hint">Apri Spotify, crea la playlist e torna qui — poi aggiorna la lista per trovarla.</p>
+                <div class="create-actions">
+                  <button class="btn-open-spotify" onclick="openSpotifyCreate()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="#fff"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+                    Apri Spotify
+                  </button>
+                  <button class="btn-refresh" onclick="refreshPlaylists()">Aggiorna lista</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- C: playlist selezionata -->
+          <div id="panelSelected" style="display:none">
+            <div class="playlist-card">
+              <div class="playlist-card__info">
+                <img class="playlist-card__art" id="selArt" src="" alt="">
+                <div class="playlist-card__meta">
+                  <div class="playlist-card__name" id="selName"></div>
+                  <div class="playlist-card__author" id="selOwner"></div>
+                  <div class="playlist-card__songs-count" id="selCount"></div>
+                </div>
+                <i class="ph-fill ph-check-circle" style="color:#1db954;font-size:22px"></i>
+              </div>
+            </div>
+            <button class="btn-change" onclick="changePlaylist()">Cambia playlist</button>
+            <div class="collab-panel">
+              <div class="collab-text">
+                <div class="collab-title">Playlist collaborativa</div>
+                <div class="collab-sub">Gli invitati possono aggiungere canzoni in tempo reale.</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="collabToggle">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <button class="btn-continue" id="btnContinue" onclick="goNext()">
+        Continua <i class="ph ph-arrow-right" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</div>
+<script>
+// ── Config ────────────────────────────────────────────────────
+// 1. Registra un'app su https://developer.spotify.com
+// 2. Aggiungi questo URL come Redirect URI: (apri la console per vederlo)
+const SPOTIFY_CLIENT_ID = '73090658f4914dfd8d3ea4fd79fcbdfd';
+const REDIRECT_URI = window.location.origin + window.location.pathname;
+const SCOPES = 'playlist-read-private playlist-read-collaborative';
+
+// ── State ─────────────────────────────────────────────────────
+let musicMode = 'none';
+let selectedPlaylist = null;
+
+// ── PKCE helpers ──────────────────────────────────────────────
+function rndBase64(n) {
+  const b = new Uint8Array(n);
+  crypto.getRandomValues(b);
+  return btoa(String.fromCharCode(...b)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+}
+async function sha256b64(s) {
+  const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return btoa(String.fromCharCode(...new Uint8Array(d))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+}
+
+async function startSpotifyAuth() {
+  console.log('Redirect URI da registrare su Spotify Developer:', REDIRECT_URI);
+  const verifier = rndBase64(64);
+  localStorage.setItem('pkce_v', verifier);
+  const challenge = await sha256b64(verifier);
+  const p = new URLSearchParams({
+    client_id: SPOTIFY_CLIENT_ID,
+    response_type: 'code',
+    redirect_uri: REDIRECT_URI,
+    scope: SCOPES,
+    code_challenge_method: 'S256',
+    code_challenge: challenge,
+    state: 'step6',
+  });
+  location.href = 'https://accounts.spotify.com/authorize?' + p;
+}
+
+async function exchangeCode(code) {
+  const verifier = localStorage.getItem('pkce_v');
+  const r = await fetch('https://accounts.spotify.com/api/token', {
+    method: 'POST',
+    headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    body: new URLSearchParams({
+      client_id: SPOTIFY_CLIENT_ID,
+      grant_type: 'authorization_code',
+      code,
+      redirect_uri: REDIRECT_URI,
+      code_verifier: verifier,
+    }),
+  });
+  const d = await r.json();
+  if (!d.access_token) throw new Error(d.error_description || d.error);
+  localStorage.setItem('spotify_token', d.access_token);
+  localStorage.removeItem('pkce_v');
+  history.replaceState({}, '', location.pathname);
+  return d.access_token;
+}
+
+async function spotifyGet(path) {
+  const token = localStorage.getItem('spotify_token');
+  const r = await fetch('https://api.spotify.com/v1' + path, {
+    headers: {Authorization: 'Bearer ' + token}
+  });
+  if (r.status === 401) { disconnectSpotify(); return null; }
+  return r.json();
+}
+
+// ── UI ────────────────────────────────────────────────────────
+function setPanel(id) {
+  ['panelConnect','panelChoose','panelSelected'].forEach(p =>
+    document.getElementById(p).style.display = p === id ? '' : 'none'
+  );
+}
+
+function selectMusic(row, m) {
+  document.querySelectorAll('.option-row').forEach(r => r.classList.remove('selected'));
+  row.classList.add('selected');
+  musicMode = m;
+  document.getElementById('spotifyBox').classList.toggle('open', m === 'spotify');
+}
+
+async function onConnected(token) {
+  const me = await spotifyGet('/me');
+  if (!me) return;
+  document.getElementById('spotiBadgeName').textContent = me.display_name || me.id;
+  setPanel('panelChoose');
+  setMode('existing');
+  await loadPlaylists();
+}
+
+function disconnectSpotify() {
+  localStorage.removeItem('spotify_token');
+  selectedPlaylist = null;
+  setPanel('panelConnect');
+}
+
+function setMode(mode) {
+  document.getElementById('tabExisting').classList.toggle('active', mode === 'existing');
+  document.getElementById('tabCreate').classList.toggle('active', mode === 'create');
+  document.getElementById('modeExisting').style.display = mode === 'existing' ? '' : 'none';
+  document.getElementById('modeCreate').style.display  = mode === 'create'   ? '' : 'none';
+}
+
+async function loadPlaylists() {
+  const list = document.getElementById('playlistScroll');
+  list.innerHTML = '<div class="plist-msg"><i class="ph ph-circle-notch spin"></i> Caricamento...</div>';
+  const data = await spotifyGet('/me/playlists?limit=20');
+  if (!data || !data.items) {
+    list.innerHTML = '<div class="plist-msg">Errore nel caricamento: ' + JSON.stringify(data) + '</div>';
+    return;
+  }
+  if (!data.items.length) {
+    list.innerHTML = '<div class="plist-msg">Nessuna playlist trovata.</div>';
+    return;
+  }
+  list.innerHTML = '';
+  data.items.forEach(pl => {
+    const img = pl.images?.[0]?.url || '';
+    const total = pl.tracks?.total ?? '—';
+    const el = document.createElement('div');
+    el.className = 'plist-item' + (selectedPlaylist?.id === pl.id ? ' active' : '');
+    el.onclick = () => selectPlaylist(pl);
+    el.innerHTML = `
+      <img class="plist-art" src="${img}" onerror="this.style.visibility='hidden'">
+      <div class="plist-meta">
+        <div class="plist-name">${pl.name}</div>
+        <div class="plist-tracks">${total} brani</div>
+      </div>
+      <i class="ph-fill ph-check-circle plist-check"></i>`;
+    list.appendChild(el);
+  });
+}
+
+function selectPlaylist(pl) {
+  selectedPlaylist = pl;
+  document.getElementById('selArt').src = pl.images?.[0]?.url || '';
+  document.getElementById('selName').textContent = pl.name;
+  document.getElementById('selOwner').textContent = 'di ' + pl.owner.display_name;
+  document.getElementById('selCount').textContent = (pl.tracks?.total ?? '—') + ' brani';
+  setPanel('panelSelected');
+}
+
+function changePlaylist() { setPanel('panelChoose'); setMode('existing'); }
+async function refreshPlaylists() { await loadPlaylists(); setMode('existing'); }
+function openSpotifyCreate() { window.open('https://open.spotify.com', '_blank'); }
+
+// ── Save & navigate ───────────────────────────────────────────
+function goNext() {
+  localStorage.setItem('create_event_music_mode', musicMode);
+  if (musicMode === 'spotify' && selectedPlaylist) {
+    localStorage.setItem('create_event_playlist_connected', 'true');
+    localStorage.setItem('create_event_playlist_id', selectedPlaylist.id);
+    localStorage.setItem('create_event_playlist_name', selectedPlaylist.name);
+    localStorage.setItem('create_event_playlist_author', selectedPlaylist.owner.display_name);
+    localStorage.setItem('create_event_playlist_collab', document.getElementById('collabToggle').checked ? 'true' : 'false');
+  } else {
+    localStorage.setItem('create_event_playlist_connected', 'false');
+  }
+  window.location.href = 'create-event-step-7.html';
+}
+
+// ── Init ──────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+  const params = new URLSearchParams(location.search);
+  const code = params.get('code');
+
+  if (code && params.get('state') === 'step6') {
+    selectMusic(document.getElementById('optSpotify'), 'spotify');
+    try {
+      const token = await exchangeCode(code);
+      await onConnected(token);
+    } catch(e) {
+      console.error('Auth error', e);
+      setPanel('panelConnect');
+      const errEl = document.getElementById('authError');
+      errEl.style.display = '';
+      errEl.textContent = 'Errore: ' + (e.message || e);
+    }
+    return;
+  }
+
+  const token = localStorage.getItem('spotify_token');
+  if (token) {
+    selectMusic(document.getElementById('optSpotify'), 'spotify');
+    await onConnected(token);
+    return;
+  }
+
+  const saved = localStorage.getItem('create_event_music_mode');
+  if (saved) {
+    const row = saved === 'none' ? document.getElementById('optNoMusic') : document.getElementById('optSpotify');
+    if (row) selectMusic(row, saved);
+  }
+});
+</script>
+</body>
+</html>

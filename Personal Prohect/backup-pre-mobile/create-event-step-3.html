@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crea serata — 3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+:root{--neutral-900:#100d12;--primary-600:#c22b00;--primary-700:#942000;--brand-sec:#7a3000;--brand-sec-h:#c24c00;--brand-sec-p:#943a00;--text-primary:#f7f6f8;--text-sec:#edeced;--attention:#e8b432;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{background:#0a080c;}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0a080c;font-family:'Plus Jakarta Sans',sans-serif;}
+.phone{width:390px;height:844px;background:var(--neutral-900);border-radius:44px;overflow:hidden;display:flex;flex-direction:column;padding:0 24px 0;box-shadow:0 0 0 10px #1a1a1a,0 32px 80px rgba(0,0,0,.8);}
+.status-bar{display:flex;justify-content:space-between;align-items:center;padding:21px 0 19px}
+.status-bar__time{font-family:system-ui,-apple-system,sans-serif;font-size:17px;font-weight:590;color:#fff;letter-spacing:-.3px;width:100px}
+.status-bar__icons{display:flex;align-items:center;gap:6px;justify-content:flex-end;width:100px}
+.status-bar__icons i{color:#fff;line-height:1}
+.icon-cellular,.icon-wifi{font-size:14px}.icon-battery{font-size:18px}
+.top-nav{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.btn-back{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s}
+.btn-back:hover{background:rgba(255,255,255,.12)}
+.btn-back:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px;}
+.btn-back i{font-size:18px;color:rgba(255,255,255,.7)}
+.step-label{font-size:12px;font-weight:500;color:rgba(255,255,255,.65)}
+.step-label span{color:var(--attention);font-weight:600}
+.progress-segs{display:flex;gap:4px;margin-top:14px}
+.seg{flex:1;height:3px;border-radius:99px;background:rgba(255,255,255,.10)}
+.seg.done{background:var(--primary-600)}
+.seg.active{background:linear-gradient(to right,var(--primary-600) 60%,rgba(255,255,255,.10) 60%)}
+.scroll-area{flex:1;overflow-y:auto;scrollbar-width:none;padding-bottom:8px}
+.scroll-area::-webkit-scrollbar{display:none}
+.page-header{margin-top:28px}
+.page-eyebrow{font-size:11px;font-weight:600;letter-spacing:.8px;color:var(--attention);text-transform:uppercase;margin-bottom:10px}
+.page-title{font-family:'DM Serif Display',serif;font-size:26px;line-height:33px;color:var(--text-primary)}
+.page-sub{margin-top:8px;font-size:13px;line-height:19px;color:rgba(255,255,255,.65)}
+.options-list{display:flex;flex-direction:column;gap:10px;margin-top:26px}
+.option-row{display:flex;align-items:flex-start;gap:14px;padding:15px 16px;border-radius:24px;background:#322f35;border:1px solid #413e44;cursor:pointer;user-select:none;transition:background .18s,border-color .18s,transform .1s}
+.option-row:active{transform:scale(.985);background:#282530}
+.option-row>i{font-size:22px;color:rgba(255,255,255,.55);transition:color .18s;flex-shrink:0;margin-top:2px}
+.option-body{flex:1}
+.option-title{font-size:15px;font-weight:500;color:rgba(255,255,255,.65);transition:color .18s;line-height:1.3}
+.option-desc{font-size:12px;line-height:18px;color:rgba(255,255,255,.50);margin-top:4px;transition:color .18s}
+.option-radio{width:20px;height:20px;border-radius:50%;border:2px solid rgba(255,255,255,.12);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:border-color .18s;margin-top:2px}
+.option-radio::after{content:'';width:8px;height:8px;border-radius:50%;background:#942000;transform:scale(0);transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+.option-row.selected{background:rgba(194,76,0,.18);border-color:#c24c00}
+.option-row.selected>i{color:#e05500}
+.option-row.selected .option-title{color:#fff;font-weight:600}
+.option-row.selected .option-desc{color:rgba(255,255,255,.60)}
+.option-row.selected .option-radio{border-color:#c24c00}
+.option-row.selected .option-radio::after{transform:scale(1)}
+.option-group{display:flex;flex-direction:column}
+.expand-box{max-height:0;overflow:hidden;transition:max-height .3s cubic-bezier(.4,0,.2,1)}
+.expand-box.open{max-height:220px}
+.porta-panel{border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:10px;margin-top:10px;background:rgba(255,255,255,.025)}
+.sub-option{border-radius:10px;padding:11px 12px;cursor:pointer;transition:background .18s,border-color .18s;border:1px solid transparent;margin-bottom:6px;user-select:none}
+.sub-option:last-child{margin-bottom:0}
+.sub-option:active{background:rgba(255,255,255,.04)}
+.sub-option.selected{background:rgba(194,76,0,.14);border-color:#c24c00}
+.sub-option__row{display:flex;align-items:flex-start;gap:10px}
+.sub-radio-ring{width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.20);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:3px;transition:border-color .18s}
+.sub-radio-dot{width:7px;height:7px;border-radius:50%;background:#942000;transform:scale(0);transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+.sub-option.selected .sub-radio-ring{border-color:#c24c00}
+.sub-option.selected .sub-radio-dot{transform:scale(1)}
+.sub-option__body{flex:1}
+.sub-title-row{display:flex;align-items:center;gap:7px;margin-bottom:3px}
+.sub-option__title{font-size:13px;font-weight:600;color:rgba(255,255,255,.60);transition:color .18s}
+.sub-option.selected .sub-option__title{color:#fff}
+.sub-option__desc{font-size:11px;color:rgba(255,255,255,.42);line-height:16px;transition:color .18s}
+.sub-option.selected .sub-option__desc{color:rgba(255,255,255,.60)}
+.info-btn{width:17px;height:17px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .15s;padding:0}
+.info-btn:hover{background:rgba(255,255,255,.16)}
+.info-btn i{font-size:10px;color:rgba(255,255,255,.55);pointer-events:none}
+.sub-expand{max-height:0;overflow:hidden;transition:max-height .28s cubic-bezier(.4,0,.2,1)}
+.sub-expand.open{max-height:100px}
+.stepper-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0 4px}
+.stepper-label{font-size:11px;font-weight:500;color:rgba(255,255,255,.45)}
+.sub-helper{font-size:11px;color:rgba(255,255,255,.42);line-height:15px;padding-bottom:2px}
+.stepper{display:flex;align-items:center;border-radius:9999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);overflow:hidden;flex-shrink:0}
+.s-btn{width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;color:rgba(255,255,255,.70);font-size:14px;transition:background .15s,color .15s}
+.s-btn:hover{background:rgba(255,255,255,.10);color:var(--text-primary)}
+.s-btn:disabled{color:rgba(255,255,255,.18);cursor:not-allowed}
+.s-div{width:1px;height:20px;background:rgba(255,255,255,.09)}
+.s-val{min-width:32px;text-align:center;font-size:14px;font-weight:600;color:var(--text-primary)}
+.friends-header{display:flex;align-items:center;justify-content:space-between;margin-top:22px;margin-bottom:12px}
+.friends-header__label{font-size:11px;font-weight:600;letter-spacing:.5px;color:rgba(255,255,255,.45);text-transform:uppercase}
+.btn-sel-all{height:26px;padding:0 12px;border-radius:99px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.10);font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:600;color:rgba(255,255,255,.50);cursor:pointer;transition:background .15s,color .15s,border-color .15s;white-space:nowrap}
+.btn-sel-all:hover{background:rgba(255,255,255,.09);color:rgba(255,255,255,.80);border-color:rgba(255,255,255,.18)}
+.btn-sel-all:active{background:rgba(255,255,255,.04)}
+.friend-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.friend-row:last-child{border-bottom:none}
+.friend-av{width:36px;height:36px;border-radius:50%;overflow:hidden;flex-shrink:0}
+.friend-av img{width:100%;height:100%;object-fit:cover}
+.friend-name{flex:1;font-size:14px;font-weight:500;color:rgba(255,255,255,.65)}
+.friend-check{width:22px;height:22px;border-radius:6px;border:1.5px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s;flex-shrink:0}
+.friend-check i{font-size:13px;color:#fff;opacity:0;transition:opacity .15s}
+.friend-check.checked{background:var(--primary-700);border-color:var(--primary-700)}
+.friend-check.checked i{opacity:1}
+.empty-state{display:flex;flex-direction:column;align-items:center;text-align:center;padding:24px 8px;gap:12px}
+.empty-state i{font-size:36px;color:rgba(255,255,255,.18)}
+.empty-state__title{font-size:15px;font-weight:600;color:rgba(255,255,255,.45)}
+.empty-state__sub{font-size:13px;color:rgba(255,255,255,.25);line-height:19px}
+.btn-invite{display:inline-flex;align-items:center;gap:7px;height:40px;padding:0 20px;border-radius:9999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;color:rgba(255,255,255,.60);cursor:pointer;transition:background .15s,color .15s}
+.btn-invite:hover{background:rgba(255,255,255,.11);color:rgba(255,255,255,.85)}
+.btn-invite i{font-size:15px}
+.footer{position:sticky;bottom:0;background:var(--neutral-900);padding:20px 0 32px}
+.btn-continue{width:100%;height:52px;border-radius:40px;background:#c24c00;border:1px solid #943a00;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:600;color:var(--text-sec);display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,border-color .15s,transform .1s}
+.btn-continue i{font-size:18px}
+.btn-continue:hover{background:#d45500;border-color:#b53700}
+.btn-continue:active{background:#943a00;border-color:#6b1800;transform:scale(.98)}
+.btn-continue:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px;}
+.btn-continue:disabled{background:rgba(255,255,255,.07);border-color:transparent;color:#9c9a9f;cursor:not-allowed;transform:none}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.60);display:flex;align-items:center;justify-content:center;z-index:9999;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-card{width:318px;background:#1c1820;border-radius:20px;overflow:hidden;transform:scale(.94) translateY(6px);transition:transform .22s cubic-bezier(.34,1.1,.64,1);position:relative}
+.modal-overlay.open .modal-card{transform:scale(1) translateY(0)}
+.modal-img-ph{height:130px;background:linear-gradient(135deg,#3d0e00 0%,#c22b00 55%,#e05500 100%);display:flex;align-items:center;justify-content:center}
+.modal-img-ph i{font-size:44px;color:rgba(255,255,255,.22)}
+.modal-x{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.35);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.70);transition:background .15s;z-index:1}
+.modal-x:hover{background:rgba(0,0,0,.55)}
+.modal-x i{font-size:14px}
+.modal-body{padding:18px 20px 24px}
+.modal-title{font-family:'DM Serif Display',serif;font-size:19px;color:#f7f6f8;margin-bottom:8px}
+.modal-desc{font-size:13px;line-height:19px;color:rgba(255,255,255,.62)}
+.modal-desc+.modal-desc{margin-top:7px}
+.modal-stepper-row{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.07)}
+.modal-stepper-label{font-size:13px;font-weight:500;color:rgba(255,255,255,.55)}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <i class="ph-fill ph-cell-signal-full icon-cellular"></i>
+      <i class="ph-fill ph-wifi-high icon-wifi"></i>
+      <i class="ph-fill ph-battery-full icon-battery"></i>
+    </div>
+  </div>
+  <div class="top-nav">
+    <button class="btn-back" aria-label="Torna indietro" onclick="history.back()"><i class="ph ph-arrow-left" aria-hidden="true"></i></button>
+    <span class="step-label">Step <span>3</span> di 8</span>
+  </div>
+  <div class="progress-segs">
+    <div class="seg done"></div><div class="seg done"></div>
+    <div class="seg active"></div>
+    <div class="seg"></div><div class="seg"></div><div class="seg"></div><div class="seg"></div><div class="seg"></div>
+  </div>
+  <div class="scroll-area">
+    <div class="page-header">
+      <p class="page-eyebrow">Crea serata</p>
+      <h1 class="page-title">Chi partecipa?</h1>
+      <p class="page-sub">Scegli chi può vedere e accedere alla tua serata.</p>
+    </div>
+
+    <div class="options-list">
+      <div class="option-row" role="button" tabindex="0" onclick="selectPrivacy(this,'friends')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+        <i class="ph ph-shield-check" aria-hidden="true"></i>
+        <div class="option-body">
+          <div class="option-title">Solo amici diretti</div>
+          <div class="option-desc">Visibile solo ai tuoi amici. Tu scegli chi invitare, uno per uno o tutti insieme.</div>
+        </div>
+        <div class="option-radio"></div>
+      </div>
+
+      <div class="option-group">
+        <div class="option-row" role="button" tabindex="0" onclick="selectPrivacy(this,'extended')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+          <i class="ph ph-users-three" aria-hidden="true"></i>
+          <div class="option-body">
+            <div class="option-title">Amici di amici</div>
+            <div class="option-desc">I tuoi amici confermati possono portare qualcuno dalla loro cerchia, con la tua approvazione.</div>
+          </div>
+          <div class="option-radio"></div>
+        </div>
+
+        <!-- Modalità amici di amici — appare subito sotto quando selezionato -->
+        <div class="expand-box" id="portaBox">
+          <div class="porta-panel">
+
+            <div class="sub-option" id="subOptPorta" onclick="selectSubMode('porta')">
+              <div class="sub-option__row">
+                <div class="sub-radio-ring"><div class="sub-radio-dot"></div></div>
+                <div class="sub-option__body">
+                  <div class="sub-title-row">
+                    <span class="sub-option__title">Porta una persona</span>
+                    <button class="info-btn" onclick="openInfoModal(event,'porta')" aria-label="Informazioni"><i class="ph ph-info"></i></button>
+                  </div>
+                </div>
+              </div>
+              <div class="sub-expand" id="stepperBox">
+                <div class="stepper-row">
+                  <span class="stepper-label">Ospiti per amico</span>
+                  <div class="stepper">
+                    <button class="s-btn" id="portaDec" onclick="event.stopPropagation();adjPorta(-1)" disabled><i class="ph ph-minus"></i></button>
+                    <div class="s-div"></div>
+                    <span class="s-val" id="portaVal">+1</span>
+                    <div class="s-div"></div>
+                    <button class="s-btn" id="portaInc" onclick="event.stopPropagation();adjPorta(1)"><i class="ph ph-plus"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="sub-option" id="subOptVisible" onclick="selectSubMode('visible')">
+              <div class="sub-option__row">
+                <div class="sub-radio-ring"><div class="sub-radio-dot"></div></div>
+                <div class="sub-option__body">
+                  <div class="sub-title-row">
+                    <span class="sub-option__title">Visibile agli amici di amici</span>
+                    <button class="info-btn" onclick="openInfoModal(event,'visible')" aria-label="Informazioni"><i class="ph ph-info"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="option-row" role="button" tabindex="0" onclick="selectPrivacy(this,'public')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+        <i class="ph ph-globe" aria-hidden="true"></i>
+        <div class="option-body">
+          <div class="option-title">Aperta a tutti</div>
+          <div class="option-desc">Chiunque nell'app può vedere la serata e richiedere di partecipare.</div>
+        </div>
+        <div class="option-radio"></div>
+      </div>
+    </div>
+
+    <!-- Lista amici -->
+    <div class="friends-header">
+      <span class="friends-header__label">I tuoi amici nell'app</span>
+      <button class="btn-sel-all" id="btnSelAll" onclick="toggleSelectAll()">Seleziona tutti</button>
+    </div>
+
+    <div id="friendList">
+      <!-- Stato con amici -->
+      <div class="friend-row">
+        <div class="friend-av"><img src="https://www.figma.com/api/mcp/asset/c08fdc84-628a-41db-b884-b61ab49b0e81" alt=""></div>
+        <span class="friend-name">Giulia M.</span>
+        <div class="friend-check" role="button" tabindex="0" onclick="toggleFriend(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph ph-check" aria-hidden="true"></i></div>
+      </div>
+      <div class="friend-row">
+        <div class="friend-av"><img src="https://www.figma.com/api/mcp/asset/042a454b-975e-4ac2-b171-c0abc593a5fa" alt=""></div>
+        <span class="friend-name">Luca R.</span>
+        <div class="friend-check" role="button" tabindex="0" onclick="toggleFriend(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph ph-check" aria-hidden="true"></i></div>
+      </div>
+      <div class="friend-row">
+        <div class="friend-av" style="background:rgba(148,32,0,.30);display:flex;align-items:center;justify-content:center"><i class="ph ph-user" style="font-size:18px;color:rgba(255,255,255,.40)"></i></div>
+        <span class="friend-name">Sara T.</span>
+        <div class="friend-check" role="button" tabindex="0" onclick="toggleFriend(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph ph-check" aria-hidden="true"></i></div>
+      </div>
+      <div class="friend-row">
+        <div class="friend-av" style="background:rgba(122,48,0,.30);display:flex;align-items:center;justify-content:center"><i class="ph ph-user" style="font-size:18px;color:rgba(255,255,255,.40)"></i></div>
+        <span class="friend-name">Marco B.</span>
+        <div class="friend-check" role="button" tabindex="0" onclick="toggleFriend(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph ph-check" aria-hidden="true"></i></div>
+      </div>
+    </div>
+
+    <!-- Empty state (nascosto per default — scambia con friendList in produzione se 0 amici) -->
+    <div id="emptyFriends" style="display:none">
+      <div class="empty-state">
+        <i class="ph ph-users-three"></i>
+        <div class="empty-state__title">Non hai ancora amici nell'app.</div>
+        <div class="empty-state__sub">Invita qualcuno su WhatsApp e, una volta iscritto, potrai aggiungerlo alla tua serata.</div>
+        <button class="btn-invite"><i class="ph ph-whatsapp-logo"></i> Condividi il link invito</button>
+      </div>
+    </div>
+
+    <div class="footer">
+      <button class="btn-continue" id="btnContinue" disabled onclick="goNext()">
+        Continua <i class="ph ph-arrow-right" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="infoModalPorta" onclick="closeInfoModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-img-ph">
+      <i class="ph ph-user-plus" aria-hidden="true"></i>
+    </div>
+    <button class="modal-x" onclick="closeInfoModal()" aria-label="Chiudi"><i class="ph ph-x"></i></button>
+    <div class="modal-body">
+      <h2 class="modal-title">Porta una persona</h2>
+      <p class="modal-desc">Ogni amico che conferma la presenza può portare con sé una persona dalla sua cerchia. Tu ricevi una notifica e approvi ogni nuovo ingresso prima che sia ufficiale.</p>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="infoModalVisible" onclick="closeInfoModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-img-ph" style="background:linear-gradient(135deg,#0a1a3d 0%,#1a3a8a 55%,#2e5ed0 100%)">
+      <i class="ph ph-planet" aria-hidden="true"></i>
+    </div>
+    <button class="modal-x" onclick="closeInfoModal()" aria-label="Chiudi"><i class="ph ph-x"></i></button>
+    <div class="modal-body">
+      <h2 class="modal-title">Visibile agli amici di amici</h2>
+      <p class="modal-desc">L'evento appare automaticamente nella home di chi conosce già i tuoi amici. Non devi invitare nessuno: la tua cerchia si allarga in modo naturale.</p>
+      <p class="modal-desc">Chiunque voglia partecipare dovrà comunque fare richiesta, e tu decidi chi ammettere.</p>
+    </div>
+  </div>
+</div>
+<script>
+let portaGuests = 1;
+let privacyMode = null;
+let subMode = null;
+
+function selectPrivacy(row, mode) {
+  document.querySelectorAll('.option-row').forEach(r => r.classList.remove('selected'));
+  row.classList.add('selected');
+  privacyMode = mode;
+  document.getElementById('portaBox').classList.toggle('open', mode === 'extended');
+  if (mode === 'extended' && !subMode) selectSubMode('porta');
+  document.getElementById('btnContinue').disabled = false;
+}
+
+function selectSubMode(mode) {
+  subMode = mode;
+  document.querySelectorAll('.sub-option').forEach(o => o.classList.remove('selected'));
+  document.getElementById(mode === 'porta' ? 'subOptPorta' : 'subOptVisible').classList.add('selected');
+  document.getElementById('stepperBox').classList.toggle('open', mode === 'porta');
+}
+
+function openInfoModal(e, which) {
+  e.stopPropagation();
+  document.getElementById(which === 'porta' ? 'infoModalPorta' : 'infoModalVisible').classList.add('open');
+}
+
+function closeInfoModal() {
+  document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+}
+
+function adjPorta(d) {
+  portaGuests = Math.max(1, Math.min(3, portaGuests + d));
+  document.getElementById('portaVal').textContent = '+' + portaGuests;
+  document.getElementById('portaDec').disabled = portaGuests <= 1;
+  document.getElementById('portaInc').disabled = portaGuests >= 3;
+}
+
+function toggleFriend(el) {
+  el.classList.toggle('checked');
+  const checks = document.querySelectorAll('.friend-check');
+  const allChecked = [...checks].every(c => c.classList.contains('checked'));
+  document.getElementById('btnSelAll').textContent = allChecked ? 'Deseleziona tutti' : 'Seleziona tutti';
+}
+
+function toggleSelectAll() {
+  const checks = document.querySelectorAll('.friend-check');
+  const allChecked = [...checks].every(c => c.classList.contains('checked'));
+  checks.forEach(c => allChecked ? c.classList.remove('checked') : c.classList.add('checked'));
+  document.getElementById('btnSelAll').textContent = allChecked ? 'Seleziona tutti' : 'Deseleziona tutti';
+}
+
+function goNext() {
+  localStorage.setItem('create_event_privacy', privacyMode);
+  localStorage.setItem('create_event_porta', privacyMode === 'extended' ? portaGuests : 0);
+  localStorage.setItem('create_event_sub_mode', privacyMode === 'extended' ? subMode : '');
+
+  const friends = [];
+  document.querySelectorAll('.friend-row').forEach(row => {
+    if (row.querySelector('.friend-check').classList.contains('checked')) {
+      friends.push(row.querySelector('.friend-name').textContent);
+    }
+  });
+  localStorage.setItem('create_event_friends', JSON.stringify(friends));
+
+  window.location.href = 'create-event-step-4.html';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const savedPrivacy = localStorage.getItem('create_event_privacy');
+  const savedPorta = localStorage.getItem('create_event_porta');
+  const savedSubMode = localStorage.getItem('create_event_sub_mode');
+  const savedFriendsJson = localStorage.getItem('create_event_friends');
+
+  if (savedPrivacy) {
+    const rows = document.querySelectorAll('.option-row');
+    let targetRow = null;
+    if (savedPrivacy === 'friends') targetRow = rows[0];
+    else if (savedPrivacy === 'extended') targetRow = rows[1];
+    else if (savedPrivacy === 'public') targetRow = rows[2];
+    if (targetRow) selectPrivacy(targetRow, savedPrivacy);
+  }
+
+  if (savedSubMode && savedPrivacy === 'extended') {
+    selectSubMode(savedSubMode);
+  }
+
+  if (savedPorta && savedPrivacy === 'extended' && savedSubMode === 'porta') {
+    portaGuests = parseInt(savedPorta);
+    document.getElementById('portaVal').textContent = '+' + portaGuests;
+    document.getElementById('portaDec').disabled = portaGuests <= 1;
+    document.getElementById('portaInc').disabled = portaGuests >= 3;
+  }
+
+  if (savedFriendsJson) {
+    const savedFriends = JSON.parse(savedFriendsJson);
+    document.querySelectorAll('.friend-row').forEach(row => {
+      const name = row.querySelector('.friend-name').textContent;
+      if (savedFriends.includes(name)) {
+        row.querySelector('.friend-check').classList.add('checked');
+      }
+    });
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeInfoModal();
+  });
+});
+</script>
+</body>
+</html>

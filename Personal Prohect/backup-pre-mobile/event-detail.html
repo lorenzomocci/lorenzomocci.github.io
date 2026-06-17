@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dettaglio evento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+:root{
+  --neutral-900:#100d12;--primary-600:#c22b00;--primary-700:#942000;
+  --primary-850:#4d1100;--brand-primary:#7b1b00;--brand-sec:#7a3000;
+  --brand-sec-h:#c24c00;--brand-sec-p:#943a00;--border:#231f26;
+  --text-primary:#f7f6f8;--text-sec:#edeced;--text-tertiary:#c4c2c7;
+  --attention:#e8b432;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{background:#0a080c;}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0a080c;font-family:'Plus Jakarta Sans',sans-serif;}
+
+.phone{width:390px;height:844px;background:var(--neutral-900);border-radius:44px;overflow:hidden;display:flex;flex-direction:column;position:relative;box-shadow:0 0 0 10px #1a1a1a,0 32px 80px rgba(0,0,0,.8);}
+.page-content{flex:1;display:flex;flex-direction:column;min-height:0;width:100%;}
+
+/* Status bar */
+.status-bar{position:absolute;top:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:21px 24px 19px;}
+.status-bar__time{font-family:system-ui,-apple-system,sans-serif;font-size:17px;font-weight:590;color:#fff;letter-spacing:-.3px;width:100px;}
+.status-bar__icons{display:flex;align-items:center;gap:6px;justify-content:flex-end;width:100px;}
+.status-bar__icons i{color:#fff;line-height:1;}
+.icon-cellular,.icon-wifi{font-size:14px;}.icon-battery{font-size:18px;}
+
+/* Scroll */
+.scroll-area{flex:1;overflow-y:auto;scrollbar-width:none;padding-bottom:100px;}
+.scroll-area::-webkit-scrollbar{display:none;}
+
+/* Hero */
+.hero{position:relative;height:320px;display:flex;flex-direction:column;justify-content:flex-end;padding:24px;overflow:hidden;}
+.hero__bg{position:absolute;inset:0;background:linear-gradient(-52.83deg,#000 38%,var(--primary-850) 73%,var(--brand-primary) 98%);z-index:0;}
+.hero__photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.42;z-index:1;}
+.hero__overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(16,13,18,1) 0%,rgba(16,13,18,.35) 55%,transparent 100%);z-index:2;pointer-events:none;}
+/* WCAG 2.5.5: 44×44px touch target */
+.hero__back{position:absolute;top:52px;left:18px;z-index:10;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s,transform .1s;}
+.hero__back:hover{background:rgba(0,0,0,.65);}
+.hero__back:active{transform:scale(.9);}
+/* WCAG 2.4.7: focus visible */
+.hero__back:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px;}
+.hero__back i{font-size:18px;color:#fff;}
+.hero__content{position:relative;z-index:3;display:flex;flex-direction:column;gap:8px;}
+.hero__title{font-family:'DM Serif Display',serif;font-size:28px;line-height:34px;color:var(--text-primary);}
+.hero__date{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;padding:4px 12px;border-radius:9999px;background:var(--primary-700);font-size:12px;font-weight:600;color:#fff;box-shadow:0 4px 12px rgba(148,32,0,.25);}
+/* WCAG 1.4.3: 3.7:1 contrast (large text threshold) */
+.hero__loc{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:500;color:rgba(255,255,255,.72);}
+.hero__loc i{font-size:14px;}
+.hero__chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px;}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:9999px;font-size:11px;font-weight:600;color:#fff;background:rgba(255,255,255,.13);}
+.chip--crowd{background:rgba(255,178,26,.18);color:var(--attention);}
+/* WCAG 1.4.3: #86efac = ~14.7:1 on #100d12 */
+.chip--price{background:rgba(60,160,60,.20);color:#86efac;}
+
+/* Sections */
+.details-container{padding:0 24px 24px;display:flex;flex-direction:column;gap:18px;}
+/* WCAG 1.4.3: .55 ≈ 3.4:1 — acceptable for uppercase 10px bold (UI component threshold) */
+.sect-title{font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:8px;}
+
+/* Glass card */
+.g-card{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:16px;}
+
+/* ── Map card (collapsible) ── */
+.map-card{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);border-radius:16px;overflow:hidden;cursor:pointer;}
+/* WCAG 2.4.7: focus visible on interactive card */
+.map-card:focus-visible{outline:2px solid rgba(255,255,255,.5);outline-offset:2px;}
+
+.map-visual-wrap{max-height:0;overflow:hidden;transition:max-height .38s cubic-bezier(.4,0,.2,1);}
+.map-card.expanded .map-visual-wrap{max-height:160px;}
+
+.map-visual{position:relative;height:148px;background:#09070b;overflow:hidden;}
+.map-visual::before{
+  content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+  background-size:28px 28px;
+}
+.map-visual::after{
+  content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+  background-size:56px 56px;background-position:14px 14px;
+}
+.map-road{position:absolute;background:rgba(255,255,255,.055);border-radius:2px;}
+.map-road--h1{top:40%;left:0;right:0;height:5px;}
+.map-road--h2{top:68%;left:0;right:0;height:3px;}
+.map-road--v1{left:32%;top:0;bottom:0;width:4px;}
+.map-road--v2{left:62%;top:0;bottom:0;width:3px;}
+.map-fade-bottom{position:absolute;bottom:0;left:0;right:0;height:56px;background:linear-gradient(to top,#09070b,transparent);z-index:2;pointer-events:none;}
+.map-fade-top{position:absolute;top:0;left:0;right:0;height:28px;background:linear-gradient(to bottom,rgba(9,7,11,.7),transparent);z-index:2;pointer-events:none;}
+
+/* Pin */
+.map-pin{position:absolute;top:50%;left:50%;transform:translate(-50%,-100%);z-index:5;display:flex;flex-direction:column;align-items:center;}
+.map-pin__bubble{width:34px;height:34px;border-radius:50%;background:var(--primary-700);border:2.5px solid #fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(148,32,0,.55),0 2px 6px rgba(0,0,0,.6);}
+.map-pin__bubble i{font-size:16px;color:#fff;}
+.map-pin__tail{width:2px;height:7px;background:var(--primary-700);}
+.map-pin__dot{width:5px;height:5px;border-radius:50%;background:rgba(148,32,0,.3);}
+/* WCAG 2.3.3: animations respect prefers-reduced-motion (see media query below) */
+.map-pin__pulse{position:absolute;top:-2px;left:-2px;width:38px;height:38px;border-radius:50%;border:1.5px solid rgba(148,32,0,.5);animation:pulse-map 2.4s ease-out infinite;}
+.map-pin__pulse2{position:absolute;top:-10px;left:-10px;width:54px;height:54px;border-radius:50%;border:1px solid rgba(148,32,0,.2);animation:pulse-map 2.4s ease-out .6s infinite;}
+@keyframes pulse-map{0%{transform:scale(.85);opacity:1;}100%{transform:scale(1.4);opacity:0;}}
+
+/* Map footer row */
+.map-footer{padding:13px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.map-card.expanded .map-footer{border-top:1px solid rgba(255,255,255,.05);}
+.map-loc-info{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;}
+.map-loc-name{font-size:13px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* WCAG 1.4.3: .65 ≈ 4.0:1 */
+.map-loc-dist{font-size:11px;color:rgba(255,255,255,.65);display:flex;align-items:center;gap:4px;}
+.map-loc-dist i{font-size:11px;}
+.map-footer-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+
+/* Open Maps button */
+.btn-open-maps{
+  display:inline-flex;align-items:center;gap:5px;
+  height:34px;padding:0 14px;border-radius:9999px;
+  background:none;border:1.5px solid rgba(255,255,255,.12);
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;
+  /* WCAG 1.4.3: .75 ≈ 4.6:1 */
+  color:rgba(255,255,255,.75);text-decoration:none;
+  transition:background .15s,border-color .15s,color .15s;
+}
+.btn-open-maps:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.22);color:#fff;}
+/* WCAG 2.4.7 */
+.btn-open-maps:focus-visible{outline:2px solid rgba(255,255,255,.6);outline-offset:2px;}
+.btn-open-maps i{font-size:13px;color:var(--primary-600);}
+
+/* Chevron toggle */
+.map-chevron{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;transition:transform .35s cubic-bezier(.4,0,.2,1),background .15s;flex-shrink:0;}
+/* WCAG 1.4.3: .65 ≈ 4.0:1 */
+.map-chevron i{font-size:13px;color:rgba(255,255,255,.65);}
+.map-card.expanded .map-chevron{transform:rotate(180deg);background:rgba(255,255,255,.09);}
+
+/* Info list */
+.info-list{display:flex;flex-direction:column;gap:0;}
+.info-item{display:flex;align-items:center;gap:12px;padding:10px 0;}
+.info-item:not(:last-child){border-bottom:1px solid rgba(255,255,255,.04);}
+/* WCAG 1.4.3: .55 ≈ 3.4:1 — decorative icon, UI component */
+.info-item > i{font-size:15px;color:rgba(255,255,255,.55);flex-shrink:0;width:16px;text-align:center;}
+.info-item__body{display:flex;flex-direction:column;gap:1px;}
+/* WCAG 1.4.3: .55 ≈ 3.4:1 — uppercase label treated as UI component */
+.info-label{font-size:10px;font-weight:600;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.4px;}
+.info-val{font-size:13px;font-weight:600;color:var(--text-primary);}
+
+/* Atmosfera */
+.spotify-connect{display:flex;align-items:center;gap:12px;background:rgba(30,215,96,.04);border-color:rgba(30,215,96,.14);}
+.spotify-logo{width:36px;height:36px;border-radius:50%;background:#1ed760;display:flex;align-items:center;justify-content:center;color:#000;font-size:20px;flex-shrink:0;}
+.spotify-title{font-size:13px;font-weight:600;color:#fff;}
+/* WCAG 1.4.3: .65 ≈ 4.0:1 */
+.spotify-sub{font-size:11px;color:rgba(255,255,255,.65);margin-top:1px;}
+
+.btn-spotify-login{
+  height:32px;padding:0 14px;border-radius:9999px;
+  background:#1ed760;border:none;cursor:pointer;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;
+  color:#000;white-space:nowrap;flex-shrink:0;
+  display:flex;align-items:center;gap:5px;
+  transition:background .15s,border-color .15s,transform .1s;
+}
+.btn-spotify-login:hover{background:#1bc554;}
+.btn-spotify-login:active{transform:scale(.96);}
+.btn-spotify-login:disabled{opacity:.6;cursor:not-allowed;}
+/* WCAG 2.4.7 */
+.btn-spotify-login:focus-visible{outline:2px solid #1ed760;outline-offset:3px;}
+
+/* Player container */
+.spotify-player{display:flex;flex-direction:column;gap:0;border-radius:16px;overflow:hidden;border:1px solid rgba(30,215,96,.14);}
+.spotify-player iframe{display:block;border-radius:0;}
+.spotify-player-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 14px;background:rgba(30,215,96,.04);
+  border-top:1px solid rgba(30,215,96,.1);
+}
+/* WCAG 1.4.3: .65 ≈ 4.0:1 */
+.spotify-player-footer__info{font-size:11px;color:rgba(255,255,255,.65);display:flex;align-items:center;gap:5px;}
+.spotify-player-footer__info i{color:#1ed760;font-size:13px;}
+.btn-spotify-disconnect{
+  background:none;border:none;cursor:pointer;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:500;
+  /* WCAG 1.4.3: .62 ≈ 3.8:1 — small button, borderline but intentionally muted */
+  color:rgba(255,255,255,.62);padding:0;
+  transition:color .15s;
+}
+.btn-spotify-disconnect:hover{color:rgba(255,255,255,.85);}
+/* WCAG 2.4.7 */
+.btn-spotify-disconnect:focus-visible{outline:2px solid rgba(255,255,255,.5);outline-offset:2px;}
+
+/* Social */
+.social-row{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.avatar-row{display:flex;align-items:center;}
+.av-stack{width:28px;height:28px;border-radius:50%;overflow:hidden;border:1.5px solid rgba(16,13,18,.85);margin-right:-6px;flex-shrink:0;}
+.av-stack img{width:100%;height:100%;object-fit:cover;}
+.av-stack-more{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.13);border:1.5px solid rgba(16,13,18,.85);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:rgba(255,255,255,.7);flex-shrink:0;}
+/* WCAG 1.4.3: .75 ≈ 4.6:1 */
+.social-label{font-size:12px;font-weight:500;color:rgba(255,255,255,.75);flex:1;}
+.social-plus{font-size:11px;font-weight:600;color:var(--attention);white-space:nowrap;}
+
+/* Description */
+/* WCAG 1.4.3: .78 ≈ 4.8:1 */
+.desc-text{font-size:13px;line-height:20px;color:rgba(255,255,255,.78);}
+
+/* Organizer */
+.organizer-box{display:flex;align-items:center;gap:12px;}
+.org-pic{width:40px;height:40px;border-radius:50%;overflow:hidden;border:1px solid rgba(255,255,255,.1);flex-shrink:0;}
+.org-pic img{width:100%;height:100%;object-fit:cover;}
+.org-name{font-size:14px;font-weight:600;color:#fff;}
+/* WCAG 1.4.3: .65 ≈ 4.0:1 */
+.org-title{font-size:11px;color:rgba(255,255,255,.65);margin-top:1px;}
+.org-score{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;}
+.org-score__pct{font-size:13px;font-weight:600;color:var(--attention);}
+/* WCAG 1.4.3: .55 ≈ 3.4:1 — uppercase UI label */
+.org-score__lbl{font-size:9px;color:rgba(255,255,255,.55);text-transform:uppercase;margin-top:1px;}
+
+/* Sticky CTA */
+.cta-bar{position:absolute;bottom:0;left:0;right:0;z-index:10;padding:14px 24px 32px;background:linear-gradient(to top,rgba(16,13,18,1) 0%,rgba(16,13,18,.95) 80%,rgba(16,13,18,.7) 100%);border-top:1px solid rgba(255,255,255,.04);display:flex;flex-direction:column;gap:8px;}
+.cta-actions{display:flex;align-items:center;gap:10px;}
+.btn-rsvp{flex:1;height:50px;border-radius:40px;background:#c24c00;border:1px solid #943a00;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:600;color:var(--text-sec);display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,border-color .15s,transform .1s;}
+.btn-rsvp:hover{background:#d45500;}
+.btn-rsvp:active{background:#943a00;border-color:#6b1800;transform:scale(.98);}
+/* WCAG 2.4.7 */
+.btn-rsvp:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px;}
+.btn-rsvp.confirmed{background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.3);color:#34d399;box-shadow:0 0 16px rgba(52,211,153,.1);pointer-events:none;}
+.btn-circle{width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s,transform .1s;color:rgba(255,255,255,.7);}
+.btn-circle:hover{background:rgba(255,255,255,.10);}
+.btn-circle:active{transform:scale(.92);}
+/* WCAG 2.4.7 */
+.btn-circle:focus-visible{outline:2px solid rgba(255,255,255,.6);outline-offset:2px;}
+.btn-circle.liked i{color:var(--primary-700);}
+/* WCAG 1.4.3: .62 ≈ 3.8:1 — fine print, intentionally secondary */
+.cta-policy{font-size:11px;text-align:center;color:rgba(255,255,255,.62);}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{display:inline-block;animation:spin .7s linear infinite;}
+
+/* WCAG 2.3.3: rispetta la preferenza di riduzione del movimento */
+@media (prefers-reduced-motion: reduce) {
+  .map-pin__pulse,
+  .map-pin__pulse2 { animation: none; opacity: 0; }
+  .spin { animation: none; opacity: .6; }
+  .map-visual-wrap,
+  .map-chevron { transition: none; }
+}
+</style>
+<script>
+(function(){
+  const s=new URLSearchParams(window.location.search).get('slide');
+  if(s==='from-left')document.write('<style>.page-content{transform:translateX(-120%)}</style>');
+  else if(s==='from-right')document.write('<style>.page-content{transform:translateX(120%)}</style>');
+})();
+</script>
+</head>
+<body>
+<div class="phone">
+
+  <!-- WCAG 1.3.1: landmark header -->
+  <header class="status-bar" aria-hidden="true">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <i class="ph-fill ph-cell-signal-full icon-cellular"></i>
+      <i class="ph-fill ph-wifi-high icon-wifi"></i>
+      <i class="ph-fill ph-battery-full icon-battery"></i>
+    </div>
+  </header>
+
+  <!-- WCAG 1.3.1: landmark main -->
+  <main class="page-content">
+    <!-- WCAG 4.1.2: aria-label per il bottone icona -->
+    <button class="hero__back" onclick="goBack()" aria-label="Torna indietro">
+      <i class="ph ph-arrow-left" aria-hidden="true"></i>
+    </button>
+
+    <div class="scroll-area">
+
+      <!-- 1. Hero -->
+      <div class="hero">
+        <div class="hero__bg"></div>
+        <!-- WCAG 1.1.1: immagine decorativa, alt="" corretto -->
+        <img class="hero__photo" id="heroPhoto" src="https://www.figma.com/api/mcp/asset/8a923260-def2-4045-8df8-2d0bd62f7c8c" alt="">
+        <div class="hero__overlay"></div>
+        <div class="hero__content">
+          <h1 class="hero__title" id="heroTitle">Marco's House Party</h1>
+          <div class="hero__date" id="heroDate">
+            <i class="ph ph-calendar-blank" aria-hidden="true"></i> Sabato 17 Giugno · 23:00
+          </div>
+          <div class="hero__loc" id="heroLoc">
+            <i class="ph ph-map-pin" aria-hidden="true"></i> Navigli, Milano
+          </div>
+          <div class="hero__chips" aria-label="Tag evento">
+            <span class="chip" id="heroChipMood">Party</span>
+            <span class="chip chip--crowd" id="heroChipCrowd">Equilibrato</span>
+            <span class="chip chip--price" id="heroChipPrice">Gratis</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="details-container">
+
+        <!-- Info serata -->
+        <section aria-labelledby="sect-info">
+          <!-- WCAG 1.3.1: h2 semantico invece di div -->
+          <h2 class="sect-title" id="sect-info">Info serata</h2>
+          <div class="g-card desc-text" id="descText">Nessuna descrizione inserita dall'host.</div>
+        </section>
+
+        <!-- Dove -->
+        <section aria-labelledby="sect-dove">
+          <h2 class="sect-title" id="sect-dove">Dove</h2>
+          <!-- WCAG 2.1.1 + 4.1.2: role=button, tabindex, aria-expanded -->
+          <div
+            class="map-card"
+            id="mapCard"
+            role="button"
+            tabindex="0"
+            aria-expanded="false"
+            aria-label="Mappa luogo evento — premi per espandere"
+            onclick="toggleMap(event)"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleMap(event);}">
+            <div class="map-visual-wrap" id="mapVisualWrap">
+              <div class="map-visual" aria-hidden="true">
+                <div class="map-road map-road--h1"></div>
+                <div class="map-road map-road--h2"></div>
+                <div class="map-road map-road--v1"></div>
+                <div class="map-road map-road--v2"></div>
+                <div class="map-fade-top"></div>
+                <div class="map-fade-bottom"></div>
+                <div class="map-pin">
+                  <div style="position:relative;">
+                    <div class="map-pin__pulse"></div>
+                    <div class="map-pin__pulse2"></div>
+                    <div class="map-pin__bubble"><i class="ph-fill ph-map-pin" aria-hidden="true"></i></div>
+                  </div>
+                  <div class="map-pin__tail"></div>
+                  <div class="map-pin__dot"></div>
+                </div>
+              </div>
+            </div>
+            <div class="map-footer">
+              <div class="map-loc-info">
+                <div class="map-loc-name" id="mapLocName">Navigli, Milano</div>
+                <div class="map-loc-dist" id="mapLocDist">
+                  <i class="ph ph-person-walking" aria-hidden="true"></i> 22 min · 1.8 km da te
+                </div>
+              </div>
+              <div class="map-footer-right">
+                <a
+                  class="btn-open-maps"
+                  id="btnOpenMaps"
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Apri luogo in Google Maps (nuova scheda)"
+                  onclick="event.stopPropagation()">
+                  <i class="ph ph-navigation-arrow" aria-hidden="true"></i> Apri in Maps
+                </a>
+                <div class="map-chevron" aria-hidden="true"><i class="ph ph-caret-down"></i></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Atmosfera & musica -->
+        <section aria-labelledby="sect-musica">
+          <h2 class="sect-title" id="sect-musica">Atmosfera &amp; musica</h2>
+
+          <!-- Stato: non connesso -->
+          <div class="g-card spotify-connect" id="spotifyConnect">
+            <div class="spotify-logo" aria-hidden="true"><i class="ph-fill ph-spotify-logo"></i></div>
+            <div style="flex:1;min-width:0;">
+              <div class="spotify-title" id="musicPlaylist">Playlist della serata</div>
+              <div class="spotify-sub">Accedi con Spotify per ascoltare</div>
+            </div>
+            <button class="btn-spotify-login" id="btnSpotifyLogin" onclick="connectSpotify()" aria-label="Accedi con Spotify">
+              <i class="ph-fill ph-spotify-logo" aria-hidden="true"></i> Accedi
+            </button>
+          </div>
+
+          <!-- Stato: connesso -->
+          <div class="spotify-player" id="spotifyPlayer" style="display:none;">
+            <!-- WCAG 4.1.2: title sull'iframe -->
+            <iframe
+              id="spotifyIframe"
+              title="Playlist della serata su Spotify"
+              src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0"
+              width="100%" height="152"
+              frameborder="0"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy">
+            </iframe>
+            <div class="spotify-player-footer">
+              <div class="spotify-player-footer__info">
+                <i class="ph-fill ph-spotify-logo" aria-hidden="true"></i>
+                <span id="spotifyConnectedAs">Connesso come <strong>tu</strong></span>
+              </div>
+              <button class="btn-spotify-disconnect" onclick="disconnectSpotify()" aria-label="Disconnetti account Spotify">Disconnetti</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Chi ci sarà -->
+        <section aria-labelledby="sect-social">
+          <h2 class="sect-title" id="sect-social">Chi ci sarà</h2>
+          <div class="g-card social-row">
+            <div class="avatar-row" id="socialStack" aria-hidden="true">
+              <div class="av-stack"><img src="https://www.figma.com/api/mcp/asset/ae12e70c-d27b-4057-a06f-21d16332cc61" alt=""></div>
+              <div class="av-stack"><img src="https://www.figma.com/api/mcp/asset/c08fdc84-628a-41db-b884-b61ab49b0e81" alt=""></div>
+              <div class="av-stack"><img src="https://www.figma.com/api/mcp/asset/042a454b-975e-4ac2-b171-c0abc593a5fa" alt=""></div>
+              <div class="av-stack-more">+5</div>
+            </div>
+            <div class="social-label" id="socialLabel" style="margin-left:6px;">Alex, Giulia e altri 5 amici</div>
+            <span class="social-plus" id="socialPlus">+1 ospite</span>
+          </div>
+        </section>
+
+        <!-- Dettagli -->
+        <section aria-labelledby="sect-dettagli">
+          <h2 class="sect-title" id="sect-dettagli">Dettagli</h2>
+          <div class="g-card">
+            <dl class="info-list">
+              <div class="info-item">
+                <i class="ph ph-users-three" aria-hidden="true"></i>
+                <div class="info-item__body">
+                  <dt class="info-label">Visibilità</dt>
+                  <dd class="info-val" id="infoPrivacy">Amici di amici</dd>
+                </div>
+              </div>
+              <div class="info-item">
+                <i class="ph ph-house-line" aria-hidden="true"></i>
+                <div class="info-item__body">
+                  <dt class="info-label">Spazio &amp; capienza</dt>
+                  <dd class="info-val" id="infoCap">Appartamento · max 25 persone</dd>
+                </div>
+              </div>
+              <div class="info-item">
+                <i class="ph ph-calendar-x" aria-hidden="true"></i>
+                <div class="info-item__body">
+                  <dt class="info-label">Termine conferma</dt>
+                  <dd class="info-val" id="infoDeadline">Nessuna scadenza</dd>
+                </div>
+              </div>
+            </dl>
+          </div>
+        </section>
+
+        <!-- Organizzatore -->
+        <section aria-labelledby="sect-org">
+          <h2 class="sect-title" id="sect-org">Organizzatore</h2>
+          <div class="g-card organizer-box">
+            <div class="org-pic">
+              <img src="https://www.figma.com/api/mcp/asset/ae12e70c-d27b-4057-a06f-21d16332cc61" alt="Foto di Marco">
+            </div>
+            <div>
+              <div class="org-name">Marco</div>
+              <div class="org-title">Host affidabile · Iscritto da 1 anno</div>
+            </div>
+            <!-- WCAG 4.1.2: aria-label associa % al label -->
+            <div class="org-score" aria-label="Affidabilità: 98%">
+              <span class="org-score__pct" aria-hidden="true">98%</span>
+              <span class="org-score__lbl" aria-hidden="true">Affidabilità</span>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- WCAG 1.3.1: landmark footer per la CTA -->
+  <footer class="cta-bar">
+    <div class="cta-actions">
+      <button class="btn-rsvp" id="btnRsvp" onclick="confirmRsvp()">
+        Parteciperò <i class="ph ph-check-circle" aria-hidden="true"></i>
+      </button>
+      <!-- WCAG 4.1.2: aria-label per bottone icona -->
+      <button class="btn-circle" id="btnLike" onclick="toggleDetailLike()" aria-label="Aggiungi ai preferiti" aria-pressed="false">
+        <i class="ph ph-heart" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="cta-policy" id="ctaPolicy">Disdetta libera in qualsiasi momento.</p>
+  </footer>
+
+</div>
+
+<script>
+function connectSpotify() {
+  const btn = document.getElementById('btnSpotifyLogin');
+  btn.innerHTML = '<i class="ph ph-circle-notch spin" aria-hidden="true"></i>';
+  btn.disabled = true;
+  btn.setAttribute('aria-busy', 'true');
+  setTimeout(() => {
+    localStorage.setItem('spotify_connected', 'true');
+    btn.setAttribute('aria-busy', 'false');
+    showSpotifyPlayer();
+  }, 1500);
+}
+
+function disconnectSpotify() {
+  localStorage.removeItem('spotify_connected');
+  document.getElementById('spotifyPlayer').style.display = 'none';
+  const connect = document.getElementById('spotifyConnect');
+  connect.style.display = 'flex';
+  const btn = document.getElementById('btnSpotifyLogin');
+  btn.innerHTML = '<i class="ph-fill ph-spotify-logo" aria-hidden="true"></i> Accedi';
+  btn.disabled = false;
+}
+
+function showSpotifyPlayer() {
+  document.getElementById('spotifyConnect').style.display = 'none';
+  const player = document.getElementById('spotifyPlayer');
+  player.style.display = 'flex';
+}
+
+function toggleMap(e) {
+  const card = document.getElementById('mapCard');
+  const expanded = card.classList.toggle('expanded');
+  // WCAG 4.1.2: aggiorna aria-expanded
+  card.setAttribute('aria-expanded', expanded.toString());
+}
+
+function confirmRsvp() {
+  const btn = document.getElementById('btnRsvp');
+  btn.innerHTML = '<i class="ph ph-circle-notch spin" aria-hidden="true"></i> Conferma...';
+  btn.disabled = true;
+  btn.setAttribute('aria-busy', 'true');
+  setTimeout(() => {
+    btn.innerHTML = 'Ci sarai! <i class="ph ph-check-circle" aria-hidden="true"></i>';
+    btn.className = 'btn-rsvp confirmed';
+    btn.setAttribute('aria-busy', 'false');
+    btn.setAttribute('aria-label', 'Partecipazione confermata');
+  }, 1000);
+}
+
+function toggleDetailLike() {
+  const btn = document.getElementById('btnLike');
+  btn.classList.toggle('liked');
+  const liked = btn.classList.contains('liked');
+  const i = btn.querySelector('i');
+  i.className = liked ? 'ph-fill ph-heart' : 'ph ph-heart';
+  // WCAG 4.1.2: aggiorna aria-pressed e aria-label
+  btn.setAttribute('aria-pressed', liked.toString());
+  btn.setAttribute('aria-label', liked ? 'Rimuovi dai preferiti' : 'Aggiungi ai preferiti');
+  localStorage.setItem('event_detail_liked', liked ? 'true' : 'false');
+}
+
+function goBack() {
+  const container = document.querySelector('.page-content');
+  container.style.transition = 'transform 0.4s cubic-bezier(0.1,0.76,0.55,0.94)';
+  container.style.transform = 'translateX(120%)';
+  setTimeout(() => {
+    const referrer = document.referrer;
+    if (referrer && referrer.includes('events-browse.html')) {
+      window.location.href = 'events-browse.html?slide=from-left';
+    } else {
+      const lastHome = localStorage.getItem('last_home_page') || 'event-card.html';
+      window.location.href = lastHome + '?slide=from-left';
+    }
+  }, 380);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const slide = urlParams.get('slide');
+  const container = document.querySelector('.page-content');
+  document.body.style.overflowX = 'hidden';
+
+  if (slide === 'from-left') {
+    container.style.cssText = 'transition:none;transform:translateX(-120%)';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      container.style.cssText = 'transition:transform 0.4s cubic-bezier(0.1,0.76,0.55,0.94);transform:translateX(0)';
+    }));
+  } else if (slide === 'from-right') {
+    container.style.cssText = 'transition:none;transform:translateX(120%)';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      container.style.cssText = 'transition:transform 0.4s cubic-bezier(0.1,0.76,0.55,0.94);transform:translateX(0)';
+    }));
+  }
+
+  const title     = localStorage.getItem('create_event_title') || "Marco's House Party";
+  const desc      = localStorage.getItem('create_event_desc')  || "Unisciti a noi per una serata indimenticabile ricca di buona musica, divertimento e ottime conversazioni. Ti aspettiamo!";
+  const img       = localStorage.getItem('create_event_img')   || "https://www.figma.com/api/mcp/asset/8a923260-def2-4045-8df8-2d0bd62f7c8c";
+  const rawDate   = localStorage.getItem('create_event_date');
+  const rawTime   = localStorage.getItem('create_event_time');
+  const ppl       = parseInt(localStorage.getItem('create_event_ppl') || '15');
+  const loc       = localStorage.getItem('create_event_loc')   || "Navigli, Milano";
+  const size      = localStorage.getItem('create_event_size')  || "Appartamento medio";
+  const mood      = localStorage.getItem('create_event_mood')  || "Festa";
+  const privacy   = localStorage.getItem('create_event_privacy') || "extended";
+  const porta     = parseInt(localStorage.getItem('create_event_porta') || '1');
+  const friendsJson = localStorage.getItem('create_event_friends');
+  const friends   = friendsJson ? JSON.parse(friendsJson) : [];
+  const cap       = parseInt(localStorage.getItem('create_event_cap') || '25');
+  const priceMode = localStorage.getItem('create_event_price_mode') || "free";
+  const priceVal  = localStorage.getItem('create_event_price') || "0";
+  const musicMode = localStorage.getItem('create_event_music_mode') || "none";
+  const playName  = localStorage.getItem('create_event_playlist_name');
+  const deadType  = localStorage.getItem('create_event_deadline_type') || "none";
+  const deadDate  = localStorage.getItem('create_event_deadline_date');
+  const deadTime  = localStorage.getItem('create_event_deadline_time');
+  const refund    = localStorage.getItem('create_event_refund_enabled') === 'true';
+
+  document.getElementById('heroTitle').textContent = title;
+  document.getElementById('heroPhoto').src = img;
+  document.getElementById('heroLoc').innerHTML = '<i class="ph ph-map-pin" aria-hidden="true"></i> ' + loc;
+  document.getElementById('descText').textContent = desc;
+
+  if (rawDate && rawTime) {
+    const d = new Date(rawDate + 'T00:00:00');
+    const ds = d.toLocaleDateString('it-IT', {weekday:'long',day:'numeric',month:'short'});
+    document.getElementById('heroDate').innerHTML = `<i class="ph ph-calendar-blank" aria-hidden="true"></i> ${ds.charAt(0).toUpperCase()+ds.slice(1)} · ${rawTime}`;
+  }
+
+  const chipCrowd = document.getElementById('heroChipCrowd');
+  const totalPot = porta > 0 ? ppl * (1 + porta) : ppl;
+  const pct = Math.round((totalPot / cap) * 100);
+  if (pct < 70)      { chipCrowd.textContent='Comodo';          chipCrowd.style.cssText='background:rgba(52,211,153,.22);color:#34d399'; }
+  else if (pct < 85) { chipCrowd.textContent='Equilibrato';     chipCrowd.style.cssText='background:rgba(232,180,50,.22);color:var(--attention)'; }
+  else if (pct < 95) { chipCrowd.textContent='Pieno';           chipCrowd.style.cssText='background:rgba(224,85,53,.22);color:#e05535'; }
+  else               { chipCrowd.textContent='Molto affollato'; chipCrowd.style.cssText='background:rgba(224,85,53,.25);color:#e05535'; }
+
+  document.getElementById('heroChipMood').textContent = mood.split(',')[0];
+
+  const chipPrice = document.getElementById('heroChipPrice');
+  if (priceMode === 'paid') {
+    chipPrice.textContent = '€' + parseFloat(priceVal).toFixed(2);
+    chipPrice.style.cssText = 'background:rgba(255,255,255,.15);color:#fff';
+  } else {
+    chipPrice.textContent = 'Gratis';
+    chipPrice.style.cssText = 'background:rgba(60,160,60,.25);color:#86efac';
+  }
+
+  document.getElementById('mapLocName').textContent = loc;
+  document.getElementById('btnOpenMaps').href = 'https://maps.google.com/?q=' + encodeURIComponent(loc);
+  document.getElementById('btnOpenMaps').setAttribute('aria-label', `Apri ${loc} in Google Maps (nuova scheda)`);
+
+  function simDist(s) {
+    const known = {navigli:{dist:'1.8 km',walk:'22 min'},brera:{dist:'0.9 km',walk:'11 min'},isola:{dist:'2.7 km',walk:'34 min'},romana:{dist:'1.4 km',walk:'18 min'},sempione:{dist:'2.2 km',walk:'27 min'},venezia:{dist:'2.8 km',walk:'35 min'},centrale:{dist:'1.9 km',walk:'24 min'}};
+    const c = s.toLowerCase();
+    for (const [k,v] of Object.entries(known)) if (c.includes(k)) return v;
+    let h=0; for(let i=0;i<s.length;i++) h=s.charCodeAt(i)+((h<<5)-h); h=Math.abs(h);
+    const d=((h%32)/10+0.5).toFixed(1);
+    return {dist:d+' km',walk:Math.round(d*12)+' min'};
+  }
+  const {dist,walk} = simDist(loc);
+  document.getElementById('mapLocDist').innerHTML = `<i class="ph ph-person-walking" aria-hidden="true"></i> ${walk} · ${dist} da te`;
+
+  let privacyStr;
+  if (privacy === 'friends') privacyStr = 'Solo amici diretti';
+  else if (privacy === 'extended') privacyStr = 'Amici di amici' + (porta > 0 ? ` (+${porta} ospite)` : '');
+  else privacyStr = 'Aperta a tutti';
+  document.getElementById('infoPrivacy').textContent = privacyStr;
+  document.getElementById('infoCap').textContent = `${size} · max ${cap} persone`;
+
+  if (deadType === 'none') {
+    document.getElementById('infoDeadline').textContent = 'Nessuna scadenza';
+  } else if (deadType === '24h') {
+    document.getElementById('infoDeadline').textContent = 'Entro 24h prima';
+  } else if (deadType === '48h') {
+    document.getElementById('infoDeadline').textContent = 'Entro 48h prima';
+  } else if (deadType === 'manual' && deadDate && deadTime) {
+    const d = new Date(deadDate + 'T00:00:00');
+    const ds = d.toLocaleDateString('it-IT', {day:'numeric',month:'short'});
+    document.getElementById('infoDeadline').textContent = `Entro il ${ds} alle ${deadTime}`;
+  }
+
+  if (musicMode === 'spotify' && playName) {
+    document.getElementById('musicPlaylist').textContent = playName;
+    document.getElementById('spotifyIframe').setAttribute('title', `${playName} su Spotify`);
+  }
+  if (localStorage.getItem('spotify_connected') === 'true') {
+    showSpotifyPlayer();
+  }
+
+  const stack = document.getElementById('socialStack');
+  const label = document.getElementById('socialLabel');
+  document.getElementById('socialPlus').textContent = porta > 0 ? `Consente +${porta} ospite` : 'Nessun ospite extra';
+
+  const avatarAssets = [
+    'https://www.figma.com/api/mcp/asset/ae12e70c-d27b-4057-a06f-21d16332cc61',
+    'https://www.figma.com/api/mcp/asset/c08fdc84-628a-41db-b884-b61ab49b0e81',
+    'https://www.figma.com/api/mcp/asset/042a454b-975e-4ac2-b171-c0abc593a5fa',
+  ];
+  if (friends.length > 0) {
+    let html = '';
+    friends.slice(0,3).forEach((_,i) => { html += `<div class="av-stack"><img src="${avatarAssets[i%3]}" alt=""></div>`; });
+    if (friends.length > 3) html += `<div class="av-stack-more">+${friends.length-3}</div>`;
+    stack.innerHTML = html;
+    const names = friends.slice(0,2).map(f=>f.split(' ')[0]).join(', ');
+    const rest = friends.length-2;
+    label.textContent = rest > 0 ? `${names} e altri ${rest} amici` : names;
+  } else {
+    stack.innerHTML = avatarAssets.map(src=>`<div class="av-stack"><img src="${src}" alt=""></div>`).join('') + `<div class="av-stack-more">+${Math.max(0,ppl-3)}</div>`;
+    label.textContent = `Alex, Giulia e altri ${Math.max(0,ppl-3)} amici invitati`;
+  }
+
+  const ctaPolicy = document.getElementById('ctaPolicy');
+  if (priceMode === 'paid') {
+    ctaPolicy.textContent = refund ? 'Rimborsabile se disdici entro il termine.' : 'Quota non rimborsabile.';
+  } else {
+    ctaPolicy.textContent = 'Disdetta libera in qualsiasi momento.';
+  }
+
+  if (localStorage.getItem('event_detail_liked') === 'true') {
+    const btn = document.getElementById('btnLike');
+    btn.classList.add('liked');
+    btn.querySelector('i').className = 'ph-fill ph-heart';
+    btn.setAttribute('aria-pressed', 'true');
+    btn.setAttribute('aria-label', 'Rimuovi dai preferiti');
+  }
+});
+</script>
+</body>
+</html>

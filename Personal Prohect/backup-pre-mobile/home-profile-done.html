@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+:root {
+  --neutral-900:   #100d12;
+  --primary-600:   #c22b00;
+  --primary-700:   #942000;
+  --primary-850:   #4d1100;
+  --brand-primary: #7b1b00;
+  --brand-sec:     #7a3000;
+  --brand-sec-h:   #c24c00;
+  --brand-sec-p:   #943a00;
+  --border:        #231f26;
+  --text-primary:  #f7f6f8;
+  --text-sec:      #edeced;
+  --text-tertiary: #c4c2c7;
+  --attention:     #e8b432;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { background: #0a080c; }
+
+body {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: #0a080c;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.phone {
+  width: 390px; height: 844px;
+  background: #0a080c;
+  border-radius: 44px; overflow: hidden;
+  display: flex; flex-direction: column;
+  box-shadow: 0 0 0 10px #1a1a1a, 0 32px 80px rgba(0,0,0,.8);
+  position: relative;
+}
+
+/* Figma: subtle warm red glow upper half */
+.phone::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 420px;
+  background: linear-gradient(157.98deg, rgba(123,27,0,.22) 27%, rgba(25,22,28,.08) 67%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-content {
+  flex: 1; display: flex; flex-direction: column;
+  min-height: 0; width: 100%;
+  will-change: transform;
+  position: relative; z-index: 1;
+}
+
+/* ── Status bar ── */
+.status-bar { display: flex; justify-content: space-between; align-items: center; padding: 21px 24px 16px; flex-shrink: 0; }
+.status-bar__time { font-family: system-ui,-apple-system,sans-serif; font-size: 17px; font-weight: 590; color: #fff; letter-spacing: -.3px; width: 100px; }
+.status-bar__icons { display: flex; align-items: center; gap: 6px; justify-content: flex-end; width: 100px; }
+.status-bar__icons i { color: #fff; line-height: 1; }
+.icon-cellular { font-size: 14px; } .icon-wifi { font-size: 14px; } .icon-battery { font-size: 18px; }
+
+/* ── Profile row ── */
+.profile-row { display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 52px; flex-shrink: 0; position: relative; z-index: 10; }
+
+.friends-btn { width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.10); display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; padding: 0; transition: background .15s, border-color .15s; }
+.friends-btn:hover  { background: rgba(255,255,255,.12); }
+.friends-btn:active { background: rgba(255,255,255,.04); }
+.friends-btn i { font-size: 20px; color: rgba(255,255,255,.70); }
+
+/* City selector — Figma: #322f35 bg, #413e44 border, radius 24px, content-width */
+.city-selector {
+  flex: none; display: flex; align-items: center; justify-content: center; gap: 16px;
+  padding: 10px; border-radius: 24px;
+  background: #322f35; border: 1px solid #413e44;
+  cursor: pointer; user-select: none; transition: background .15s;
+}
+.city-selector:active { background: #3a3740; }
+.city-sel__pin { font-size: 24px; color: #e05500; flex-shrink: 0; }
+.city-sel__label { display: flex; align-items: baseline; }
+.city-sel__name { font-size: 13px; font-weight: 500; line-height: 18px; color: #f7f6f8; }
+.city-sel__km   { font-size: 13px; font-weight: 400; line-height: 18px; color: #c4c2c7; }
+.city-sel__caret { font-size: 16px; color: rgba(255,255,255,.65); transition: transform .2s; flex-shrink: 0; }
+.city-selector.open .city-sel__caret { transform: rotate(180deg); }
+
+/* City dropdown — Figma: #1e1a21 bg, #231f26 border */
+.city-dropdown {
+  position: relative; z-index: 10; margin: 6px 24px 0; border-radius: 24px;
+  background: #1e1a21; border: 1px solid #231f26;
+  overflow: hidden; max-height: 0; opacity: 0;
+  transition: max-height .35s cubic-bezier(.4,0,.2,1), opacity .2s; flex-shrink: 0;
+}
+.city-dropdown.open { max-height: 420px; opacity: 1; }
+
+.city-dropdown-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px 8px; border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.city-dropdown-title {
+  font-size: 11px; font-weight: 700; color: var(--text-tertiary);
+  letter-spacing: .8px; text-transform: uppercase;
+}
+
+.city-opts-list {
+  position: relative; display: flex; align-items: center; padding: 12px 0 16px;
+}
+.city-opts-scroll {
+  display: flex; align-items: center; gap: 10px;
+  overflow-x: auto; scrollbar-width: none;
+  width: 100%; padding-left: 20px; padding-right: 20px;
+}
+.city-opts-scroll::-webkit-scrollbar { display: none; }
+.city-opt {
+  display: flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px;
+  border-radius: 16px; cursor: pointer; transition: background .15s, border-color .15s;
+  background: transparent; border: 1px solid #413e44; flex-shrink: 0;
+}
+.city-opt__pin { font-size: 15px; color: rgba(255,255,255,.55); flex-shrink: 0; transition: color .15s; }
+.city-opt__name { font-size: 12px; font-weight: 500; color: #fff; transition: color .15s; }
+.city-opt.selected { background: rgba(194,76,0,.18); border-color: #c24c00; }
+.city-opt.selected .city-opt__pin  { color: #e05500; }
+.city-opt.selected .city-opt__name { font-weight: 600; color: #fff; }
+.city-opt:not(.selected):hover  { background: rgba(255,255,255,.04); }
+.city-opt:active { transform: scale(.95); background: rgba(255,255,255,.06); }
+.city-nearby-chip:active { transform: scale(.95); background: rgba(255,255,255,.08); }
+.city-opt:focus-visible { outline: 2px solid rgba(255,255,255,.7); outline-offset: 2px; }
+.city-opt__delete {
+  font-size: 12px; color: rgba(255,255,255,.55); margin-left: 4px; padding: 1px;
+  border-radius: 50%; cursor: pointer; transition: color .15s, background .15s;
+  display: none; align-items: center; justify-content: center; width: 14px; height: 14px;
+}
+.city-opt__delete:hover { color: #fff; background: rgba(255,255,255,.15); }
+.city-opt__delete:focus-visible { outline: 1px solid rgba(255,255,255,.7); }
+.city-dropdown.editing .city-opt__delete { display: inline-flex; }
+
+.city-edit-btn {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  width: 32px; height: 32px; border-radius: 50%; background: #322f35; border: 1px solid #413e44;
+  color: #fff; cursor: pointer; flex-shrink: 0; transition: all .25s cubic-bezier(.4,0,.2,1);
+}
+.city-edit-btn:hover { background: #3a3740; transform: scale(1.05); }
+.city-edit-btn:active { transform: scale(0.95); }
+.city-edit-btn i { font-size: 16px; color: #fff; transition: transform .25s; }
+.city-edit-btn .city-edit-btn-text {
+  font-size: 12px; font-weight: 600; display: none; color: #fff;
+}
+
+/* Primary style for the edit button when editing is open */
+.city-dropdown.editing .city-edit-btn {
+  background: #c24c00; border-color: #943a00; color: #fff;
+  width: auto; padding: 0 12px; border-radius: 16px; height: 32px;
+  box-shadow: 0 0 12px rgba(194, 76, 0, 0.35);
+}
+.city-dropdown.editing .city-edit-btn:hover {
+  background: #d45500; border-color: #b53700;
+  box-shadow: 0 0 16px rgba(212, 85, 0, 0.5);
+}
+.city-dropdown.editing .city-edit-btn .city-edit-btn-text {
+  display: inline;
+}
+
+.city-edit-panel { overflow: hidden; max-height: 0; transition: max-height .3s ease; }
+.city-edit-panel.open { max-height: 200px; }
+.city-edit-search { padding: 12px 20px 8px; position: relative; }
+.city-edit-search i { position: absolute; left: 32px; top: 50%; transform: translateY(-50%); font-size: 15px; color: rgba(255,255,255,.35); pointer-events: none; }
+.city-edit-search input { width: 100%; height: 38px; border-radius: 24px; background: #322f35; border: 1px solid #413e44; padding: 0 14px 0 36px; font-family: 'Plus Jakarta Sans',sans-serif; font-size: 13px; color: var(--text-primary); outline: none; caret-color: var(--primary-600); transition: border-color .15s; }
+.city-edit-search input:focus { border-color: var(--primary-600); }
+.city-edit-search input::placeholder { color: rgba(255,255,255,.40); }
+.city-nearby { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 20px 12px; }
+.city-nearby-chip { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 16px; background: transparent; border: 1px solid #413e44; font-size: 12px; font-weight: 500; color: #fff; cursor: pointer; transition: background .15s, border-color .15s, color .15s; font-family: 'Plus Jakarta Sans',sans-serif; }
+.city-nearby-chip:hover { background: rgba(255,255,255,.04); }
+.city-nearby-chip i { font-size: 15px; color: rgba(255,255,255,.55); flex-shrink: 0; transition: color .15s; }
+
+/* Profile pic */
+.profile-pic { width: 42px; height: 42px; border-radius: 50%; overflow: hidden; box-shadow: 0 0 16.9px rgba(255,107,46,.40); flex-shrink: 0; cursor: pointer; }
+.profile-pic img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ── Scroll area ── */
+.scroll-area { flex: 1; overflow-y: auto; scrollbar-width: none; padding: 0 24px 16px; }
+.scroll-area::-webkit-scrollbar { display: none; }
+
+/* ── Hero carousel ── */
+.hero-head { padding-top: 24px; margin-bottom: 0; }
+.hero-head__title { font-family: 'DM Serif Display', serif; font-size: 40px; line-height: 48px; color: var(--text-primary); letter-spacing: -.2px; transition: opacity .22s ease, transform .22s ease; }
+.hero-head__title em { font-style: normal; color: var(--primary-600); }
+.hero-head__title.fading { opacity: 0; transform: translateY(8px); }
+.hero-dots { display: flex; gap: 5px; margin: 14px 0 22px; }
+.hero-dot { width: 5px; height: 5px; border-radius: 99px; background: rgba(255,255,255,.20); cursor: pointer; flex-shrink: 0; transition: width .32s cubic-bezier(.4,0,.2,1), background .32s; }
+.hero-dot.active { width: 16px; background: var(--primary-600); }
+
+/* ── CTA draggable strip ── */
+.cta-strip {
+  display: flex; gap: 12px;
+  overflow-x: scroll; scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  margin: 0 -24px; padding: 4px 24px 4px 24px; scroll-padding-left: 24px;
+  margin-bottom: 20px;
+}
+.cta-strip::-webkit-scrollbar { display: none; }
+.cta-btn {
+  flex-shrink: 0; width: calc(100% - 52px);
+  scroll-snap-align: start;
+  display: flex; align-items: center; gap: 12px;
+  height: 60px; padding: 0 16px; border-radius: 40px;
+  background: #322f35; border: 1px solid #231f26;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 16px; font-weight: 600; color: rgba(255,255,255,.50);
+  cursor: pointer;
+  transition: background .38s cubic-bezier(.4,0,.2,1), border-color .38s, color .38s, transform .1s;
+}
+.cta-btn.active { background: #c24c00; border-color: #943a00; color: #edeced; }
+.cta-btn:hover  { opacity: .92; }
+.cta-btn:active { transform: scale(.98); }
+.cta-btn__icon  { font-size: 22px; flex-shrink: 0; color: rgba(255,255,255,.45); transition: color .38s; }
+.cta-btn.active .cta-btn__icon { color: rgba(255,255,255,.90); }
+.cta-btn__label { flex: 1; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cta-btn__arrow { font-size: 20px; flex-shrink: 0; opacity: .60; transition: opacity .38s; }
+.cta-btn.active .cta-btn__arrow { opacity: .85; }
+
+/* ── Divider ── */
+.section-divider { height: 1px; background: rgba(255,255,255,.08); margin-bottom: 24px; }
+
+/* ── Section block ── */
+.section-block { margin-bottom: 32px; }
+.section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 8px; }
+.section-head__title { font-family: 'DM Serif Display', serif; font-size: 23px; line-height: 28px; color: #fff; flex: 1; }
+/* Figma: "Tutti" underlined orange */
+.section-head__link {
+  font-size: 16px; font-weight: 400; color: var(--brand-sec-h);
+  text-decoration: underline; text-underline-offset: 2px;
+  display: flex; align-items: center; gap: 4px;
+  cursor: pointer; flex-shrink: 0;
+  background: none; border: none;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: color .15s;
+}
+.section-head__link:hover { color: var(--primary-600); }
+.section-head__link i { font-size: 14px; }
+
+/* ── Card row ── */
+.card-row { display: flex; gap: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -24px; padding: 0 24px 4px; scrollbar-width: none; }
+.card-row::-webkit-scrollbar { display: none; }
+
+/* ── Mini card (Figma: 160×206, photo fill, gradient overlay) ── */
+.mc {
+  flex-shrink: 0; width: 160px; height: 206px;
+  border-radius: 16px; border: 1px solid var(--border);
+  position: relative; overflow: hidden;
+  cursor: pointer; transition: transform .15s;
+  display: flex; flex-direction: column; justify-content: flex-end;
+}
+.mc:active { transform: scale(.97); }
+
+.mc__photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+
+/* Gradient overlays per section — bottom dark, top tinted */
+.mc__overlay { position: absolute; inset: 0; pointer-events: none; }
+.mc-chill  .mc__overlay { background: linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(65,77,15,.80) 100%); }
+.mc-dance  .mc__overlay { background: linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(55,8,75,.75) 100%); }
+.mc-drinks .mc__overlay { background: linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(90,28,0,.70) 100%); }
+.mc-social .mc__overlay { background: linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(48,18,88,.65) 100%); }
+.mc-apero  .mc__overlay { background: linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(100,48,0,.65) 100%); }
+.mc-quiet  .mc__overlay { background: linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(8,40,18,.75) 100%); }
+.mc-budget .mc__overlay { background: linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(18,20,50,.65) 100%); }
+
+/* Like button — Figma: 32px black circle */
+.mc__like {
+  position: absolute; top: 10px; right: 10px; z-index: 4;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(0,0,0,.55); border: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background .15s, border-color .15s, transform .1s;
+}
+.mc__like:hover  { background: rgba(0,0,0,.75); }
+.mc__like:active { transform: scale(.88); }
+.mc__like i { font-size: 15px; color: rgba(255,255,255,.80); transition: color .15s; }
+.mc__like.liked i { color: var(--primary-700); }
+
+/* Card body — Figma: name 19px semibold, dot+loc 13px, chips 9px */
+.mc__body {
+  position: relative; z-index: 3;
+  padding: 10px 10px 12px;
+  display: flex; flex-direction: column; gap: 7px;
+  min-height: 80px; justify-content: flex-end;
+}
+.mc__name { font-size: 15px; font-weight: 600; line-height: 20px; color: var(--text-primary); }
+.mc__loc  { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-tertiary); }
+.mc__dot  { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.35); flex-shrink: 0; }
+.mc__chips { display: flex; gap: 4px; flex-wrap: nowrap; overflow: hidden; }
+.mc-chip        { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 9999px; font-size: 10px; font-weight: 600; color: var(--text-sec); background: rgba(255,255,255,.12); white-space: nowrap; }
+.mc-chip--crowd { background: rgba(255,178,26,.20); color: var(--attention); }
+.mc-chip--date  { background: rgba(148,32,0,.55); color: rgba(255,255,255,.90); }
+.mc-chip--free  { background: rgba(52,211,153,.20); color: #34d399; }
+
+/* ── Bottom nav ── */
+.nav-wrap { display: flex; align-items: center; gap: 10px; padding: 12px 24px 32px; flex-shrink: 0; position: relative; z-index: 5; }
+.bottom-nav { position: relative; display: flex; align-items: stretch; gap: 3px; padding: 5px; height: 58px; border-radius: 9999px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.10); backdrop-filter: blur(16px); flex: 1; }
+.nav-slider { position: absolute; top: 5px; bottom: 5px; border-radius: 9999px; background: rgba(148,32,0,.32); pointer-events: none; z-index: 0; }
+.nav-item { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 0 12px; border-radius: 9999px; cursor: pointer; flex: 1; -webkit-tap-highlight-color: transparent; }
+.nav-item i    { font-size: 20px; color: rgba(255,255,255,.75); transition: color .3s; }
+.nav-item span { font-size: 10px; font-weight: 500; color: rgba(255,255,255,.75); transition: color .3s; }
+.nav-item.active i    { color: #e05500; }
+.nav-item.active span { font-weight: 600; color: #e05500; }
+.nav-add { width: 58px; height: 58px; border-radius: 50%; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.10); backdrop-filter: blur(16px); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: background .15s, border-color .15s, transform .1s; }
+.nav-add:hover  { background: rgba(255,255,255,.13); }
+.nav-add:active { transform: scale(.9); }
+.nav-add i { font-size: 22px; color: rgba(255,255,255,.75); }
+
+/* ── Focus-visible (WCAG 2.4.7) ── */
+.friends-btn:focus-visible        { outline: 2px solid rgba(255,255,255,.7); outline-offset: 2px; }
+.city-selector:focus-visible      { outline: 2px solid rgba(255,255,255,.7); outline-offset: 2px; }
+.city-edit-btn:focus-visible      { outline: 2px solid rgba(255,255,255,.7); outline-offset: 2px; }
+.city-opt:focus-visible           { outline: 2px solid rgba(255,255,255,.7); outline-offset: -2px; }
+.cta-btn:focus-visible            { outline: 2px solid rgba(255,255,255,.7); outline-offset: 2px; }
+.mc:focus-visible                 { outline: 2px solid rgba(255,255,255,.4); outline-offset: 2px; }
+.mc__like:focus-visible           { outline: 2px solid rgba(255,255,255,.7); outline-offset: 2px; }
+.nav-item:focus-visible           { outline: 2px solid rgba(255,255,255,.6); outline-offset: -3px; border-radius: 9999px; }
+.nav-add:focus-visible            { outline: 2px solid #fff; outline-offset: 2px; }
+.section-head__link:focus-visible { outline: 2px solid rgba(255,255,255,.7); outline-offset: 2px; border-radius: 4px; }
+.profile-pic:focus-visible        { outline: 2px solid rgba(255,107,46,.8); outline-offset: 2px; }
+.city-nearby-chip:focus-visible   { outline: 2px solid rgba(255,255,255,.7); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mc, .cta-btn, .nav-add, .city-selector, .page-content { transition: none !important; }
+}
+</style>
+<script>
+(function() {
+  const s = new URLSearchParams(window.location.search).get('slide');
+  if (s === 'from-left')  document.write('<style>.page-content{transform:translateX(-120%)}</style>');
+  if (s === 'from-right') document.write('<style>.page-content{transform:translateX(120%)}</style>');
+})();
+</script>
+</head>
+<body>
+<div class="phone">
+
+  <div class="status-bar" aria-hidden="true">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <i class="ph-fill ph-cell-signal-full icon-cellular" aria-hidden="true"></i>
+      <i class="ph-fill ph-wifi-high icon-wifi" aria-hidden="true"></i>
+      <i class="ph-fill ph-battery-full icon-battery" aria-hidden="true"></i>
+    </div>
+  </div>
+
+  <div class="page-content">
+
+    <div class="profile-row">
+      <button class="friends-btn" aria-label="Amici">
+        <i class="ph ph-users-three" aria-hidden="true"></i>
+      </button>
+      <div class="city-selector" id="citySel" role="button" tabindex="0"
+           onclick="toggleCityDropdown()"
+           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+        <i class="ph-fill ph-map-pin city-sel__pin" aria-hidden="true"></i>
+        <span class="city-sel__label">
+          <span class="city-sel__name" id="citySelName">Milano&thinsp;</span><span class="city-sel__km" id="citySelKm">· 10 km</span>
+        </span>
+        <i class="ph ph-caret-down city-sel__caret" id="cityCaret" aria-hidden="true"></i>
+      </div>
+      <div class="profile-pic" role="button" tabindex="0" aria-label="Il tuo profilo"
+           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();}">
+        <img src="https://www.figma.com/api/mcp/asset/00b1a209-e8f6-41dc-b1b9-d3b6244cb7be" alt="Foto profilo">
+      </div>
+    </div>
+
+    <div class="city-dropdown" id="cityDropdown">
+      <div class="city-dropdown-header">
+        <span class="city-dropdown-title" id="cityDropdownTitle">Le tue città</span>
+        <button class="city-edit-btn" id="cityEditBtn" aria-label="Modifica città" onclick="toggleCityEdit()">
+          <i class="ph ph-pencil-simple" aria-hidden="true"></i><span class="city-edit-btn-text">Fine</span>
+        </button>
+      </div>
+
+      <div class="city-opts-list" id="cityOptsList">
+        <div class="city-opts-scroll" id="cityOptsScroll">
+          <div class="city-opt selected" data-km="10 km" role="button" tabindex="0"
+               onclick="selectCity(this,'Milano')"
+               onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+            <i class="ph-fill ph-map-pin city-opt__pin" aria-hidden="true"></i>
+            <span class="city-opt__name">Milano</span>
+            <i class="ph ph-x city-opt__delete" aria-label="Elimina Milano" onclick="removeCityOpt(event, this)" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"></i>
+          </div>
+          <div class="city-opt" data-km="15 km" role="button" tabindex="0"
+               onclick="selectCity(this,'Torino')"
+               onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+            <i class="ph ph-map-pin city-opt__pin" aria-hidden="true"></i>
+            <span class="city-opt__name">Torino</span>
+            <i class="ph ph-x city-opt__delete" aria-label="Elimina Torino" onclick="removeCityOpt(event, this)" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="city-edit-panel" id="cityEditPanel">
+        <div class="city-edit-search">
+          <i class="ph ph-magnifying-glass" aria-hidden="true"></i>
+          <input type="text" placeholder="Cerca una città..." oninput="filterNearbyOpts(this.value)" id="citySearchInput">
+        </div>
+        <div class="city-nearby" id="cityNearby">
+          <div class="city-nearby-chip" role="button" tabindex="0" onclick="addCityOpt('Monza')"   onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph ph-map-pin" aria-hidden="true"></i>Monza</div>
+          <div class="city-nearby-chip" role="button" tabindex="0" onclick="addCityOpt('Bergamo')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph ph-map-pin" aria-hidden="true"></i>Bergamo</div>
+          <div class="city-nearby-chip" role="button" tabindex="0" onclick="addCityOpt('Como')"    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph ph-map-pin" aria-hidden="true"></i>Como</div>
+          <div class="city-nearby-chip" role="button" tabindex="0" onclick="addCityOpt('Roma')"    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph ph-map-pin" aria-hidden="true"></i>Roma</div>
+          <div class="city-nearby-chip" role="button" tabindex="0" onclick="addCityOpt('Torino')"  onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph ph-map-pin" aria-hidden="true"></i>Torino</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-area">
+
+      <div class="hero-carousel" id="heroCarousel">
+        <div class="hero-head">
+          <h1 class="hero-head__title" id="heroTitle">Ciao <em>Alex</em>,<br>cosa fai<br>stasera?</h1>
+        </div>
+        <div class="hero-dots" id="heroDots"></div>
+        <div class="cta-strip" id="ctaStrip" role="list"></div>
+      </div>
+
+      <div class="section-divider" role="separator" aria-hidden="true"></div>
+
+      <!-- Serate tra amici (eventi privati creati da amici) -->
+      <section aria-labelledby="sect-friends" class="section-block">
+        <div class="section-head">
+          <h2 class="section-head__title" id="sect-friends">Serate tra amici</h2>
+          <button class="section-head__link" onclick="slideToPage('events-browse.html','to-left')">Tutte <i class="ph ph-arrow-right" aria-hidden="true"></i></button>
+        </div>
+        <div class="card-row">
+          <div class="mc mc-drinks">
+            <img class="mc__photo" src="immagini/9eaf6f9fb8ac175b8cd1651e738b03a6.jpg" alt="">
+            <div class="mc__overlay"></div>
+            <button class="mc__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(event,this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+            <div class="mc__body">
+              <div class="mc__name">Marco's House Party</div>
+              <div class="mc__loc"><span class="mc__dot" aria-hidden="true"></span>Navigli · amico di Luca</div>
+              <div class="mc__chips"><span class="mc-chip">Privata</span><span class="mc-chip mc-chip--free">Free</span></div>
+            </div>
+          </div>
+          <div class="mc mc-social">
+            <img class="mc__photo" src="immagini/ffa82178b91e9078e13c75c5ee16eb63.jpg" alt="">
+            <div class="mc__overlay"></div>
+            <button class="mc__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(event,this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+            <div class="mc__body">
+              <div class="mc__name">Aperitivo da Giulia</div>
+              <div class="mc__loc"><span class="mc__dot" aria-hidden="true"></span>Brera · amica</div>
+              <div class="mc__chips"><span class="mc-chip">Privata</span><span class="mc-chip mc-chip--date">Sab 19:00</span></div>
+            </div>
+          </div>
+          <div class="mc mc-chill">
+            <img class="mc__photo" src="immagini/454847d32216bc836914d72e435a4642.jpg" alt="">
+            <div class="mc__overlay"></div>
+            <button class="mc__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(event,this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+            <div class="mc__body">
+              <div class="mc__name">Karaoke Night</div>
+              <div class="mc__loc"><span class="mc__dot" aria-hidden="true"></span>Isola · amico di Sara</div>
+              <div class="mc__chips"><span class="mc-chip">Privata</span><span class="mc-chip mc-chip--crowd">Poco affollata</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Serata chill -->
+      <section aria-labelledby="sect-chill" class="section-block">
+        <div class="section-head">
+          <h2 class="section-head__title" id="sect-chill">Serata chill con amici</h2>
+          <button class="section-head__link" onclick="slideToPage('events-browse.html','to-left')">Tutti <i class="ph ph-arrow-right" aria-hidden="true"></i></button>
+        </div>
+        <div class="card-row">
+          <div class="mc mc-chill">
+            <img class="mc__photo" src="immagini/ffa82178b91e9078e13c75c5ee16eb63.jpg" alt="">
+            <div class="mc__overlay"></div>
+            <button class="mc__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(event,this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+            <div class="mc__body">
+              <div class="mc__name">Ray Beach Club</div>
+              <div class="mc__loc"><span class="mc__dot" aria-hidden="true"></span>Via Brera · 0.8 km</div>
+              <div class="mc__chips"><span class="mc-chip">Games</span><span class="mc-chip">Chill</span></div>
+            </div>
+          </div>
+          <div class="mc mc-chill">
+            <img class="mc__photo" src="immagini/454847d32216bc836914d72e435a4642.jpg" alt="">
+            <div class="mc__overlay"></div>
+            <button class="mc__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(event,this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+            <div class="mc__body">
+              <div class="mc__name">Sunday Wind Down</div>
+              <div class="mc__loc"><span class="mc__dot" aria-hidden="true"></span>Isola, Milano</div>
+              <div class="mc__chips"><span class="mc-chip">Indie</span><span class="mc-chip mc-chip--crowd">Poco affollato</span></div>
+            </div>
+          </div>
+          <div class="mc mc-chill">
+            <img class="mc__photo" src="immagini/9eaf6f9fb8ac175b8cd1651e738b03a6.jpg" alt="">
+            <div class="mc__overlay"></div>
+            <button class="mc__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(event,this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+            <div class="mc__body">
+              <div class="mc__name">The Quiet Rooftop</div>
+              <div class="mc__loc"><span class="mc__dot" aria-hidden="true"></span>Navigli</div>
+              <div class="mc__chips"><span class="mc-chip">Chill</span><span class="mc-chip mc-chip--date">Sab 22:00</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Ballare -->
+      <section aria-labelledby="sect-dance" class="section-block">
+        <div class="section-head">
+          <h2 class="section-head__title" id="sect-dance">Per quando vuoi ballare</h2>
+          <button class="section-head__link" onclick="slideToPage('events-browse.html','to-left')">Tutti <i class="ph ph-arrow-right" aria-hidden="true"></i></button>
+        </div>
+        <div class="card-row">
+          <div class="mc mc-dance">
+            <img class="mc__photo" src="immagini/8698575ac33b6d0afa508642d8ea6fa4.jpg" alt="">
+            <div class="mc__overlay"></div>
+            <button class="mc__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(event,this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+            <div class="mc__body">
+              <div class="mc__name">Club Amnesia</div>
+              <div class="mc__loc"><span class="mc__dot" aria-hidden="true"></span>Via Brera · 0.8 km</div>
+              <div class="mc__chips"><span class="mc-chip">Nightlife</span><span class="mc-chip mc-chip--crowd">Affollato</span></div>
+            </div>
+          </div>
+          <div class="mc mc-dance">
+            <img class="mc__photo" src="immagini/721fac99888bff8e61553c2d0a74f679.jpg" alt="">
+            <div class="mc__overlay"></div>
+            <button class="mc__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(event,this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+            <div class="mc__body">
+              <div class="mc__name">Room 126</div>
+              <div class="mc__loc"><span class="mc__dot" aria-hidden="true"></span>Navigli</div>
+              <div class="mc__chips"><span class="mc-chip">House</span><span class="mc-chip mc-chip--date">Sab 23:00</span></div>
+            </div>
+          </div>
+          <div class="mc mc-dance">
+            <img class="mc__photo" src="immagini/456ed706d66dd4ee3da6dcaf299dcbd3.jpg" alt="">
+            <div class="mc__overlay"></div>
+            <button class="mc__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(event,this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+            <div class="mc__body">
+              <div class="mc__name">Warehouse Night</div>
+              <div class="mc__loc"><span class="mc__dot" aria-hidden="true"></span>Circolo Magnolia</div>
+              <div class="mc__chips"><span class="mc-chip">Techno</span><span class="mc-chip mc-chip--crowd">Molto affollato</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Aperitivo -->
+      <section aria-labelledby="sect-apero" class="section-block">
+        <div class="section-head">
+          <h2 class="section-head__title" id="sect-apero">Posti perfetti per un aperitivo</h2>
+          <button class="section-head__link" onclick="slideToPage('events-browse.html','to-left')">Tutti <i class="ph ph-arrow-right" aria-hidden="true"></i></button>
+        </div>
+        <div class="card-row">
+          <div class="mc mc-apero">
+            <img class="mc__photo" src="immagini/9eaf6f9fb8ac175b8cd1651e738b03a6.jpg" alt="">
+            <div class="mc__overlay"></div>
+            <button class="mc__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(event,this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+            <div class="mc__body">
+              <div class="mc__name">Aperitivo Sunset</div>
+              <div class="mc__loc"><span class="mc__dot" aria-hidden="true"></span>Navigli, Milano</div>
+              <div class="mc__chips"><span class="mc-chip">Aperitivo</span><span class="mc-chip mc-chip--crowd">Poco affollato</span></div>
+            </div>
+          </div>
+          <div class="mc mc-apero">
+            <img class="mc__photo" src="immagini/ffa82178b91e9078e13c75c5ee16eb63.jpg" alt="">
+            <div class="mc__overlay"></div>
+            <button class="mc__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(event,this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+            <div class="mc__body">
+              <div class="mc__name">Rooftop Vibes</div>
+              <div class="mc__loc"><span class="mc__dot" aria-hidden="true"></span>Porta Romana</div>
+              <div class="mc__chips"><span class="mc-chip">Aperitivo</span><span class="mc-chip mc-chip--date">Sab 18:30</span></div>
+            </div>
+          </div>
+          <div class="mc mc-apero">
+            <img class="mc__photo" src="immagini/454847d32216bc836914d72e435a4642.jpg" alt="">
+            <div class="mc__overlay"></div>
+            <button class="mc__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(event,this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+            <div class="mc__body">
+              <div class="mc__name">Solferino Lounge</div>
+              <div class="mc__loc"><span class="mc__dot" aria-hidden="true"></span>Brera</div>
+              <div class="mc__chips"><span class="mc-chip">Cocktails</span><span class="mc-chip mc-chip--date">Ven 19:00</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Conoscere gente -->
+      <section aria-labelledby="sect-social" class="section-block">
+        <div class="section-head">
+          <h2 class="section-head__title" id="sect-social">Serate per conoscere gente</h2>
+          <button class="section-head__link" onclick="slideToPage('events-browse.html','to-left')">Tutti <i class="ph ph-arrow-right" aria-hidden="true"></i></button>
+        </div>
+        <div class="card-row">
+          <div class="mc mc-social">
+            <img class="mc__photo" src="immagini/456ed706d66dd4ee3da6dcaf299dcbd3.jpg" alt="">
+            <div class="mc__overlay"></div>
+            <button class="mc__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(event,this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+            <div class="mc__body">
+              <div class="mc__name">Mixer Social Night</div>
+              <div class="mc__loc"><span class="mc__dot" aria-hidden="true"></span>Isola, Milano</div>
+              <div class="mc__chips"><span class="mc-chip">Social</span><span class="mc-chip mc-chip--crowd">Animato</span></div>
+            </div>
+          </div>
+          <div class="mc mc-social">
+            <img class="mc__photo" src="immagini/721fac99888bff8e61553c2d0a74f679.jpg" alt="">
+            <div class="mc__overlay"></div>
+            <button class="mc__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(event,this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+            <div class="mc__body">
+              <div class="mc__name">Strangers Club</div>
+              <div class="mc__loc"><span class="mc__dot" aria-hidden="true"></span>Navigli</div>
+              <div class="mc__chips"><span class="mc-chip">Social</span><span class="mc-chip mc-chip--date">Sab 21:00</span></div>
+            </div>
+          </div>
+          <div class="mc mc-social">
+            <img class="mc__photo" src="immagini/04d23dfdbce58c951a610dfe2db46829.jpg" alt="">
+            <div class="mc__overlay"></div>
+            <button class="mc__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(event,this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+            <div class="mc__body">
+              <div class="mc__name">Speed Friends</div>
+              <div class="mc__loc"><span class="mc__dot" aria-hidden="true"></span>Porta Romana</div>
+              <div class="mc__chips"><span class="mc-chip">Social</span><span class="mc-chip mc-chip--date">Dom 20:00</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Budget -->
+      <section aria-labelledby="sect-budget" class="section-block">
+        <div class="section-head">
+          <h2 class="section-head__title" id="sect-budget">Uscire senza spendere troppo</h2>
+          <button class="section-head__link" onclick="slideToPage('events-browse.html','to-left')">Tutti <i class="ph ph-arrow-right" aria-hidden="true"></i></button>
+        </div>
+        <div class="card-row">
+          <div class="mc mc-budget">
+            <img class="mc__photo" src="immagini/7d555226ac0bcc0c06e70d15b46e6f84.jpg" alt="">
+            <div class="mc__overlay"></div>
+            <button class="mc__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(event,this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+            <div class="mc__body">
+              <div class="mc__name">Monopoly Night</div>
+              <div class="mc__loc"><span class="mc__dot" aria-hidden="true"></span>Isola, Milano</div>
+              <div class="mc__chips"><span class="mc-chip">Games</span><span class="mc-chip mc-chip--free">Free entry</span></div>
+            </div>
+          </div>
+          <div class="mc mc-budget">
+            <img class="mc__photo" src="immagini/8698575ac33b6d0afa508642d8ea6fa4.jpg" alt="">
+            <div class="mc__overlay"></div>
+            <button class="mc__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(event,this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+            <div class="mc__body">
+              <div class="mc__name">Free Entry Friday</div>
+              <div class="mc__loc"><span class="mc__dot" aria-hidden="true"></span>Navigli</div>
+              <div class="mc__chips"><span class="mc-chip">Nightlife</span><span class="mc-chip mc-chip--free">Free entry</span></div>
+            </div>
+          </div>
+          <div class="mc mc-budget">
+            <img class="mc__photo" src="immagini/456ed706d66dd4ee3da6dcaf299dcbd3.jpg" alt="">
+            <div class="mc__overlay"></div>
+            <button class="mc__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(event,this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+            <div class="mc__body">
+              <div class="mc__name">Open Mic Night</div>
+              <div class="mc__loc"><span class="mc__dot" aria-hidden="true"></span>Brera</div>
+              <div class="mc__chips"><span class="mc-chip">Live</span><span class="mc-chip mc-chip--date">Ven 21:00</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /scroll-area -->
+
+  </div><!-- /page-content -->
+
+  <div class="nav-wrap">
+    <nav class="bottom-nav" id="mainNav">
+      <div class="nav-slider" id="navSlider"></div>
+      <div class="nav-item active" data-icon="house" role="button" tabindex="0"
+           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();}">
+        <i class="ph-fill ph-house" aria-hidden="true"></i><span>Home</span>
+      </div>
+      <div class="nav-item" data-icon="magnifying-glass" role="button" tabindex="0"
+           onclick="slideToPage('events-browse.html','to-left',this)"
+           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+        <i class="ph ph-magnifying-glass" aria-hidden="true"></i><span>Esplora</span>
+      </div>
+      <div class="nav-item" data-icon="heart" role="button" tabindex="0"
+           onclick="slideToPage('events-browse.html','to-left',this)"
+           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+        <i class="ph ph-heart" aria-hidden="true"></i><span>Salvati</span>
+      </div>
+    </nav>
+    <button class="nav-add" aria-label="Crea evento"
+            onclick="window.location.href='paywall.html'">
+      <i class="ph ph-plus" aria-hidden="true"></i>
+    </button>
+  </div>
+
+</div><!-- /phone -->
+
+<script>
+/* ── Hero carousel ── */
+const HERO_VARIANTS = [
+  { title: 'Ciao <em>Alex</em>,<br>cosa fai<br>stasera?',            cta: 'Troviamo la serata perfetta', icon: 'ph-magic-wand',  href: 'quiz-step-1.html'   },
+  { title: 'Ciao <em>Alex</em>,<br>ti va una serata<br>tranquilla?',  cta: 'Trova qualcosa di chill',     icon: 'ph-moon-stars',  href: 'events-browse.html' },
+  { title: 'Ciao <em>Alex</em>,<br>hai voglia di<br>ballare stasera?',cta: 'Vedi le serate musicali',     icon: 'ph-music-note',  href: 'events-browse.html' },
+  { title: 'Ciao <em>Alex</em>,<br>vuoi uscire con<br>gente nuova?',  cta: 'Scopri le serate social',     icon: 'ph-users-three', href: 'events-browse.html' },
+  { title: 'Ciao <em>Alex</em>,<br>cerchi una serata<br>tra amici?',  cta: 'Esplora serate private',      icon: 'ph-house',       href: 'events-browse.html' },
+];
+let heroIdx = 0;
+
+function initHeroCarousel() {
+  const strip   = document.getElementById('ctaStrip');
+  const dotsEl  = document.getElementById('heroDots');
+  const titleEl = document.getElementById('heroTitle');
+
+  /* Build buttons */
+  HERO_VARIANTS.forEach((v, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'cta-btn' + (i === 0 ? ' active' : '');
+    btn.setAttribute('role', 'listitem');
+    btn.setAttribute('aria-label', v.cta);
+    btn.innerHTML =
+      `<i class="ph ${v.icon} cta-btn__icon" aria-hidden="true"></i>` +
+      `<span class="cta-btn__label">${v.cta}</span>` +
+      `<i class="ph ph-arrow-right cta-btn__arrow" aria-hidden="true"></i>`;
+    btn.addEventListener('click', () => slideToPage(v.href, 'to-left'));
+    strip.appendChild(btn);
+  });
+
+  /* Build dots */
+  HERO_VARIANTS.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'hero-dot' + (i === 0 ? ' active' : '');
+    d.setAttribute('aria-label', 'Opzione ' + (i + 1));
+    d.addEventListener('click', () => {
+      const btns = strip.querySelectorAll('.cta-btn');
+      if (!btns[i]) return;
+      strip.scrollTo({ left: i * (btns[i].offsetWidth + 12), behavior: 'smooth' });
+    });
+    dotsEl.appendChild(d);
+  });
+
+  /* Scroll → update active button + title */
+  const btns = strip.querySelectorAll('.cta-btn');
+  let titleTimer;
+
+  strip.addEventListener('scroll', () => {
+    if (!btns[0]) return;
+    const step = btns[0].offsetWidth + 12;
+    const idx  = Math.round(strip.scrollLeft / step);
+    if (idx === heroIdx || idx < 0 || idx >= HERO_VARIANTS.length) return;
+
+    btns[heroIdx].classList.remove('active');
+    btns[idx].classList.add('active');
+    heroIdx = idx;
+
+    document.querySelectorAll('.hero-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+
+    clearTimeout(titleTimer);
+    titleTimer = setTimeout(() => {
+      titleEl.classList.add('fading');
+      setTimeout(() => {
+        titleEl.innerHTML = HERO_VARIANTS[idx].title;
+        titleEl.classList.remove('fading');
+      }, 220);
+    }, 60);
+  }, { passive: true });
+}
+
+function toggleLike(e, btn) {
+  e.stopPropagation();
+  btn.classList.toggle('liked');
+  btn.querySelector('i').className = btn.classList.contains('liked') ? 'ph-fill ph-heart' : 'ph ph-heart';
+  btn.setAttribute('aria-label', btn.classList.contains('liked') ? 'Rimuovi dai preferiti' : 'Aggiungi ai preferiti');
+}
+
+function switchNav(clicked) {
+  const nav = clicked.closest('.bottom-nav');
+  const slider = nav.querySelector('.nav-slider');
+  const items  = nav.querySelectorAll('.nav-item');
+  const current = nav.querySelector('.nav-item.active');
+  if (!current || current === clicked) return;
+  slider.style.transition = 'none';
+  slider.style.left  = current.offsetLeft + 'px';
+  slider.style.width = current.offsetWidth + 'px';
+  items.forEach(item => {
+    item.classList.remove('active');
+    item.querySelector('i').className = 'ph ph-' + item.dataset.icon;
+  });
+  clicked.classList.add('active');
+  clicked.querySelector('i').className = 'ph-fill ph-' + clicked.dataset.icon;
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    slider.style.transition = 'left .4s cubic-bezier(.34,1.56,.64,1), width .4s cubic-bezier(.34,1.56,.64,1)';
+    slider.style.left  = clicked.offsetLeft + 'px';
+    slider.style.width = clicked.offsetWidth + 'px';
+  }));
+}
+
+function slideToPage(url, direction, clickedEl) {
+  const container = document.querySelector('.page-content');
+  container.style.transition = 'transform 0.4s cubic-bezier(0.1,0.76,0.55,0.94)';
+  container.style.transform  = direction === 'to-left' ? 'translateX(-120%)' : 'translateX(120%)';
+  let tabParam = '';
+  if (clickedEl) {
+    const icon = clickedEl.getAttribute('data-icon');
+    if (icon === 'magnifying-glass') tabParam = '&tab=esplora';
+    else if (icon === 'heart') tabParam = '&tab=salvati';
+  }
+  requestAnimationFrame(() => {
+    window.location.href = url + '?slide=' + (direction === 'to-left' ? 'from-right' : 'from-left') + tabParam;
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  localStorage.setItem('last_home_page', 'home-profile-done.html');
+  initHeroCarousel();
+  const params = new URLSearchParams(window.location.search);
+  const slide  = params.get('slide');
+  const tab    = params.get('tab');
+  const container = document.querySelector('.page-content');
+  document.body.style.overflowX = 'hidden';
+
+  // Restore active tab from URL param
+  if (tab === 'salvati' || tab === 'esplora') {
+    const icon = tab === 'salvati' ? 'heart' : 'magnifying-glass';
+    const tabEl = document.querySelector(`.nav-item[data-icon="${icon}"]`);
+    if (tabEl) {
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+        item.querySelector('i').className = 'ph ph-' + item.dataset.icon;
+      });
+      tabEl.classList.add('active');
+      tabEl.querySelector('i').className = 'ph-fill ph-' + tabEl.dataset.icon;
+    }
+  }
+
+  // Slide-in animation
+  if (slide === 'from-left' || slide === 'from-right') {
+    container.style.transition = 'none';
+    container.style.transform  = slide === 'from-left' ? 'translateX(-120%)' : 'translateX(120%)';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      container.style.transition = 'transform 0.4s cubic-bezier(0.1,0.76,0.55,0.94)';
+      container.style.transform  = 'translateX(0)';
+    }));
+  }
+
+  // Nav slider initial position
+  requestAnimationFrame(() => {
+    const active = document.querySelector('.nav-item.active');
+    const slider = document.getElementById('navSlider');
+    if (active && slider) {
+      slider.style.left  = active.offsetLeft + 'px';
+      slider.style.width = active.offsetWidth + 'px';
+    }
+  });
+
+  // Bind cards: role, tabindex, aria-label, keyboard nav
+  document.querySelectorAll('.mc').forEach(card => {
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    const name = card.querySelector('.mc__name');
+    if (name) card.setAttribute('aria-label', 'Apri ' + name.textContent.trim());
+    card.addEventListener('click', e => {
+      if (e.target.closest('.mc__like')) return;
+      slideToPage('event-detail.html', 'to-left');
+    });
+    card.addEventListener('keydown', e => {
+      if ((e.key === 'Enter' || e.key === ' ') && !e.target.closest('.mc__like')) {
+        e.preventDefault();
+        slideToPage('event-detail.html', 'to-left');
+      }
+    });
+  });
+});
+
+// City dropdown logic
+function toggleCityDropdown() {
+  const dd = document.getElementById('cityDropdown');
+  const sel = document.getElementById('citySel');
+  const open = dd.classList.toggle('open');
+  sel.classList.toggle('open', open);
+  if (!open) {
+    document.getElementById('cityEditPanel').classList.remove('open');
+    document.getElementById('cityEditBtn').classList.remove('expanded');
+    dd.classList.remove('editing');
+    const icon = document.getElementById('cityEditBtn').querySelector('i');
+    if (icon) icon.className = 'ph ph-pencil-simple';
+    const title = document.getElementById('cityDropdownTitle');
+    if (title) title.textContent = 'Le tue città';
+  }
+}
+function selectCity(opt, name, km) {
+  document.querySelectorAll('.city-opt').forEach(o => {
+    o.classList.remove('selected');
+    const pin = o.querySelector('.city-opt__pin');
+    if (pin) {
+      pin.classList.remove('ph-fill');
+      pin.classList.add('ph');
+    }
+  });
+  opt.classList.add('selected');
+  const activePin = opt.querySelector('.city-opt__pin');
+  if (activePin) {
+    activePin.classList.remove('ph');
+    activePin.classList.add('ph-fill');
+  }
+  if (!km) {
+    km = opt.getAttribute('data-km') || '10 km';
+  }
+  document.getElementById('citySelName').innerHTML = name + '&thinsp;';
+  document.getElementById('citySelKm').textContent = '· ' + km;
+  setTimeout(() => {
+    document.getElementById('cityDropdown').classList.remove('open');
+    document.getElementById('citySel').classList.remove('open');
+    document.getElementById('cityEditPanel').classList.remove('open');
+    document.getElementById('cityEditBtn').classList.remove('expanded');
+    document.getElementById('cityDropdown').classList.remove('editing');
+    const icon = document.getElementById('cityEditBtn').querySelector('i');
+    if (icon) icon.className = 'ph ph-pencil-simple';
+    const title = document.getElementById('cityDropdownTitle');
+    if (title) title.textContent = 'Le tue città';
+  }, 180);
+}
+function toggleCityEdit() {
+  const panel = document.getElementById('cityEditPanel');
+  const btn   = document.getElementById('cityEditBtn');
+  const dd    = document.getElementById('cityDropdown');
+  const title = document.getElementById('cityDropdownTitle');
+  const open  = panel.classList.toggle('open');
+  btn.classList.toggle('expanded', open);
+  dd.classList.toggle('editing', open);
+  
+  if (title) {
+    title.textContent = open ? 'Modifica città' : 'Le tue città';
+  }
+  
+  const icon = btn.querySelector('i');
+  if (icon) {
+    if (open) {
+      icon.className = 'ph ph-check';
+    } else {
+      icon.className = 'ph ph-pencil-simple';
+    }
+  }
+  if (open) setTimeout(() => document.getElementById('citySearchInput').focus(), 310);
+}
+function filterNearbyOpts(val) {
+  document.querySelectorAll('.city-nearby-chip').forEach(c => {
+    c.style.display = (!val || c.textContent.trim().toLowerCase().startsWith(val.toLowerCase())) ? '' : 'none';
+  });
+}
+function addCityOpt(name) {
+  const existing = [...document.querySelectorAll('.city-opt .city-opt__name')].map(n => n.textContent);
+  if (existing.includes(name)) return;
+  const defaultKm = '12 km';
+  const newOptHtml = `
+    <div class="city-opt" data-km="${defaultKm}" role="button" tabindex="0"
+       onclick="selectCity(this,'${name}')"
+       onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+      <i class="ph ph-map-pin city-opt__pin" aria-hidden="true"></i>
+      <span class="city-opt__name">${name}</span>
+      <i class="ph ph-x city-opt__delete" aria-label="Elimina ${name}" onclick="removeCityOpt(event, this)" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"></i>
+    </div>
+  `;
+  const scrollContainer = document.getElementById('cityOptsScroll');
+  scrollContainer.insertAdjacentHTML('beforeend', newOptHtml);
+}
+function removeCityOpt(e, deleteEl) {
+  e.stopPropagation();
+  const opt = deleteEl.closest('.city-opt');
+  const wasSelected = opt.classList.contains('selected');
+  const scrollContainer = document.getElementById('cityOptsScroll');
+  opt.remove();
+  
+  if (wasSelected) {
+    const remaining = scrollContainer.querySelectorAll('.city-opt');
+    if (remaining.length > 0) {
+      const firstOpt = remaining[0];
+      const name = firstOpt.querySelector('.city-opt__name').textContent;
+      selectCity(firstOpt, name);
+    } else {
+      document.getElementById('citySelName').innerHTML = 'Nessuna&thinsp;';
+      document.getElementById('citySelKm').textContent = '';
+    }
+  }
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('#cityDropdown') && !e.target.closest('#citySel')) {
+    const dd = document.getElementById('cityDropdown');
+    if (dd) {
+      dd.classList.remove('open');
+      document.getElementById('citySel').classList.remove('open');
+      document.getElementById('cityEditPanel').classList.remove('open');
+      document.getElementById('cityEditBtn').classList.remove('expanded');
+      dd.classList.remove('editing');
+      const icon = document.getElementById('cityEditBtn').querySelector('i');
+      if (icon) icon.className = 'ph ph-pencil-simple';
+      const title = document.getElementById('cityDropdownTitle');
+      if (title) title.textContent = 'Le tue città';
+    }
+  }
+});
+</script>
+</body>
+</html>

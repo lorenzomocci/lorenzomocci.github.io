@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Profilo — Zona</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root {
+    --neutral-900: #100d12;
+    --primary-600: #c22b00;
+    --primary-700: #942000;
+    --primary-850: #4d1100;
+    --brand-sec:   #7a3000;
+    --brand-sec-h: #c24c00;
+    --brand-sec-p: #943a00;
+    --border:      #231f26;
+    --text-primary:#f7f6f8;
+    --text-sec:    #edeced;
+    --text-tertiary:#c4c2c7;
+    --attention:   #e8b432;
+  }
+
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+  html { background: #0a080c; }
+
+  body {
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background:#0a080c; font-family:'Plus Jakarta Sans',sans-serif;
+  }
+
+  .phone {
+    width:390px; height:844px; background:var(--neutral-900);
+    border-radius:44px; overflow:hidden; display:flex; flex-direction:column;
+    padding:0 24px 0;
+    box-shadow:0 0 0 10px #1a1a1a, 0 32px 80px rgba(0,0,0,.8);
+  }
+
+  /* ── Status bar ── */
+  .status-bar{display:flex;justify-content:space-between;align-items:center;padding:21px 0 19px}
+  .status-bar__time{font-family:system-ui,-apple-system,sans-serif;font-size:17px;font-weight:590;color:#fff;letter-spacing:-.3px;width:100px}
+  .status-bar__icons{display:flex;align-items:center;gap:6px;justify-content:flex-end;width:100px}
+  .status-bar__icons i{color:#fff;line-height:1}
+  .icon-cellular{font-size:14px}.icon-wifi{font-size:14px}.icon-battery{font-size:18px}
+
+  /* ── Top nav ── */
+  .top-nav{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+  .btn-back{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s}
+  .btn-back:hover{background:rgba(255,255,255,.12)}
+  .btn-back:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px;}
+  .btn-back i{font-size:18px;color:rgba(255,255,255,.7)}
+  .step-label{font-size:12px;font-weight:500;color:rgba(255,255,255,.65)}
+  .step-label span{color:var(--attention);font-weight:600}
+
+  /* ── Progress ── */
+  .progress-segs{display:flex;gap:4px;margin-top:14px}
+  .seg{flex:1;height:3px;border-radius:99px;background:rgba(255,255,255,.10)}
+  .seg.done{background:var(--primary-600)}
+  .seg.active{background:linear-gradient(to right,var(--primary-600) 60%,rgba(255,255,255,.10) 60%)}
+
+  /* ── States ── */
+  .screen-state{display:flex;flex-direction:column;flex:1}
+  .screen-state.hidden{display:none}
+
+  /* ─────── STATE 1 ─────── */
+  .illustration{margin-top:40px;display:flex;align-items:center;justify-content:center;position:relative}
+  .icon-glow{position:absolute;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(194,43,0,.3) 0%,transparent 70%);animation:pulse 2.4s ease-in-out infinite}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.3);opacity:1}}
+  .icon-wrap{width:68px;height:68px;border-radius:50%;background:rgba(148,32,0,.18);border:1px solid rgba(148,32,0,.4);display:flex;align-items:center;justify-content:center;position:relative}
+  .icon-wrap i{font-size:30px;color:var(--primary-700)}
+
+  .question-block{margin-top:28px}
+  .question-eyebrow{font-size:11px;font-weight:600;letter-spacing:.8px;color:var(--attention);text-transform:uppercase;margin-bottom:10px}
+  .question-text{font-family:'DM Serif Display',serif;font-size:26px;line-height:34px;color:var(--text-primary)}
+  .question-sub{margin-top:8px;font-size:14px;line-height:20px;color:rgba(255,255,255,.70)}
+
+  .perm-actions{margin-top:36px;display:flex;flex-direction:column;gap:12px}
+  .btn-location{width:100%;height:52px;border-radius:40px;background:#c24c00;border:1px solid #943a00;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:500;color:var(--text-sec);display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,border-color .15s,transform .1s}
+  .btn-location i{font-size:18px}
+  .btn-location:hover{background:#d45500;border-color:#b53700}
+  .btn-location:active{background:#943a00;border-color:#6b1800;transform:scale(.98)}
+  .btn-manual{background:none;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:500;color:#c24c00;display:flex;align-items:center;justify-content:center;gap:5px;padding:8px;text-decoration:underline;text-underline-offset:2px;transition:color .15s}
+  .btn-manual:hover{color:#d45500}
+  .btn-manual:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px;}
+
+  .spinner-wrap{display:none;align-items:center;justify-content:center;gap:10px;padding:20px 0;font-size:13px;color:rgba(255,255,255,.70)}
+  .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.15);border-top-color:var(--primary-700);border-radius:50%;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ─────── STATE 2 ─────── */
+  .state2-header{margin-top:20px;margin-bottom:4px}
+  .state2-title{font-family:'DM Serif Display',serif;font-size:26px;line-height:32px;color:var(--text-primary)}
+  .state2-sub{margin-top:6px;font-size:13px;line-height:19px;color:rgba(255,255,255,.65)}
+
+  /* City header row */
+  .city-header{display:flex;align-items:center;justify-content:space-between;margin-top:20px;gap:10px}
+  .detected-badge{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border-radius:9999px;background:rgba(148,32,0,.18);border:1px solid rgba(148,32,0,.35);min-width:0;overflow:hidden}
+  .detected-badge i{font-size:14px;color:var(--primary-700);flex-shrink:0}
+  .badge-text{display:flex;flex-direction:column;min-width:0}
+  .det-street{font-size:12px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .det-city{font-size:11px;color:rgba(255,255,255,.65)}
+
+  .btn-add-city{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s,transform .1s;flex-shrink:0}
+  .btn-add-city:hover{background:rgba(255,255,255,.12)}
+  .btn-add-city:active{transform:scale(.9)}
+  .btn-add-city i{font-size:16px;color:rgba(255,255,255,.6)}
+  .btn-add-city:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px;}
+
+  /* Added chips */
+  .added-cities{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+  .added-chip{display:inline-flex;align-items:center;gap:5px;padding:6px 10px 6px 12px;border-radius:9999px;background:rgba(148,32,0,.18);border:1px solid rgba(148,32,0,.35);font-size:12px;font-weight:500;color:var(--text-primary)}
+  .added-chip__remove{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.1);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s;flex-shrink:0}
+  .added-chip__remove:hover{background:rgba(255,255,255,.2)}
+  .added-chip__remove i{font-size:11px;color:rgba(255,255,255,.6)}
+
+  /* Add-city panel */
+  .add-city-panel{overflow:hidden;max-height:0;opacity:0;transition:max-height .35s ease,opacity .25s ease;margin-top:0}
+  .add-city-panel.open{max-height:260px;opacity:1;margin-top:12px}
+  .search-wrap{position:relative}
+  .search-wrap .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:17px;color:rgba(255,255,255,.3);pointer-events:none;z-index:1;transition:color .2s}
+  .search-input{width:100%;height:48px;border-radius:9999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);padding:0 16px 0 42px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--text-primary);outline:none;caret-color:var(--primary-700);transition:border-color .2s,background .2s}
+  .search-input::placeholder{color:rgba(255,255,255,.28)}
+  .search-input:focus{border-color:rgba(148,32,0,.5);background:rgba(148,32,0,.05)}
+  .search-wrap:focus-within .search-icon{color:var(--primary-700)}
+  .nearby-chips{margin-top:10px;display:flex;flex-wrap:wrap;gap:7px}
+  .nearby-chip{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:9999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:12px;font-weight:500;color:rgba(255,255,255,.55);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+  .nearby-chip:hover{background:rgba(255,255,255,.10);color:rgba(255,255,255,.8)}
+  .nearby-chip.added{background:rgba(148,32,0,.15);border-color:rgba(148,32,0,.35);color:rgba(255,255,255,.35);pointer-events:none}
+
+  /* ── Radius section ── */
+  .radius-section{margin-top:24px}
+  .section-label{font-size:11px;font-weight:600;letter-spacing:.6px;color:rgba(255,255,255,.55);text-transform:uppercase;display:block;margin-bottom:10px}
+
+  /* Horizontal radius pills */
+  .radius-pills{display:flex;gap:8px}
+  .radius-pill{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 8px;border-radius:24px;background:#322f35;border:1px solid #413e44;cursor:pointer;transition:background .2s,border-color .2s,transform .1s;user-select:none}
+  .radius-pill:active{transform:scale(.95)}
+  .radius-pill.selected{background:rgba(194,76,0,.18);border-color:#c24c00}
+  .radius-pill__km{font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:600;line-height:1;color:rgba(255,255,255,.65);transition:color .2s;white-space:nowrap}
+  .radius-pill.selected .radius-pill__km{color:#c24c00}
+  .radius-pill__label{font-size:9px;font-weight:500;color:rgba(255,255,255,.55);transition:color .2s}
+  .radius-pill.selected .radius-pill__label{color:#c24c00}
+
+  /* Map container */
+  .map-container{
+    margin-top:10px;
+    border-radius:16px;
+    overflow:hidden;
+    border:1px solid var(--border);
+    height:0;
+    opacity:0;
+    transition:height .45s cubic-bezier(.4,0,.2,1), opacity .3s ease;
+  }
+  .map-container.visible{height:220px;opacity:1}
+  #radiusMap{width:100%;height:220px}
+
+  /* Leaflet overrides */
+  .leaflet-control-attribution{display:none}
+  .leaflet-tile-pane{filter:brightness(.85) saturate(.6)}
+
+  /* ── Scroll ── */
+  .screen-state{overflow-y:auto;scrollbar-width:none}
+  .screen-state::-webkit-scrollbar{display:none}
+
+  /* ── Footer ── */
+  .footer{position:sticky;bottom:0;background:var(--neutral-900);padding:20px 0 32px}
+  .btn-continue{width:100%;height:52px;border-radius:40px;background:#c24c00;border:1px solid #943a00;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:500;color:var(--text-sec);display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,border-color .15s,transform .1s}
+  .btn-continue i{font-size:18px}
+  .btn-continue:hover{background:#d45500;border-color:#b53700}
+  .btn-continue:active{background:#943a00;border-color:#6b1800;transform:scale(.98)}
+  .btn-continue:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px;}
+  .btn-continue:disabled{background:rgba(255,255,255,.07);border-color:transparent;color:#9c9a9f;cursor:not-allowed;transform:none}
+  @media(prefers-reduced-motion:reduce){.icon-glow{animation:none}.spin{animation:none;opacity:.6}}
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <i class="ph-fill ph-cell-signal-full icon-cellular" aria-hidden="true"></i>
+      <i class="ph-fill ph-wifi-high icon-wifi" aria-hidden="true"></i>
+      <i class="ph-fill ph-battery-full icon-battery" aria-hidden="true"></i>
+    </div>
+  </div>
+
+  <!-- Top nav -->
+  <div class="top-nav">
+    <button class="btn-back" onclick="goBack()" aria-label="Torna indietro"><i class="ph ph-arrow-left" aria-hidden="true"></i></button>
+    <span class="step-label">Step <span>3</span> of 5</span>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-segs">
+    <div class="seg done"></div>
+    <div class="seg done"></div>
+    <div class="seg active"></div>
+    <div class="seg"></div>
+    <div class="seg"></div>
+  </div>
+
+  <!-- ══ STATE 1: Permission ══ -->
+  <div class="screen-state" id="statePermission">
+    <div class="illustration">
+      <div class="icon-glow"></div>
+      <div class="icon-wrap"><i class="ph-fill ph-map-pin" aria-hidden="true"></i></div>
+    </div>
+    <div class="question-block">
+      <p class="question-eyebrow">La tua zona</p>
+      <h1 class="question-text">Dove esci<br>di solito la sera?</h1>
+      <p class="question-sub">Condividi la posizione per trovare eventi vicino a te, oppure scegli tu la zona.</p>
+    </div>
+    <div class="perm-actions">
+      <button class="btn-location" onclick="requestLocation()">
+        <i class="ph-fill ph-map-pin" aria-hidden="true"></i> Usa la mia posizione
+      </button>
+      <button class="btn-manual" onclick="goManual()">
+        <i class="ph ph-pencil-simple" aria-hidden="true"></i> Inserisci manualmente
+      </button>
+    </div>
+    <div class="spinner-wrap" id="spinner">
+      <div class="spinner"></div> Ricerca posizione…
+    </div>
+    <div class="footer">
+      <button class="btn-continue" disabled>Continua <i class="ph ph-arrow-right" aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <!-- ══ STATE 2: City + Radius ══ -->
+  <div class="screen-state hidden" id="stateRadius">
+
+    <!-- Section heading -->
+    <div class="state2-header">
+      <h2 class="state2-title">Dove esci di solito?</h2>
+      <p class="state2-sub">Aggiungi una o più città per trovare eventi vicino a te</p>
+    </div>
+
+    <!-- Detected address + add button -->
+    <div class="city-header">
+      <div class="detected-badge" id="detectedBadge">
+        <i class="ph-fill ph-check-circle" aria-hidden="true"></i>
+        <div class="badge-text">
+          <span class="det-street" id="detectedStreet">Via Dante 15</span>
+          <span class="det-city" id="detectedCity">Milano, Lombardia</span>
+        </div>
+      </div>
+      <button class="btn-add-city" onclick="toggleAddPanel()" id="btnAddCity" aria-label="Aggiungi città">
+        <i class="ph ph-plus" id="addIcon" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <!-- Added cities -->
+    <div class="added-cities" id="addedCities"></div>
+
+    <!-- Add-city panel -->
+    <div class="add-city-panel" id="addCityPanel">
+      <div class="search-wrap">
+        <input class="search-input" id="citySearch" type="text"
+          placeholder="Cerca una città..." autocomplete="off"
+          oninput="filterNearby(this.value)">
+        <i class="ph ph-magnifying-glass search-icon"></i>
+      </div>
+      <div class="nearby-chips" id="nearbyChips"></div>
+    </div>
+
+    <!-- Radius section -->
+    <div class="radius-section">
+      <span class="section-label">Raggio di ricerca</span>
+      <div class="radius-pills">
+        <div class="radius-pill" role="button" tabindex="0" onclick="selectRadius(this,5000)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+          <span class="radius-pill__km">5 km</span>
+          <span class="radius-pill__label">Quartiere</span>
+        </div>
+        <div class="radius-pill" role="button" tabindex="0" onclick="selectRadius(this,10000)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+          <span class="radius-pill__km">10 km</span>
+          <span class="radius-pill__label">Città</span>
+        </div>
+        <div class="radius-pill" role="button" tabindex="0" onclick="selectRadius(this,25000)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+          <span class="radius-pill__km">25 km</span>
+          <span class="radius-pill__label">Provincia</span>
+        </div>
+        <div class="radius-pill" role="button" tabindex="0" onclick="selectRadius(this,50000)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+          <span class="radius-pill__km">50 km+</span>
+          <span class="radius-pill__label">Regione</span>
+        </div>
+      </div>
+
+      <!-- Map (expands on first radius click) -->
+      <div class="map-container" id="mapContainer">
+        <div id="radiusMap"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <button class="btn-continue" id="btnContinue" disabled onclick="window.location.href='profile-step-2.html'">
+        Continua <i class="ph ph-arrow-right" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ── Config ── */
+const NEARBY = {
+  'Milano':  ['Monza','Bergamo','Brescia','Como','Varese','Pavia','Lodi'],
+  'Roma':    ['Tivoli','Frascati','Ostia','Velletri','Viterbo','Latina'],
+  'Firenze': ['Prato','Pistoia','Siena','Arezzo','Pisa','Livorno'],
+  'Napoli':  ['Caserta','Salerno','Pozzuoli','Ercolano','Castellammare'],
+  'Torino':  ['Moncalieri','Chieri','Cuneo','Asti','Alessandria'],
+};
+
+// Default: Via Dante, Milano
+let userCoords = [45.4664, 9.1840];
+let detectedCityName = 'Milano';
+
+let map      = null;
+let marker   = null;
+let circle   = null;
+let selectedRadius = null;
+let addedCities    = [];
+let addPanelOpen   = false;
+
+/* ─── State 1 ─── */
+function requestLocation() {
+  const spinner = document.getElementById('spinner');
+  const btn = document.querySelector('.btn-location');
+  btn.disabled = true;
+  spinner.style.display = 'flex';
+
+  const fallback = setTimeout(() => resolveLocation(45.4664, 9.1840), 2200);
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      pos => { clearTimeout(fallback); resolveLocation(pos.coords.latitude, pos.coords.longitude); },
+      ()  => { clearTimeout(fallback); resolveLocation(45.4664, 9.1840); },
+      { timeout: 2000 }
+    );
+  }
+}
+
+function goManual() {
+  showRadius();
+  document.getElementById('detectedBadge').style.display = 'none';
+  setTimeout(() => { toggleAddPanel(); document.getElementById('citySearch').focus(); }, 60);
+}
+
+async function resolveLocation(lat, lon) {
+  userCoords = [lat, lon];
+  try {
+    const r = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=it`,
+      { headers: { 'Accept-Language': 'it' } }
+    );
+    const d = await r.json();
+    const a = d.address || {};
+    const street = a.road
+      ? (a.house_number ? `${a.road} ${a.house_number}` : a.road)
+      : null;
+    const city   = a.city || a.town || a.village || 'Milano';
+    const region = a.state || 'Lombardia';
+    detectedCityName = city;
+    document.getElementById('detectedStreet').textContent = street || city;
+    document.getElementById('detectedCity').textContent   = street ? `${city}, ${region}` : region;
+  } catch (_) {
+    detectedCityName = 'Milano';
+  }
+  fillNearby(detectedCityName);
+  showRadius();
+}
+
+function showRadius() {
+  document.getElementById('spinner').style.display = 'none';
+  document.getElementById('statePermission').classList.add('hidden');
+  document.getElementById('stateRadius').classList.remove('hidden');
+}
+
+/* ─── Map ─── */
+function initMap() {
+  if (map) { map.invalidateSize(); return; }
+
+  map = L.map('radiusMap', {
+    zoomControl: false,
+    attributionControl: false,
+    dragging: true,
+    scrollWheelZoom: false,
+    doubleClickZoom: false,
+  }).setView(userCoords, 14);
+
+  // Dark CartoDB tiles
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    maxZoom: 19,
+  }).addTo(map);
+
+  // User dot marker
+  marker = L.circleMarker(userCoords, {
+    radius: 7,
+    fillColor: '#942000',
+    color: '#fff',
+    weight: 2.5,
+    fillOpacity: 1,
+    interactive: false,
+  }).addTo(map);
+}
+
+function updateCircle(meters) {
+  if (!map) return;
+  map.setView(userCoords);
+
+  if (circle) map.removeLayer(circle);
+  circle = L.circle(userCoords, {
+    radius: meters,
+    color: '#942000',
+    fillColor: '#c22b00',
+    fillOpacity: 0.10,
+    weight: 1.5,
+    dashArray: '5 5',
+    interactive: false,
+  }).addTo(map);
+
+  map.flyToBounds(circle.getBounds(), { padding: [24, 24], duration: 0.6, maxZoom: 15 });
+}
+
+/* ─── Radius selection ─── */
+function selectRadius(pill, meters) {
+  document.querySelectorAll('.radius-pill').forEach(p => p.classList.remove('selected'));
+  pill.classList.add('selected');
+  selectedRadius = meters;
+
+  const container = document.getElementById('mapContainer');
+  const isFirstOpen = !container.classList.contains('visible');
+  container.classList.add('visible');
+
+  if (isFirstOpen) {
+    // Wait for CSS transition, then init + draw
+    container.addEventListener('transitionend', function onEnd() {
+      container.removeEventListener('transitionend', onEnd);
+      initMap();
+      updateCircle(meters);
+    });
+  } else {
+    updateCircle(meters);
+  }
+
+  updateContinue();
+}
+
+/* ─── Add-city panel ─── */
+function toggleAddPanel() {
+  const panel  = document.getElementById('addCityPanel');
+  const icon   = document.getElementById('addIcon');
+  addPanelOpen = !addPanelOpen;
+  panel.classList.toggle('open', addPanelOpen);
+  icon.className = addPanelOpen ? 'ph ph-x' : 'ph ph-plus';
+  if (addPanelOpen) setTimeout(() => document.getElementById('citySearch').focus(), 320);
+}
+
+function fillNearby(city) {
+  renderNearby(NEARBY[city] || []);
+}
+
+function renderNearby(list) {
+  document.getElementById('nearbyChips').innerHTML = list.map(c => {
+    const isAdded = addedCities.includes(c);
+    return `<div class="nearby-chip${isAdded?' added':''}" onclick="addCity('${c}')">
+      <i class="ph ph-map-pin"></i>${c}
+    </div>`;
+  }).join('');
+}
+
+function filterNearby(val) {
+  const all = NEARBY[detectedCityName] || [];
+  renderNearby(val.trim() ? all.filter(c => c.toLowerCase().startsWith(val.toLowerCase())) : all);
+}
+
+function addCity(name) {
+  if (addedCities.includes(name)) return;
+  addedCities.push(name);
+  renderAddedCities();
+  filterNearby(document.getElementById('citySearch').value);
+  document.getElementById('citySearch').value = '';
+  updateContinue();
+}
+
+function removeCity(name) {
+  addedCities = addedCities.filter(c => c !== name);
+  renderAddedCities();
+  filterNearby(document.getElementById('citySearch').value);
+  updateContinue();
+}
+
+function renderAddedCities() {
+  document.getElementById('addedCities').innerHTML = addedCities.map(c =>
+    `<div class="added-chip">
+      <i class="ph ph-map-pin" style="font-size:12px;color:var(--primary-700)"></i>
+      ${c}
+      <button class="added-chip__remove" onclick="removeCity('${c}')">
+        <i class="ph ph-x"></i>
+      </button>
+    </div>`
+  ).join('');
+}
+
+function updateContinue() {
+  const hasBadge = document.getElementById('detectedBadge').style.display !== 'none';
+  const hasCity  = hasBadge || addedCities.length > 0;
+  document.getElementById('btnContinue').disabled = !(hasCity && selectedRadius);
+}
+
+/* ─── Back ─── */
+function goBack() {
+  if (!document.getElementById('stateRadius').classList.contains('hidden')) {
+    document.getElementById('stateRadius').classList.add('hidden');
+    document.getElementById('statePermission').classList.remove('hidden');
+    document.querySelector('.btn-location').disabled = false;
+    document.getElementById('spinner').style.display = 'none';
+    document.getElementById('mapContainer').classList.remove('visible');
+    selectedRadius = null; addedCities = []; addPanelOpen = false;
+    renderAddedCities();
+    document.getElementById('addCityPanel').classList.remove('open');
+    document.getElementById('addIcon').className = 'ph ph-plus';
+  } else {
+    history.back();
+  }
+}
+</script>
+</body>
+</html>

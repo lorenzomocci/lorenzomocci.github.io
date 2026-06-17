@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crea serata — 7</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+:root{--neutral-900:#100d12;--primary-600:#c22b00;--primary-700:#942000;--brand-sec:#7a3000;--brand-sec-h:#c24c00;--brand-sec-p:#943a00;--text-primary:#f7f6f8;--text-sec:#edeced;--attention:#e8b432;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{background:#0a080c;}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0a080c;font-family:'Plus Jakarta Sans',sans-serif;}
+.phone{width:390px;height:844px;background:var(--neutral-900);border-radius:44px;overflow:hidden;display:flex;flex-direction:column;padding:0 24px 0;box-shadow:0 0 0 10px #1a1a1a,0 32px 80px rgba(0,0,0,.8);}
+.status-bar{display:flex;justify-content:space-between;align-items:center;padding:21px 0 19px}
+.status-bar__time{font-family:system-ui,-apple-system,sans-serif;font-size:17px;font-weight:590;color:#fff;letter-spacing:-.3px;width:100px}
+.status-bar__icons{display:flex;align-items:center;gap:6px;justify-content:flex-end;width:100px}
+.status-bar__icons i{color:#fff;line-height:1}
+.icon-cellular,.icon-wifi{font-size:14px}.icon-battery{font-size:18px}
+.top-nav{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.btn-back{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s}
+.btn-back:hover{background:rgba(255,255,255,.12)}
+.btn-back:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px;}
+.btn-back i{font-size:18px;color:rgba(255,255,255,.7)}
+.step-label{font-size:12px;font-weight:500;color:rgba(255,255,255,.65)}
+.step-label span{color:var(--attention);font-weight:600}
+.progress-segs{display:flex;gap:4px;margin-top:14px}
+.seg{flex:1;height:3px;border-radius:99px;background:rgba(255,255,255,.10)}
+.seg.done{background:var(--primary-600)}
+.seg.active{background:linear-gradient(to right,var(--primary-600) 60%,rgba(255,255,255,.10) 60%)}
+.scroll-area{flex:1;overflow-y:auto;scrollbar-width:none;padding-bottom:8px}
+.scroll-area::-webkit-scrollbar{display:none}
+.page-header{margin-top:28px}
+.page-eyebrow{font-size:11px;font-weight:600;letter-spacing:.8px;color:var(--attention);text-transform:uppercase;margin-bottom:10px}
+.page-title{font-family:'DM Serif Display',serif;font-size:26px;line-height:33px;color:var(--text-primary)}
+.page-sub{margin-top:8px;font-size:13px;line-height:19px;color:rgba(255,255,255,.65)}
+.field-group{margin-top:22px}
+.field-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px}
+.field-label{font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:rgba(255,255,255,.70)}
+.chips-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:24px;background:#322f35;border:1px solid #413e44;cursor:pointer;user-select:none;transition:background .18s,border-color .18s,transform .1s}
+.chip:active{transform:scale(.95);background:rgba(255,255,255,.08)}
+.chip i{font-size:15px;color:rgba(255,255,255,.65);transition:color .18s;flex-shrink:0}
+.chip__label{font-size:13px;font-weight:500;color:rgba(255,255,255,.70);transition:color .18s;white-space:nowrap}
+.chip.selected{background:rgba(194,76,0,.18);border-color:#c24c00}
+.chip.selected i{color:#e05500}
+.chip.selected .chip__label{color:#fff}
+
+/* Custom picker panel */
+.expand-box{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1)}
+.expand-box.open{max-height:200px}
+.picker-panel{padding-top:14px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tap-row{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);cursor:pointer;transition:background .15s,border-color .15s;position:relative}
+.tap-row:active{background:rgba(255,255,255,.08)}
+.tap-row__icon{font-size:17px;color:var(--primary-700);flex-shrink:0}
+.tap-row__body{flex:1;min-width:0}
+.tap-row__label{font-size:10px;font-weight:500;color:rgba(255,255,255,.60);margin-bottom:2px}
+.tap-row__value{font-size:13px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tap-row__value.empty{color:rgba(255,255,255,.55);font-weight:400}
+
+/* Policy Card */
+.policy-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:16px;margin-top:20px;display:flex;flex-direction:column;gap:12px}
+.policy-header{display:flex;align-items:center;justify-content:space-between}
+.policy-title{font-size:14px;font-weight:600;color:var(--text-primary)}
+.policy-desc{font-size:12px;line-height:17px;color:rgba(255,255,255,.65)}
+
+/* Toggle Switch Style */
+.switch{position:relative;display:inline-block;width:40px;height:24px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;inset:0;background-color:rgba(255,255,255,.1);transition:.3s;border-radius:24px}
+.slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background-color:rgba(255,255,255,.7);transition:.3s;border-radius:50%}
+input:checked + .slider{background-color:#c24c00}
+input:checked + .slider:before{transform:translateX(16px);background-color:#fff}
+
+.footer{position:sticky;bottom:0;background:var(--neutral-900);padding:20px 0 32px}
+.btn-continue{width:100%;height:52px;border-radius:40px;background:#c24c00;border:1px solid #943a00;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:600;color:var(--text-sec);display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,border-color .15s,transform .1s}
+.btn-continue i{font-size:18px}
+.btn-continue:hover{background:#d45500;border-color:#b53700}
+.btn-continue:active{background:#943a00;border-color:#6b1800;transform:scale(.98)}
+.btn-continue:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px;}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <i class="ph-fill ph-cell-signal-full icon-cellular"></i>
+      <i class="ph-fill ph-wifi-high icon-wifi"></i>
+      <i class="ph-fill ph-battery-full icon-battery"></i>
+    </div>
+  </div>
+  <div class="top-nav">
+    <button class="btn-back" aria-label="Torna indietro" onclick="history.back()"><i class="ph ph-arrow-left" aria-hidden="true"></i></button>
+    <span class="step-label">Step <span>7</span> di 8</span>
+  </div>
+  <div class="progress-segs">
+    <div class="seg done"></div><div class="seg done"></div><div class="seg done"></div>
+    <div class="seg done"></div><div class="seg done"></div><div class="seg done"></div>
+    <div class="seg active"></div>
+    <div class="seg"></div>
+  </div>
+  <div class="scroll-area">
+    <div class="page-header">
+      <p class="page-eyebrow">Scadenze</p>
+      <h1 class="page-title">Termini e conferme</h1>
+      <p class="page-sub">Specifica entro quando gli invitati devono rispondere e le regole di disdetta.</p>
+    </div>
+
+    <!-- DEADLINE CHOICE -->
+    <div class="field-group">
+      <label class="field-label">Scadenza conferma</label>
+      <div class="chips-grid" id="deadlineGrid">
+        <div class="chip selected" role="button" tabindex="0" onclick="selectDeadline(this, 'none')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph ph-bell-slash"></i><span class="chip__label">Nessuna</span></div>
+        <div class="chip" role="button" tabindex="0" onclick="selectDeadline(this, '24h')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph ph-hourglass-high"></i><span class="chip__label">24h prima</span></div>
+        <div class="chip" role="button" tabindex="0" onclick="selectDeadline(this, '48h')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph ph-hourglass-medium"></i><span class="chip__label">48h prima</span></div>
+        <div class="chip" role="button" tabindex="0" onclick="selectDeadline(this, 'manual')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph ph-calendar"></i><span class="chip__label">Scegli data</span></div>
+      </div>
+    </div>
+
+    <!-- MANUAL DATE/TIME PICKER -->
+    <div class="expand-box" id="manualBox">
+      <div class="picker-panel">
+        <div class="two-col">
+          <div class="tap-row" role="button" tabindex="0" onclick="document.getElementById('deadlineDate').showPicker()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+            <i class="ph ph-calendar tap-row__icon"></i>
+            <div class="tap-row__body">
+              <div class="tap-row__label">Data scadenza</div>
+              <div class="tap-row__value empty" id="dateVal">Seleziona</div>
+            </div>
+            <input type="date" id="deadlineDate" style="position:absolute;opacity:0;width:0;height:0" onchange="setDate(this.value)">
+          </div>
+          <div class="tap-row" role="button" tabindex="0" onclick="document.getElementById('deadlineTime').showPicker()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+            <i class="ph ph-clock tap-row__icon"></i>
+            <div class="tap-row__body">
+              <div class="tap-row__label">Orario scadenza</div>
+              <div class="tap-row__value empty" id="timeVal">Seleziona</div>
+            </div>
+            <input type="time" id="deadlineTime" style="position:absolute;opacity:0;width:0;height:0" onchange="setTime(this.value)">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DYNAMIC POLICY CARD -->
+    <div class="policy-card">
+      <div class="policy-header">
+        <span class="policy-title" id="policyTitle">Policy Disdetta</span>
+        <label class="switch">
+          <input type="checkbox" id="policyToggle" checked onchange="togglePolicyText()">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <p class="policy-desc" id="policyDesc">Gli invitati possono disdire in qualsiasi momento per liberare posti per gli altri.</p>
+    </div>
+
+    <div class="footer">
+      <button class="btn-continue" id="btnContinue" onclick="goNext()">
+        Continua <i class="ph ph-arrow-right" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</div>
+<script>
+let deadlineType = 'none';
+let dateOk = false;
+let timeOk = false;
+let isPaid = false;
+
+function selectDeadline(chip, type) {
+  document.querySelectorAll('#deadlineGrid .chip').forEach(c => c.classList.remove('selected'));
+  chip.classList.add('selected');
+  deadlineType = type;
+  
+  const box = document.getElementById('manualBox');
+  box.classList.toggle('open', type === 'manual');
+  
+  checkCta();
+}
+
+function setDate(v) {
+  if (!v) return;
+  const d = new Date(v + 'T00:00:00');
+  const opts = { weekday:'short', day:'numeric', month:'short' };
+  document.getElementById('dateVal').textContent = d.toLocaleDateString('it-IT', opts);
+  document.getElementById('dateVal').classList.remove('empty');
+  dateOk = true;
+  checkCta();
+}
+
+function setTime(v) {
+  if (!v) return;
+  document.getElementById('timeVal').textContent = v;
+  document.getElementById('timeVal').classList.remove('empty');
+  timeOk = true;
+  checkCta();
+}
+
+function checkCta() {
+  const btn = document.getElementById('btnContinue');
+  if (deadlineType === 'manual') {
+    btn.disabled = !(dateOk && timeOk);
+  } else {
+    btn.disabled = false;
+  }
+}
+
+function togglePolicyText() {
+  const toggle = document.getElementById('policyToggle').checked;
+  const desc = document.getElementById('policyDesc');
+  if (isPaid) {
+    desc.textContent = toggle 
+      ? "La quota di partecipazione verrà rimborsata automaticamente agli invitati in caso di disdetta prima della scadenza." 
+      : "Nessun rimborso previsto. Una volta pagato, la quota rimarrà bloccata anche in caso di disdetta.";
+  } else {
+    desc.textContent = toggle
+      ? "Gli invitati possono disdire in qualsiasi momento per liberare posti per gli altri."
+      : "Gli invitati sono incoraggiati a mantenere l'impegno preso.";
+  }
+}
+
+function goNext() {
+  localStorage.setItem('create_event_deadline_type', deadlineType);
+  if (deadlineType === 'manual') {
+    localStorage.setItem('create_event_deadline_date', document.getElementById('deadlineDate').value);
+    localStorage.setItem('create_event_deadline_time', document.getElementById('deadlineTime').value);
+  } else {
+    localStorage.removeItem('create_event_deadline_date');
+    localStorage.removeItem('create_event_deadline_time');
+  }
+  localStorage.setItem('create_event_refund_enabled', document.getElementById('policyToggle').checked ? 'true' : 'false');
+  window.location.href = 'create-event-step-8.html';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const priceMode = localStorage.getItem('create_event_price_mode');
+  isPaid = priceMode === 'paid';
+  
+  const title = document.getElementById('policyTitle');
+  const desc = document.getElementById('policyDesc');
+  
+  if (isPaid) {
+    title.textContent = "Politica di Rimborso";
+    desc.textContent = "La quota di partecipazione verrà rimborsata automaticamente agli invitati in caso di disdetta prima della scadenza.";
+  } else {
+    title.textContent = "Disdetta Libera";
+    desc.textContent = "Gli invitati possono disdire in qualsiasi momento per liberare posti per gli altri.";
+  }
+
+  // Restore state
+  const savedType = localStorage.getItem('create_event_deadline_type');
+  const savedDate = localStorage.getItem('create_event_deadline_date');
+  const savedTime = localStorage.getItem('create_event_deadline_time');
+  const savedRefund = localStorage.getItem('create_event_refund_enabled');
+
+  if (savedType) {
+    const chips = document.querySelectorAll('#deadlineGrid .chip');
+    let target = chips[0];
+    if (savedType === '24h') target = chips[1];
+    else if (savedType === '48h') target = chips[2];
+    else if (savedType === 'manual') target = chips[3];
+    
+    selectDeadline(target, savedType);
+  }
+
+  if (savedDate && savedType === 'manual') {
+    document.getElementById('deadlineDate').value = savedDate;
+    setDate(savedDate);
+  }
+
+  if (savedTime && savedType === 'manual') {
+    document.getElementById('deadlineTime').value = savedTime;
+    setTime(savedTime);
+  }
+
+  if (savedRefund === 'false') {
+    document.getElementById('policyToggle').checked = false;
+    togglePolicyText();
+  }
+
+  checkCta();
+});
+</script>
+</body>
+</html>

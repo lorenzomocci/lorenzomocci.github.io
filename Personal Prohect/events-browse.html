@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="immagini/icon-180.png">
+<link rel="icon" type="image/png" href="immagini/icon-180.png">
+<meta name="apple-mobile-web-app-title" content="Nite">
+<title>Esplora eventi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+  :root {
+    --neutral-900:   #100d12;
+    --primary-600:   #c22b00;
+    --primary-700:   #942000;
+    --primary-850:   #4d1100;
+    --brand-primary: #7b1b00;
+    --brand-sec:     #7a3000;
+    --brand-sec-h:   #c24c00;
+    --brand-sec-p:   #943a00;
+    --border:        #231f26;
+    --text-primary:  #f7f6f8;
+    --text-sec:      #edeced;
+    --text-tertiary: #c4c2c7;
+    --attention:     #e8b432;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { background: #0a080c; }
+
+  body {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    background: #0a080c;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /* ── Phone shell ── */
+  .phone {
+    width: 390px; height: 844px;
+    background: #0a080c;
+    border-radius: 44px; overflow: hidden;
+    display: flex; flex-direction: column;
+    position: relative;
+    box-shadow: 0 0 0 10px #1a1a1a, 0 32px 80px rgba(0,0,0,.8);
+  }
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 420px;
+    background: linear-gradient(157.98deg, rgba(123,27,0,.22) 27%, rgba(25,22,28,.08) 67%);
+    pointer-events: none; z-index: 0;
+  }
+
+  .page-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    width: 100%;
+    will-change: transform;
+    position: relative; z-index: 1;
+  }
+
+  /* ── Status bar ── */
+  .status-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 21px 24px 19px; flex-shrink: 0;
+  }
+  .status-bar__time {
+    font-family: system-ui,-apple-system,sans-serif;
+    font-size: 17px; font-weight: 590; color: #fff; letter-spacing: -.3px; width: 100px;
+  }
+  .status-bar__icons {
+    display: flex; align-items: center; gap: 6px; justify-content: flex-end; width: 100px;
+  }
+  .status-bar__icons i { color: #fff; line-height: 1; }
+  .icon-cellular { font-size: 14px; } .icon-wifi { font-size: 14px; } .icon-battery { font-size: 18px; }
+
+  /* ── Top bar ── */
+  .top-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px 8px; flex-shrink: 0;
+    height: 52px;
+  }
+  .btn-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.10);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background .15s, border-color .15s, transform .1s; flex-shrink: 0;
+  }
+  .btn-icon:hover  { background: rgba(255,255,255,.12); }
+  .btn-icon:active { transform: scale(.92); }
+  .btn-icon i { font-size: 18px; color: rgba(255,255,255,.70); }
+  .top-bar__title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 21px; color: #fff; letter-spacing: -.2px;
+  }
+
+  /* ── Category chip row ── */
+  .cat-row {
+    display: flex; gap: 6px;
+    padding: 4px 24px 16px;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; flex-shrink: 0;
+  }
+  .cat-row::-webkit-scrollbar { display: none; }
+
+  .cat-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 24px;
+    font-size: 13px; font-weight: 600;
+    color: rgba(255,255,255,.70);
+    background: #322f35;
+    border: 1px solid #413e44;
+    cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    transition: background .18s, border-color .18s, color .18s, transform .1s;
+    user-select: none;
+  }
+  .cat-chip i { font-size: 15px; transition: color .18s; }
+  .cat-chip:active { transform: scale(.95); }
+
+  .cat-chip.active {
+    background: rgba(194,76,0,.18);
+    border-color: #c24c00;
+    color: #fff;
+  }
+  .cat-chip.active i { color: #e05500; }
+
+  .cat-chip:not(.active):hover {
+    background: rgba(255,255,255,.09);
+    color: rgba(255,255,255,.65);
+  }
+
+  /* ── Divider ── */
+  .divider {
+    height: 1px; background: rgba(255,255,255,.06);
+    margin: 0 24px; flex-shrink: 0;
+  }
+
+  /* ── Attribute filter row ── */
+  .attr-row {
+    display: flex; gap: 8px;
+    padding: 12px 24px;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; flex-shrink: 0;
+  }
+  .attr-row::-webkit-scrollbar { display: none; }
+
+  .attr-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 6px 11px; border-radius: 24px;
+    font-size: 11px; font-weight: 600;
+    color: rgba(255,255,255,.65);
+    background: #322f35;
+    border: 1px solid #413e44;
+    cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    transition: background .18s, border-color .18s, color .18s;
+    user-select: none;
+  }
+  .attr-chip i { font-size: 11px; }
+  .attr-chip i.caret { font-size: 10px; color: rgba(255,255,255,.55); transition: color .18s; }
+
+  .attr-chip.active {
+    background: rgba(194,76,0,.18);
+    border-color: #c24c00;
+    color: #fff;
+  }
+  .attr-chip.active i:not(.caret) { color: #e05500; }
+  .attr-chip.open i:not(.caret) { color: #e05500; }
+  .attr-chip.active i.caret { color: rgba(255,255,255,.70); }
+  .attr-chip:not(.active):hover {
+    background: rgba(255,255,255,.08);
+    color: rgba(255,255,255,.60);
+  }
+
+  /* ── Scroll area ── */
+  .scroll-area {
+    flex: 1; overflow-y: auto; overflow-x: hidden; scrollbar-width: none;
+    padding: 18px 24px 12px;
+    touch-action: pan-y;
+    /* le card sfumano a trasparente in alto: niente velo colorato sopra lo sfondo */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 24px);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 24px);
+  }
+  .scroll-area::-webkit-scrollbar { display: none; }
+
+  /* ── Results header ── */
+  .results-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 0 14px;
+  }
+  .results-row__count {
+    font-size: 12px; font-weight: 500; color: rgba(255,255,255,.60);
+  }
+  .results-row__sort {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 600; color: var(--primary-700);
+    cursor: pointer; transition: color .15s;
+  }
+  .results-row__sort:hover { color: var(--brand-sec-h); }
+  .results-row__sort i { font-size: 13px; }
+
+  /* ── Event list card ── */
+  .evt-item {
+    width: 100%; height: 218px;
+    border-radius: 20px; border: 1px solid var(--border);
+    position: relative; overflow: hidden; cursor: pointer;
+    margin-bottom: 12px; flex-shrink: 0;
+    transition: transform .15s;
+  }
+  .evt-item:last-child { margin-bottom: 0; }
+  .evt-item:active { transform: scale(.99); }
+
+  /* Gradient backgrounds per card */
+  .evt-item__bg { position: absolute; inset: 0; }
+  .evt-item.grad-dance   .evt-item__bg { background: linear-gradient(-52.83deg, #000 28%, var(--primary-850) 62%, var(--brand-primary) 100%); }
+  .evt-item.grad-apero   .evt-item__bg { background: linear-gradient(-52.83deg, #000 32%, var(--primary-850) 66%, var(--brand-sec) 100%); }
+  .evt-item.grad-quiet   .evt-item__bg { background: linear-gradient(-52.83deg, #000 42%, #1c0900 78%, #2a0d00 100%); }
+  .evt-item.grad-party   .evt-item__bg { background: linear-gradient(-52.83deg, #000 30%, #3a1100 65%, var(--primary-700) 100%); }
+  .evt-item.grad-drinks  .evt-item__bg { background: linear-gradient(-52.83deg, #000 35%, #2a0d00 70%, var(--primary-850) 100%); }
+
+  .evt-item__photo {
+    position: absolute; inset: 0;
+    object-fit: cover; width: 100%; height: 100%;
+    opacity: .36; pointer-events: none; z-index: 1;
+  }
+
+  /* Like button */
+  .evt-item__like {
+    position: absolute; top: 12px; right: 12px; z-index: 3;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: rgba(0,0,0,.42); border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background .15s, border-color .15s, transform .1s;
+  }
+  .evt-item__like:hover  { background: rgba(0,0,0,.62); }
+  .evt-item__like:active { transform: scale(.88); }
+  .evt-item__like i { font-size: 14px; color: rgba(255,255,255,.65); transition: color .15s; }
+  .evt-item__like.liked i { color: var(--primary-700); }
+
+  /* Bottom content */
+  .evt-item__body {
+    position: absolute; bottom: 0; left: 0; right: 0; z-index: 2;
+    padding: 52px 14px 14px;
+    background: linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(0,0,0,.65) 50%, transparent 100%);
+    display: flex; flex-direction: column; gap: 6px;
+  }
+
+  .evt-item__name {
+    font-family: 'DM Serif Display', Georgia, serif !important;
+    font-size: 19px; line-height: 24px; color: var(--text-primary);
+  }
+
+  /* Date pill row */
+  .ec-pill-row { display: flex; align-items: center; gap: 7px; }
+  .ec-date-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    height: 24px; padding: 0 10px; border-radius: 9999px;
+    background: rgba(148,32,0,0.52);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(16,13,18,0.55);
+    font-size: 10.5px; font-weight: 500; color: #edeced;
+    flex-shrink: 0;
+  }
+  .ec-date-pill i { font-size: 10px; }
+  .ec-countdown {
+    display: inline-flex; align-items: center;
+    height: 24px; padding: 0 9px; border-radius: 9999px;
+    background: rgba(255,255,255,0.09);
+    border: 1px solid rgba(255,255,255,0.13);
+    font-size: 10px; font-weight: 600; color: rgba(255,255,255,.60);
+    flex-shrink: 0;
+  }
+
+  /* Colored body tags */
+  .ec-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+  .ec-tag {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 3px 8px; border-radius: 9999px;
+    font-size: 10px; font-weight: 600; flex-shrink: 0;
+  }
+  .ec-tag i { font-size: 11px; }
+  .ec-tag--orange    { background: rgba(194,76,0,0.22); border: 1px solid rgba(194,76,0,0.38); color: #ff8040; }
+  .ec-tag--blue      { background: rgba(80,140,255,0.16); border: 1px solid rgba(80,140,255,0.30); color: #7eb3ff; }
+  .ec-tag--green     { background: rgba(52,211,153,0.16); border: 1px solid rgba(52,211,153,0.28); color: #34d399; }
+  .ec-tag--night     { background: rgba(130,100,220,0.20); border: 1px solid rgba(130,100,220,0.30); color: #a990f5; }
+  .ec-tag--amber     { background: rgba(232,180,50,0.18); border: 1px solid rgba(232,180,50,0.30); color: #e8b432; }
+  /* Semantic event-type tags */
+  .ec-tag--party     { background: rgba(245,160,35,0.20); border: 1px solid rgba(245,160,35,0.34); color: #f5b040; }
+  .ec-tag--aperitivo { background: rgba(215,185,0,0.20); border: 1px solid rgba(215,185,0,0.32); color: #e0c828; }
+  .ec-tag--disco     { background: rgba(155,75,255,0.18); border: 1px solid rgba(155,75,255,0.30); color: #b878ff; }
+  .ec-tag--live      { background: rgba(30,200,172,0.16); border: 1px solid rgba(30,200,172,0.28); color: #28c8ac; }
+
+  /* Footer: loc + avatars */
+  .evt-item__footer {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px; margin-top: 1px;
+  }
+  .evt-item__loc {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 10.5px; font-weight: 500; color: rgba(255,255,255,.55);
+    min-width: 0;
+  }
+  .evt-item__loc i { font-size: 10px; flex-shrink: 0; }
+  .evt-item__loc span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* Avatars */
+  .e-avatars { display: flex; align-items: center; flex-shrink: 0; }
+  .e-av {
+    width: 24px; height: 24px; border-radius: 50%; overflow: hidden;
+    border: 1.5px solid rgba(16,13,18,.8);
+    margin-right: -7px; flex-shrink: 0;
+  }
+  .e-av img { width: 100%; height: 100%; object-fit: cover; }
+  .e-av:nth-child(1) { z-index: 4; }
+  .e-av:nth-child(2) { z-index: 3; }
+  .e-av:nth-child(3) { z-index: 2; }
+  .e-av-more {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: rgba(255,255,255,.14); border: 1.5px solid rgba(16,13,18,.8);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 600; color: rgba(255,255,255,.75);
+    margin-right: 0; z-index: 1; flex-shrink: 0;
+  }
+
+  /* ── Bottom nav ── */
+  .nav-wrap {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 24px 32px; flex-shrink: 0;
+  }
+  .bottom-nav {
+    position: relative; display: flex; align-items: stretch;
+    gap: 3px; padding: 5px; height: 58px; border-radius: 9999px;
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.10);
+    backdrop-filter: blur(16px); flex: 1;
+  }
+  .nav-slider {
+    position: absolute; top: 5px; bottom: 5px;
+    border-radius: 9999px; background: rgba(148,32,0,.32);
+    pointer-events: none; z-index: 0;
+  }
+  .nav-item {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 2px; padding: 0 12px; border-radius: 9999px;
+    cursor: pointer; flex: 1; -webkit-tap-highlight-color: transparent;
+  }
+  .nav-item i    { font-size: 20px; color: rgba(255,255,255,.75); transition: color .3s; }
+  .nav-item span { font-size: 10px; font-weight: 500; color: rgba(255,255,255,.75); transition: color .3s; }
+  .nav-item.active i    { color: #e05500; }
+  .nav-item.active span { font-weight: 600; color: #e05500; }
+  .nav-add {
+    width: 58px; height: 58px; border-radius: 50%;
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.10);
+    backdrop-filter: blur(16px); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0; transition: background .15s, border-color .15s, transform .1s;
+  }
+  .nav-add:hover  { background: rgba(255,255,255,.13); }
+  .nav-add:active { transform: scale(.9); }
+  .nav-add i { font-size: 22px; color: rgba(255,255,255,.7); }
+
+  /* ── Inline filter dropdown ── */
+  .filter-dropdown {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    flex-shrink: 0;
+    transition: max-height .42s cubic-bezier(.4,0,.2,1), opacity .28s ease;
+  }
+  .filter-dropdown.open { max-height: 480px; opacity: 1; }
+
+  .filter-dropdown-inner {
+    padding: 12px 24px 16px;
+    display: flex; flex-direction: column; gap: 8px;
+    border-bottom: 1px solid rgba(255,255,255,.05);
+  }
+  .filter-dd-title {
+    font-size: 11px; font-weight: 600; letter-spacing: .6px;
+    color: rgba(255,255,255,.35); text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  /* attr chip "open" state (dropdown visible) */
+  .attr-chip.open {
+    background: rgba(194,76,0,.10);
+    border-color: rgba(194,76,0,.50);
+    color: rgba(255,255,255,.85);
+  }
+  .attr-chip.open i.caret { transform: rotate(180deg); }
+  .attr-chip i.caret { transition: transform .25s ease, color .18s; }
+
+  /* ── Filter panels ── */
+  .filter-panel { display: none; flex-direction: column; gap: 6px; }
+  .filter-panel.active { display: flex; }
+
+  /* Single-select row (prezzo, distanza, orario) */
+  .fopt-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 11px 14px; border-radius: 12px;
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
+    cursor: pointer; user-select: none;
+    transition: background .15s, border-color .15s;
+  }
+  .fopt-row:active { background: rgba(255,255,255,.08); }
+  .fopt-row.selected { background: rgba(194,76,0,.14); border-color: #c24c00; }
+  .fopt-row__label { font-size: 13px; font-weight: 500; color: rgba(255,255,255,.70); transition: color .15s; }
+  .fopt-row.selected .fopt-row__label { color: #fff; font-weight: 600; }
+  .fopt-row__right { display: flex; align-items: center; gap: 8px; }
+  .fopt-row__hint { font-size: 11px; color: rgba(255,255,255,.30); }
+  .fopt-row.selected .fopt-row__hint { color: rgba(255,255,255,.55); }
+  .fopt-row__dot {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,.18);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: border-color .15s;
+  }
+  .fopt-row.selected .fopt-row__dot { border-color: #c24c00; }
+  .fopt-row.selected .fopt-row__dot::after {
+    content: ''; width: 9px; height: 9px; border-radius: 50%; background: #c24c00;
+  }
+
+  /* Crowd cards (affollamento) */
+  .crowd-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+  .crowd-card {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px; padding: 14px 8px; border-radius: 12px;
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
+    cursor: pointer; user-select: none; text-align: center;
+    transition: background .15s, border-color .15s, transform .1s;
+  }
+  .crowd-card:active { transform: scale(.96); }
+  .crowd-card i { font-size: 22px; color: rgba(255,255,255,.40); transition: color .15s; }
+  .crowd-card__label { font-size: 11px; font-weight: 600; color: rgba(255,255,255,.50); line-height: 1.3; transition: color .15s; }
+  .crowd-card.selected { background: rgba(194,76,0,.14); border-color: #c24c00; }
+  .crowd-card.selected i { color: #e05500; }
+  .crowd-card.selected .crowd-card__label { color: #fff; }
+
+  /* Multi-select chips (chi c'è, trasporto) */
+  .fopt-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .fopt {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 12px; border-radius: 99px;
+    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.09);
+    font-size: 12px; font-weight: 500; color: rgba(255,255,255,.65);
+    cursor: pointer; user-select: none; white-space: nowrap;
+    transition: background .15s, border-color .15s, color .15s, transform .1s;
+  }
+  .fopt i { font-size: 13px; color: rgba(255,255,255,.40); transition: color .15s; }
+  .fopt:active { transform: scale(.95); }
+  .fopt.selected { background: rgba(194,76,0,.18); border-color: #c24c00; color: #fff; }
+  .fopt.selected i { color: #e05500; }
+
+  /* ── Price histogram + dual slider ── */
+  .price-histogram {
+    display: flex; align-items: flex-end; gap: 3px;
+    height: 56px; padding: 0 1px; margin-bottom: 2px;
+  }
+  .price-bar {
+    flex: 1; border-radius: 3px 3px 0 0; min-height: 3px;
+    background: rgba(255,255,255,.10);
+    transition: background .2s;
+  }
+  .price-bar.in-range { background: rgba(194,76,0,.55); }
+
+  .price-slider-wrap {
+    position: relative; height: 24px; margin: 0 1px;
+  }
+  .price-track {
+    position: absolute; top: 50%; left: 0; right: 0;
+    height: 3px; margin-top: -1.5px;
+    background: rgba(255,255,255,.12); border-radius: 99px; overflow: hidden;
+  }
+  .price-fill {
+    position: absolute; top: 0; height: 100%;
+    background: #c24c00; border-radius: 99px;
+  }
+  .price-range {
+    position: absolute; top: 50%; width: 100%;
+    transform: translateY(-50%);
+    -webkit-appearance: none; appearance: none;
+    background: transparent; pointer-events: none; height: 24px; margin: 0;
+    outline: none;
+  }
+  .price-range::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: #f7f6f8; border: 2.5px solid #c24c00;
+    pointer-events: all; cursor: grab;
+    box-shadow: 0 1px 6px rgba(0,0,0,.5);
+    transition: transform .1s;
+  }
+  .price-range::-webkit-slider-thumb:active { cursor: grabbing; transform: scale(1.15); }
+  .price-range::-moz-range-thumb {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: #f7f6f8; border: 2.5px solid #c24c00;
+    pointer-events: all; cursor: grab; box-shadow: 0 1px 6px rgba(0,0,0,.5);
+  }
+  .price-labels {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 8px;
+  }
+  .price-label-pill {
+    padding: 4px 10px; border-radius: 99px;
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.10);
+    font-size: 12px; font-weight: 600; color: rgba(255,255,255,.80);
+    min-width: 52px; text-align: center;
+  }
+  .price-label-sep { font-size: 11px; color: rgba(255,255,255,.30); }
+
+  .filter-apply {
+    width: 100%; height: 42px; margin-top: 4px;
+    border-radius: 40px; border: 1px solid #943a00; cursor: pointer;
+    background: #c24c00;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px; font-weight: 600; color: var(--text-sec);
+    transition: background .15s, border-color .15s, transform .1s;
+  }
+  .filter-apply:hover  { background: #c44e00; border-color: #b53700; }
+  .filter-apply:active { background: #943a00; border-color: #6b1800; transform: scale(.98); }
+  .filter-apply:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+  /* ── Action panel (floats above nav) ── */
+  .action-panel {
+    position: absolute;
+    bottom: 106px; right: 24px;
+    z-index: 50;
+    display: flex; flex-direction: column; gap: 8px; align-items: flex-end;
+    transform-origin: bottom right;
+    transform: scale(.82) translateY(10px);
+    opacity: 0; pointer-events: none;
+    transition: transform .24s cubic-bezier(.34,1.56,.64,1), opacity .16s ease;
+  }
+  .action-panel.open { transform: scale(1) translateY(0); opacity: 1; pointer-events: all; }
+  .action-panel-opt {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 11px 18px; border-radius: 9999px;
+    background: rgba(50,47,53,.88); border: 1px solid rgba(255,255,255,.10);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    cursor: pointer; user-select: none; white-space: nowrap;
+    transition: background .15s, transform .1s;
+  }
+  .action-panel-opt:active { transform: scale(.96); }
+  .action-panel-opt i { font-size: 18px; flex-shrink: 0; }
+  .action-panel-opt--create i { color: #e05500; }
+  .action-panel-opt--find   i { color: var(--attention); }
+  .action-panel-opt__label { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+
+
+/* ── Focus-visible (WCAG 2.4.7) ── */
+  .btn-icon:focus-visible { outline: 2px solid rgba(255,255,255,.7); outline-offset: 2px; }
+  .cat-chip:focus-visible { outline: 2px solid rgba(255,255,255,.7); outline-offset: 2px; }
+  .attr-chip:focus-visible { outline: 2px solid rgba(255,255,255,.7); outline-offset: 2px; }
+  .evt-item__like:focus-visible { outline: 2px solid rgba(255,255,255,.7); outline-offset: 2px; }
+  .nav-add:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  .fopt:focus-visible { outline: 2px solid rgba(255,255,255,.7); outline-offset: 2px; }
+
+  /* ── Find-nudge banner ── */
+  .find-nudge {
+    display: flex; flex-direction: column; align-items: flex-start;
+    padding: 30px 2px 24px;
+    margin-bottom: 12px;
+    text-align: left;
+    position: relative;
+  }
+  .find-nudge::before {
+    content: '';
+    position: absolute; top: -60px; right: -50px; bottom: -60px; left: -50px;
+    background: radial-gradient(42% 45% at 72% 42%, rgba(194,43,0,.13) 0%, rgba(194,43,0,.05) 45%, transparent 68%);
+    pointer-events: none; z-index: 0;
+  }
+  .find-nudge__bg-icon {
+    position: absolute; right: -14px; top: 50%; margin-top: -62px;
+    font-size: 124px; line-height: 1;
+    color: rgba(255,124,56,.13);
+    pointer-events: none; z-index: 0;
+    animation: wand-drift 5.5s ease-in-out infinite;
+  }
+  .find-nudge__spark {
+    position: absolute; color: rgba(232,180,50,.35);
+    animation: nudge-twinkle 3.2s ease-in-out infinite;
+  }
+  .find-nudge__spark--1 { top: 6px; left: -4px; font-size: 22px; }
+  .find-nudge__spark--2 { bottom: 18px; right: 86px; font-size: 14px; animation-delay: 1.6s; }
+  @keyframes wand-drift    { 0%,100% { transform: rotate(-12deg) translateY(0); } 50% { transform: rotate(-6deg) translateY(-7px); } }
+  @keyframes nudge-twinkle { 0%,100% { opacity: .25; transform: scale(.65); } 50% { opacity: 1; transform: scale(1); } }
+  @media (prefers-reduced-motion: reduce) {
+    .find-nudge__bg-icon, .find-nudge__spark { animation: none; }
+  }
+  .find-nudge__title, .find-nudge__sub, .find-nudge__cta { position: relative; z-index: 1; }
+  .find-nudge__title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 21px; line-height: 1.25; color: var(--text-primary);
+    margin-bottom: 7px;
+  }
+  .find-nudge__sub {
+    font-size: 12px; font-weight: 400; color: var(--text-tertiary); line-height: 1.6;
+    margin-bottom: 16px; max-width: 270px;
+  }
+  .find-nudge__sub strong { color: var(--text-sec); font-weight: 600; }
+  .find-nudge__cta {
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    width: 100%; height: 44px; border-radius: 22px;
+    background: #c24c00; border: 1px solid #943a00;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px; font-weight: 600; color:#fff;
+    cursor: pointer;
+    box-shadow: 0 8px 22px rgba(194,76,0,.26);
+    transition: background .15s, border-color .15s, transform .1s;
+  }
+  .find-nudge__cta:hover  { background: #c44e00; }
+  .find-nudge__cta:active { background: #943a00; transform: scale(.98); }
+  .find-nudge__cta:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  .find-nudge__cta i { font-size: 15px; }
+
+  /* entrance state — JS adds .nudge-visible to trigger */
+  .find-nudge {
+    opacity: 0;
+    transform: translateY(14px) scale(.97);
+    transition:
+      opacity .28s cubic-bezier(.22,1,.36,1),
+      transform .28s cubic-bezier(.22,1,.36,1);
+  }
+  .find-nudge.nudge-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  /* icon pops in slightly after the card */
+  .find-nudge__icon-wrap {
+    opacity: 0;
+    transform: scale(.6) rotate(-12deg);
+    transition:
+      opacity .22s cubic-bezier(.34,1.56,.64,1) .12s,
+      transform .22s cubic-bezier(.34,1.56,.64,1) .12s;
+  }
+  .find-nudge.nudge-visible .find-nudge__icon-wrap {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+  /* title + sub + cta stagger in */
+  .find-nudge__title {
+    opacity: 0; transform: translateY(6px);
+    transition: opacity .20s ease .18s, transform .20s ease .18s;
+  }
+  .find-nudge.nudge-visible .find-nudge__title { opacity: 1; transform: translateY(0); }
+
+  .find-nudge__sub {
+    opacity: 0; transform: translateY(6px);
+    transition: opacity .20s ease .26s, transform .20s ease .26s;
+  }
+  .find-nudge.nudge-visible .find-nudge__sub { opacity: 1; transform: translateY(0); }
+
+  .find-nudge__cta {
+    opacity: 0; transform: translateY(4px);
+    transition:
+      opacity .18s ease .34s,
+      transform .18s ease .34s,
+      background .15s, border-color .15s;
+  }
+  .find-nudge.nudge-visible .find-nudge__cta { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 430px) {
+  html, body { background: #0f0d12; }
+  body { align-items: flex-start; }
+  .phone {
+    width: 100%;
+    height: calc(100svh + env(safe-area-inset-top));
+    border-radius: 0;
+    box-shadow: none;
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-top: env(safe-area-inset-top);
+  }
+  .status-bar { display: none; }
+  /* fade above nav bar */
+  .nav-wrap { position: relative; }
+  .nav-wrap::before {
+    content: '';
+    position: absolute;
+    top: -52px; left: 0; right: 0; height: 52px;
+    background: linear-gradient(to bottom, transparent, #0a080c);
+    pointer-events: none;
+    z-index: 4;
+  }
+}
+
+/* ── View Transitions (whole card → hero) ── */
+@view-transition { navigation: auto; }
+::view-transition-group(card-container) {
+  animation-duration: 520ms;
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+::view-transition-old(card-container) { animation: vt-fade-out 380ms ease forwards; }
+::view-transition-new(card-container) { animation: vt-fade-in  380ms ease forwards; }
+::view-transition-old(root) { animation: vt-fade-out 260ms ease forwards; }
+::view-transition-new(root) { animation: vt-fade-in  400ms ease forwards; }
+@keyframes vt-fade-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes vt-fade-out { from { opacity: 1; } to { opacity: 0; } }
+@media (max-width: 430px){ .nav-wrap{ padding-bottom: 8px; } }
+</style>
+<script>
+  (function() {
+    const s = new URLSearchParams(window.location.search);
+    const slide = s.get('slide');
+    if (slide === 'from-left')        document.write('<style>.page-content{transform:translateX(-100%)}</style>');
+    else if (slide === 'from-right')  document.write('<style>.page-content{transform:translateX(100%)}</style>');
+  })();
+</script>
+</head>
+<body>
+<div class="phone">
+
+  <!-- Status bar -->
+  <div class="status-bar" aria-hidden="true">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <i class="ph-fill ph-cell-signal-full icon-cellular" aria-hidden="true"></i>
+      <i class="ph-fill ph-wifi-high icon-wifi" aria-hidden="true"></i>
+      <i class="ph-fill ph-battery-full icon-battery" aria-hidden="true"></i>
+    </div>
+  </div>
+
+  <div class="page-content">
+  <!-- Top bar -->
+  <div class="top-bar">
+    <button class="btn-icon" aria-label="Indietro" onclick="history.back()"><i class="ph ph-arrow-left" aria-hidden="true"></i></button>
+    <span class="top-bar__title">Esplora</span>
+    <button class="btn-icon" aria-label="Cerca"><i class="ph ph-magnifying-glass" aria-hidden="true"></i></button>
+  </div>
+
+  <!-- ① Category chips -->
+  <div class="cat-row">
+
+    <div role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" class="cat-chip per-te active" onclick="selectCat(this)">
+      <i class="ph-duotone ph-sparkle" aria-hidden="true"></i> Per te
+    </div>
+
+    <div role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" class="cat-chip" onclick="selectCat(this)">
+      <i class="ph-duotone ph-map-pin" aria-hidden="true"></i> Vicino a te
+    </div>
+
+    <div role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" class="cat-chip" onclick="selectCat(this)">
+      <i class="ph-duotone ph-house" aria-hidden="true"></i> Festa in casa
+    </div>
+
+    <div role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" class="cat-chip" onclick="selectCat(this)">
+      <i class="ph-duotone ph-wine" aria-hidden="true"></i> Bar / Pub
+    </div>
+
+    <div role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" class="cat-chip" onclick="selectCat(this)">
+      <i class="ph-duotone ph-vinyl-record" aria-hidden="true"></i> Discoteca
+    </div>
+
+    <div role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" class="cat-chip" onclick="selectCat(this)">
+      <i class="ph-duotone ph-graduation-cap" aria-hidden="true"></i> Universitaria
+    </div>
+
+    <div role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" class="cat-chip" onclick="selectCat(this)">
+      <i class="ph-duotone ph-sun" aria-hidden="true"></i> All'aperto
+    </div>
+
+    <div role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" class="cat-chip" onclick="selectCat(this)">
+      <i class="ph-duotone ph-dice-four" aria-hidden="true"></i> Giochi
+    </div>
+
+    <div role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" class="cat-chip" onclick="selectCat(this)">
+      <i class="ph-duotone ph-moon-stars" aria-hidden="true"></i> Chill
+    </div>
+
+  </div>
+
+  <!-- Divider -->
+  <div class="divider"></div>
+
+  <!-- ② Attribute filter chips -->
+  <div class="attr-row">
+
+    <div class="attr-chip" role="button" tabindex="0" data-label="Prezzo" onclick="openFilter(this,'prezzo')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+      <i class="ph-duotone ph-money" aria-hidden="true"></i>
+      Prezzo
+      <i class="ph ph-caret-down caret" aria-hidden="true"></i>
+    </div>
+
+    <div class="attr-chip" role="button" tabindex="0" data-label="Distanza" onclick="openFilter(this,'distanza')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+      <i class="ph-duotone ph-map-pin" aria-hidden="true"></i>
+      Distanza
+      <i class="ph ph-caret-down caret" aria-hidden="true"></i>
+    </div>
+
+    <div class="attr-chip" role="button" tabindex="0" data-label="Chi c'è" onclick="openFilter(this,'chice')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+      <i class="ph-duotone ph-users-three" aria-hidden="true"></i>
+      Chi c'è
+      <i class="ph ph-caret-down caret" aria-hidden="true"></i>
+    </div>
+
+    <div class="attr-chip" role="button" tabindex="0" data-label="Affollamento" onclick="openFilter(this,'affollamento')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+      <i class="ph-duotone ph-fire" aria-hidden="true"></i>
+      Affollamento
+      <i class="ph ph-caret-down caret" aria-hidden="true"></i>
+    </div>
+
+    <div class="attr-chip" role="button" tabindex="0" data-label="Trasporto" onclick="openFilter(this,'trasporto')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+      <i class="ph-duotone ph-bus" aria-hidden="true"></i>
+      Trasporto
+      <i class="ph ph-caret-down caret" aria-hidden="true"></i>
+    </div>
+
+    <div class="attr-chip" role="button" tabindex="0" data-label="Orario" onclick="openFilter(this,'orario')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+      <i class="ph-duotone ph-clock" aria-hidden="true"></i>
+      Orario
+      <i class="ph ph-caret-down caret" aria-hidden="true"></i>
+    </div>
+
+  </div>
+
+  <!-- Inline filter dropdown -->
+  <div class="filter-dropdown" id="filterDropdown">
+    <div class="filter-dropdown-inner">
+      <span class="filter-dd-title" id="filterDdTitle"></span>
+
+      <!-- Prezzo: histogram + dual range slider -->
+      <div class="filter-panel" id="fp-prezzo" data-type="range">
+        <div class="price-histogram" id="priceHistogram"></div>
+        <div class="price-slider-wrap">
+          <div class="price-track"><div class="price-fill" id="priceFill"></div></div>
+          <input type="range" id="priceMin" class="price-range price-range--min" min="0" max="50" value="0" step="5" oninput="updatePriceSlider(this)" aria-label="Prezzo minimo">
+          <input type="range" id="priceMax" class="price-range price-range--max" min="0" max="50" value="50" step="5" oninput="updatePriceSlider(this)" aria-label="Prezzo massimo">
+        </div>
+        <div class="price-labels">
+          <span class="price-label-pill" id="priceMinLabel">€0</span>
+          <span class="price-label-sep">–</span>
+          <span class="price-label-pill" id="priceMaxLabel">€50+</span>
+        </div>
+      </div>
+
+      <!-- Distanza: single-select rows -->
+      <div class="filter-panel" id="fp-distanza" data-type="single">
+        <div class="fopt-row" role="button" tabindex="0" onclick="toggleFoptRow(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+          <span class="fopt-row__label">Meno di 500 m</span>
+          <div class="fopt-row__right"><span class="fopt-row__dot"></span></div>
+        </div>
+        <div class="fopt-row" role="button" tabindex="0" onclick="toggleFoptRow(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+          <span class="fopt-row__label">Entro 1 km</span>
+          <div class="fopt-row__right"><span class="fopt-row__dot"></span></div>
+        </div>
+        <div class="fopt-row" role="button" tabindex="0" onclick="toggleFoptRow(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+          <span class="fopt-row__label">Entro 2 km</span>
+          <div class="fopt-row__right"><span class="fopt-row__dot"></span></div>
+        </div>
+        <div class="fopt-row" role="button" tabindex="0" onclick="toggleFoptRow(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+          <span class="fopt-row__label">Entro 5 km</span>
+          <div class="fopt-row__right"><span class="fopt-row__dot"></span></div>
+        </div>
+        <div class="fopt-row" role="button" tabindex="0" onclick="toggleFoptRow(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+          <span class="fopt-row__label">Qualsiasi distanza</span>
+          <div class="fopt-row__right"><span class="fopt-row__dot"></span></div>
+        </div>
+      </div>
+
+      <!-- Chi c'è: multi-select chips -->
+      <div class="filter-panel" id="fp-chice" data-type="multi">
+        <div class="fopt-chips">
+          <div class="fopt" role="button" tabindex="0" onclick="toggleFopt(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph-duotone ph-users" aria-hidden="true"></i> Amici in comune</div>
+          <div class="fopt" role="button" tabindex="0" onclick="toggleFopt(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph-duotone ph-student" aria-hidden="true"></i> Under 25</div>
+          <div class="fopt" role="button" tabindex="0" onclick="toggleFopt(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph-duotone ph-person" aria-hidden="true"></i> 25 – 35 anni</div>
+          <div class="fopt" role="button" tabindex="0" onclick="toggleFopt(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph-duotone ph-user" aria-hidden="true"></i> 35+</div>
+          <div class="fopt" role="button" tabindex="0" onclick="toggleFopt(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph-duotone ph-shuffle" aria-hidden="true"></i> Mix di età</div>
+        </div>
+      </div>
+
+      <!-- Affollamento: single-select crowd cards -->
+      <div class="filter-panel" id="fp-affollamento" data-type="single">
+        <div class="crowd-grid">
+          <div class="crowd-card" role="button" tabindex="0" onclick="toggleCrowdCard(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+            <i class="ph-duotone ph-leaf" aria-hidden="true"></i>
+            <span class="crowd-card__label">Poco affollato</span>
+          </div>
+          <div class="crowd-card" role="button" tabindex="0" onclick="toggleCrowdCard(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+            <i class="ph-duotone ph-users-three" aria-hidden="true"></i>
+            <span class="crowd-card__label">Moderato</span>
+          </div>
+          <div class="crowd-card" role="button" tabindex="0" onclick="toggleCrowdCard(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+            <i class="ph-duotone ph-fire" aria-hidden="true"></i>
+            <span class="crowd-card__label">Molto affollato</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trasporto: multi-select chips -->
+      <div class="filter-panel" id="fp-trasporto" data-type="multi">
+        <div class="fopt-chips">
+          <div class="fopt" role="button" tabindex="0" onclick="toggleFopt(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph-duotone ph-person-simple-walk" aria-hidden="true"></i> A piedi</div>
+          <div class="fopt" role="button" tabindex="0" onclick="toggleFopt(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph-duotone ph-train-subway" aria-hidden="true"></i> Metro</div>
+          <div class="fopt" role="button" tabindex="0" onclick="toggleFopt(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph-duotone ph-bus" aria-hidden="true"></i> Bus / Tram</div>
+          <div class="fopt" role="button" tabindex="0" onclick="toggleFopt(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph-duotone ph-car" aria-hidden="true"></i> Auto / Taxi</div>
+          <div class="fopt" role="button" tabindex="0" onclick="toggleFopt(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><i class="ph-duotone ph-bicycle" aria-hidden="true"></i> Bici / Monopattino</div>
+        </div>
+      </div>
+
+      <!-- Orario: single-select rows -->
+      <div class="filter-panel" id="fp-orario" data-type="single">
+        <div class="fopt-row" role="button" tabindex="0" onclick="toggleFoptRow(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+          <span class="fopt-row__label">Aperitivo</span>
+          <div class="fopt-row__right"><span class="fopt-row__hint">17:00 – 20:00</span><span class="fopt-row__dot"></span></div>
+        </div>
+        <div class="fopt-row" role="button" tabindex="0" onclick="toggleFoptRow(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+          <span class="fopt-row__label">Prima serata</span>
+          <div class="fopt-row__right"><span class="fopt-row__hint">20:00 – 23:00</span><span class="fopt-row__dot"></span></div>
+        </div>
+        <div class="fopt-row" role="button" tabindex="0" onclick="toggleFoptRow(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+          <span class="fopt-row__label">Notte</span>
+          <div class="fopt-row__right"><span class="fopt-row__hint">23:00 – 03:00</span><span class="fopt-row__dot"></span></div>
+        </div>
+        <div class="fopt-row" role="button" tabindex="0" onclick="toggleFoptRow(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+          <span class="fopt-row__label">Tutta la notte</span>
+          <div class="fopt-row__right"><span class="fopt-row__dot"></span></div>
+        </div>
+      </div>
+
+      <button class="filter-apply" id="filterApplyBtn" onclick="applyFilter()">Applica filtro</button>
+    </div>
+  </div>
+
+  <!-- Events list -->
+  <div class="scroll-area">
+
+<div class="results-row">
+      <span class="results-row__count">5 serate trovate</span>
+    </div>
+
+    <!-- 1 — Club Amnesia -->
+    <div class="evt-item grad-dance" role="button" tabindex="0" onclick="goToEvent(event)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goToEvent(event);}">
+      <div class="evt-item__bg"></div>
+      <img class="evt-item__photo" src="immagini/8698575ac33b6d0afa508642d8ea6fa4.jpg" alt="" style="object-position: top">
+      <button class="evt-item__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+      <div class="evt-item__body">
+        <div class="evt-item__name">Club Amnesia</div>
+        <div class="ec-pill-row">
+          <div class="ec-date-pill"><i class="ph ph-calendar-blank"></i> Sab 17 · 23:00</div>
+          <div class="ec-countdown">4 gg</div>
+        </div>
+        <div class="ec-tags">
+          <span class="ec-tag ec-tag--disco"><i class="ph-fill ph-vinyl-record"></i> Discoteca</span>
+          <span class="ec-tag ec-tag--green"><i class="ph ph-music-note"></i> Techno</span>
+          <span class="ec-tag ec-tag--amber"><i class="ph-fill ph-fire"></i> Molto affollato</span>
+        </div>
+        <div class="evt-item__footer">
+          <div class="evt-item__loc"><i class="ph ph-map-pin"></i><span>Via Brera, Milano · 0.8 km</span></div>
+          <div class="e-avatars">
+            <div class="e-av"><img src="https://www.figma.com/api/mcp/asset/ae12e70c-d27b-4057-a06f-21d16332cc61" alt="" aria-hidden="true"></div>
+            <div class="e-av"><img src="https://www.figma.com/api/mcp/asset/c08fdc84-628a-41db-b884-b61ab49b0e81" alt="" aria-hidden="true"></div>
+            <div class="e-av-more">+5</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 — Aperitivo Sunset -->
+    <div class="evt-item grad-apero" role="button" tabindex="0" onclick="goToEvent(event)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goToEvent(event);}">
+      <div class="evt-item__bg"></div>
+      <img class="evt-item__photo" src="immagini/ffa82178b91e9078e13c75c5ee16eb63.jpg" alt="">
+      <button class="evt-item__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+      <div class="evt-item__body">
+        <div class="evt-item__name">Aperitivo Sunset</div>
+        <div class="ec-pill-row">
+          <div class="ec-date-pill"><i class="ph ph-calendar-blank"></i> Ven 16 · 19:00</div>
+          <div class="ec-countdown">domani</div>
+        </div>
+        <div class="ec-tags">
+          <span class="ec-tag ec-tag--aperitivo"><i class="ph-fill ph-wine"></i> Aperitivo</span>
+          <span class="ec-tag ec-tag--blue"><i class="ph ph-sun"></i> All'aperto</span>
+          <span class="ec-tag ec-tag--green"><i class="ph ph-leaf"></i> Tranquillo</span>
+        </div>
+        <div class="evt-item__footer">
+          <div class="evt-item__loc"><i class="ph ph-map-pin"></i><span>Navigli, Milano · 1.5 km</span></div>
+          <div class="e-avatars">
+            <div class="e-av"><img src="https://www.figma.com/api/mcp/asset/042a454b-975e-4ac2-b171-c0abc593a5fa" alt="" aria-hidden="true"></div>
+            <div class="e-av-more">+2</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 — Indie Sessions -->
+    <div class="evt-item grad-quiet" role="button" tabindex="0" onclick="goToEvent(event)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goToEvent(event);}">
+      <div class="evt-item__bg"></div>
+      <img class="evt-item__photo" src="immagini/721fac99888bff8e61553c2d0a74f679.jpg" alt="">
+      <button class="evt-item__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+      <div class="evt-item__body">
+        <div class="evt-item__name">Indie Sessions</div>
+        <div class="ec-pill-row">
+          <div class="ec-date-pill"><i class="ph ph-calendar-blank"></i> Sab 17 · 21:00</div>
+          <div class="ec-countdown">4 gg</div>
+        </div>
+        <div class="ec-tags">
+          <span class="ec-tag ec-tag--live"><i class="ph-fill ph-microphone-stage"></i> Live Music</span>
+          <span class="ec-tag ec-tag--blue"><i class="ph ph-armchair"></i> Intimo</span>
+          <span class="ec-tag ec-tag--green"><i class="ph ph-music-note"></i> Indie · Rock</span>
+        </div>
+        <div class="evt-item__footer">
+          <div class="evt-item__loc"><i class="ph ph-map-pin"></i><span>Rocket, Milano · 2.3 km</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 — Marco's House Party -->
+    <div class="evt-item grad-party" data-event="marco" role="button" tabindex="0" onclick="goToEvent(event)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goToEvent(event);}">
+      <div class="evt-item__bg"></div>
+      <img class="evt-item__photo" src="immagini/456ed706d66dd4ee3da6dcaf299dcbd3.jpg" alt="">
+      <button class="evt-item__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+      <div class="evt-item__body">
+        <div class="evt-item__name">Marco's House Party</div>
+        <div class="ec-pill-row">
+          <div class="ec-date-pill"><i class="ph ph-calendar-blank"></i> Sab 17 Giu · 23:00</div>
+          <div class="ec-countdown">4 gg</div>
+        </div>
+        <div class="ec-tags">
+          <span class="ec-tag ec-tag--party"><i class="ph-fill ph-house"></i> House Party</span>
+          <span class="ec-tag ec-tag--blue"><i class="ph ph-buildings"></i> Terrazza</span>
+          <span class="ec-tag ec-tag--green"><i class="ph ph-music-note"></i> Pop · R&amp;B</span>
+          <span class="ec-tag ec-tag--night"><i class="ph ph-moon"></i> Tarda notte</span>
+        </div>
+        <div class="evt-item__footer">
+          <div class="evt-item__loc"><i class="ph ph-map-pin"></i><span>Navigli, Milano · 1.2 km</span></div>
+          <div class="e-avatars">
+            <div class="e-av"><img src="https://www.figma.com/api/mcp/asset/ae12e70c-d27b-4057-a06f-21d16332cc61" alt="" aria-hidden="true"></div>
+            <div class="e-av"><img src="https://www.figma.com/api/mcp/asset/c08fdc84-628a-41db-b884-b61ab49b0e81" alt="" aria-hidden="true"></div>
+            <div class="e-av"><img src="https://www.figma.com/api/mcp/asset/042a454b-975e-4ac2-b171-c0abc593a5fa" alt="" aria-hidden="true"></div>
+            <div class="e-av-more">+5</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── "Trova la tua serata" nudge ── -->
+    <div class="find-nudge" role="region" aria-label="Suggerimento: trova la tua serata">
+      <div class="find-nudge__bg-icon" aria-hidden="true">
+        <i class="ph-duotone ph-magic-wand"></i>
+        <i class="ph-fill ph-sparkle find-nudge__spark find-nudge__spark--1"></i>
+        <i class="ph-fill ph-sparkle find-nudge__spark find-nudge__spark--2"></i>
+      </div>
+      <p class="find-nudge__title">Non hai trovato<br>quello che cerchi?</p>
+      <p class="find-nudge__sub">Rispondi a poche domande e ti mostriamo le serate più adatte a te.</p>
+      <button class="find-nudge__cta" onclick="slideToPage('quiz-step-1.html','to-left')" aria-label="Vai a Trova la tua serata">
+        Trova la tua serata
+        <i class="ph ph-arrow-right" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <!-- 5 — Room 126 -->
+    <div class="evt-item grad-drinks" role="button" tabindex="0" onclick="goToEvent(event)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goToEvent(event);}">
+      <div class="evt-item__bg"></div>
+      <img class="evt-item__photo" src="immagini/9eaf6f9fb8ac175b8cd1651e738b03a6.jpg" alt="" style="object-position: top">
+      <button class="evt-item__like" aria-label="Aggiungi ai preferiti" onclick="toggleLike(this)"><i class="ph ph-heart" aria-hidden="true"></i></button>
+      <div class="evt-item__body">
+        <div class="evt-item__name">Room 126</div>
+        <div class="ec-pill-row">
+          <div class="ec-date-pill"><i class="ph ph-calendar-blank"></i> Dom 18 · 01:00</div>
+          <div class="ec-countdown">5 gg</div>
+        </div>
+        <div class="ec-tags">
+          <span class="ec-tag ec-tag--disco"><i class="ph-fill ph-speaker-high"></i> Club</span>
+          <span class="ec-tag ec-tag--green"><i class="ph ph-music-note"></i> House Music</span>
+          <span class="ec-tag ec-tag--amber"><i class="ph-fill ph-fire"></i> Affollato</span>
+          <span class="ec-tag ec-tag--night"><i class="ph ph-moon"></i> Tarda notte</span>
+        </div>
+        <div class="evt-item__footer">
+          <div class="evt-item__loc"><i class="ph ph-map-pin"></i><span>Navigli, Milano · 3.1 km</span></div>
+        </div>
+      </div>
+    </div>
+
+
+  </div><!-- /scroll-area -->
+
+  </div><!-- /page-content -->
+
+  <!-- Bottom nav — "Esplora" tab active -->
+  <div class="nav-wrap">
+    <nav class="bottom-nav" id="mainNav">
+      <div class="nav-slider" id="navSlider"></div>
+      <div class="nav-item" data-icon="house" onclick="const target = localStorage.getItem('last_home_page') || 'event-card.html'; slideToPage(target, 'to-right', this)">
+        <i class="ph ph-house" aria-hidden="true"></i><span>Home</span>
+      </div>
+      <div class="nav-item active" data-icon="magnifying-glass" onclick="switchNav(this)">
+        <i class="ph-fill ph-magnifying-glass" aria-hidden="true"></i><span>Esplora</span>
+      </div>
+      <div class="nav-item" data-icon="heart" onclick="switchNav(this)">
+        <i class="ph ph-heart" aria-hidden="true"></i><span>Salvati</span>
+      </div>
+    </nav>
+    <button class="nav-add" aria-label="Azione rapida" onclick="openActionPanel(event)">
+      <i class="ph ph-plus"></i>
+    </button>
+  </div>
+
+  <!-- Action panel -->
+  <div class="action-panel" id="actionPanel">
+    <div class="action-panel-opt action-panel-opt--create" role="button" tabindex="0"
+         onclick="closeActionPanel(() => slideToPage('paywall.html','to-left'))"
+         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+      <i class="ph-duotone ph-confetti" aria-hidden="true"></i>
+      <span class="action-panel-opt__label">Organizza una serata</span>
+    </div>
+    <div class="action-panel-opt action-panel-opt--find" role="button" tabindex="0"
+         onclick="closeActionPanel(() => slideToPage('quiz-step-1.html','to-left'))"
+         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+      <i class="ph-duotone ph-magic-wand" aria-hidden="true"></i>
+      <span class="action-panel-opt__label">Trova la serata giusta</span>
+    </div>
+  </div>
+
+</div>
+<script>
+function openActionPanel(e) {
+  e.stopPropagation();
+  document.getElementById('actionPanel').classList.toggle('open');
+}
+
+function closeActionPanel(callback) {
+  document.getElementById('actionPanel').classList.remove('open');
+  if (callback) setTimeout(callback, 180);
+}
+
+function goToEvent(e) {
+  if (e.target.closest('.evt-item__like')) return;
+  const card = e.target.closest('.evt-item');
+
+  // Assign VTA shared-element names only for the matching card (Marco's House Party).
+  // Other cards navigate with a plain crossfade so their photo never "flies" into
+  // the wrong hero image.
+  // Assign the whole card as the shared container so gradient + image
+  // move together — only for the matching card to avoid wrong-image transitions.
+  if (card.dataset.event === 'marco') {
+    card.style.viewTransitionName = 'card-container';
+  }
+
+  sessionStorage.setItem('browse_scroll', document.querySelector('.scroll-area').scrollTop);
+  window.location.href = 'event-detail.html';
+}
+
+function selectCat(chip) {
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  closeFilter();
+}
+
+let currentFilterChip = null;
+
+/* ── Price slider ── */
+const PRICE_BUCKETS = [4, 6, 11, 16, 14, 10, 7, 4, 2, 1]; // fake distribution
+const PRICE_MAX = 50;
+const PRICE_STEP = 5;
+let priceSliderReady = false;
+
+function initPriceSlider() {
+  const histogram = document.getElementById('priceHistogram');
+  histogram.innerHTML = '';
+  const maxCount = Math.max(...PRICE_BUCKETS);
+  PRICE_BUCKETS.forEach((count, i) => {
+    const bar = document.createElement('div');
+    bar.className = 'price-bar in-range';
+    bar.style.height = Math.max(5, Math.round(count / maxCount * 100)) + '%';
+    bar.dataset.idx = i;
+    histogram.appendChild(bar);
+  });
+  updatePriceSlider(null);
+}
+
+function updatePriceSlider(changedEl) {
+  const minEl = document.getElementById('priceMin');
+  const maxEl = document.getElementById('priceMax');
+  if (!minEl || !maxEl) return;
+  let minVal = parseInt(minEl.value);
+  let maxVal = parseInt(maxEl.value);
+
+  const MIN_GAP = PRICE_STEP;
+  if (changedEl === minEl && minVal > maxVal - MIN_GAP) { minVal = maxVal - MIN_GAP; minEl.value = minVal; }
+  if (changedEl === maxEl && maxVal < minVal + MIN_GAP) { maxVal = minVal + MIN_GAP; maxEl.value = maxVal; }
+
+  // z-index: keep active thumb on top
+  if (changedEl === minEl) { minEl.style.zIndex = 3; maxEl.style.zIndex = 2; }
+  if (changedEl === maxEl) { maxEl.style.zIndex = 3; minEl.style.zIndex = 2; }
+
+  const fill = document.getElementById('priceFill');
+  fill.style.left  = (minVal / PRICE_MAX * 100) + '%';
+  fill.style.right = ((PRICE_MAX - maxVal) / PRICE_MAX * 100) + '%';
+
+  document.getElementById('priceMinLabel').textContent = minVal === 0 ? 'Gratis' : '€' + minVal;
+  document.getElementById('priceMaxLabel').textContent = maxVal >= PRICE_MAX ? '€50+' : '€' + maxVal;
+
+  const minBucket = minVal / PRICE_STEP;
+  const maxBucket = maxVal / PRICE_STEP;
+  document.querySelectorAll('.price-bar').forEach((bar, i) => {
+    bar.classList.toggle('in-range', i >= minBucket && i < maxBucket);
+  });
+}
+
+function openFilter(chip, filterId) {
+  const dropdown = document.getElementById('filterDropdown');
+  const isOpen = dropdown.classList.contains('open');
+
+  if (isOpen && currentFilterChip === chip) {
+    closeFilter();
+    return;
+  }
+
+  if (currentFilterChip) currentFilterChip.classList.remove('open');
+
+  currentFilterChip = chip;
+  chip.classList.add('open');
+
+  document.querySelectorAll('.filter-panel').forEach(p => p.classList.remove('active'));
+  const panel = document.getElementById('fp-' + filterId);
+  panel.classList.add('active');
+  document.getElementById('filterDdTitle').textContent = chip.dataset.label;
+
+  const applyBtn = document.getElementById('filterApplyBtn');
+  applyBtn.style.display = panel.dataset.type === 'single' ? 'none' : '';
+
+  if (filterId === 'prezzo' && !priceSliderReady) {
+    priceSliderReady = true;
+    requestAnimationFrame(() => initPriceSlider());
+  }
+
+  dropdown.classList.add('open');
+}
+
+function closeFilter() {
+  document.getElementById('filterDropdown').classList.remove('open');
+  if (currentFilterChip) { currentFilterChip.classList.remove('open'); currentFilterChip = null; }
+}
+
+function applyFilter() {
+  if (currentFilterChip) {
+    const panel = document.querySelector('.filter-panel.active');
+    let anySelected = false;
+    if (panel) {
+      if (panel.dataset.type === 'range') {
+        const minVal = parseInt(document.getElementById('priceMin')?.value ?? 0);
+        const maxVal = parseInt(document.getElementById('priceMax')?.value ?? PRICE_MAX);
+        anySelected = minVal > 0 || maxVal < PRICE_MAX;
+      } else {
+        anySelected = !!(
+          panel.querySelector('.fopt.selected') ||
+          panel.querySelector('.fopt-row.selected') ||
+          panel.querySelector('.crowd-card.selected')
+        );
+      }
+    }
+    currentFilterChip.classList.toggle('active', anySelected);
+  }
+  closeFilter();
+}
+
+function toggleFopt(el) {
+  el.classList.toggle('selected');
+}
+
+function toggleFoptRow(el) {
+  const panel = el.closest('.filter-panel');
+  panel.querySelectorAll('.fopt-row').forEach(r => r.classList.remove('selected'));
+  el.classList.add('selected');
+  setTimeout(() => applyFilter(), 220);
+}
+
+function toggleCrowdCard(el) {
+  const panel = el.closest('.filter-panel');
+  panel.querySelectorAll('.crowd-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  setTimeout(() => applyFilter(), 220);
+}
+
+function toggleLike(btn) {
+  btn.classList.toggle('liked');
+  const i = btn.querySelector('i');
+  i.className = btn.classList.contains('liked') ? 'ph-fill ph-heart' : 'ph ph-heart';
+}
+
+function switchNav(clicked) {
+  const nav    = clicked.closest('.bottom-nav');
+  const slider = nav.querySelector('.nav-slider');
+  const items  = nav.querySelectorAll('.nav-item');
+  const current = nav.querySelector('.nav-item.active');
+  if (!current || current === clicked) return;
+
+  slider.style.transition = 'none';
+  slider.style.left  = current.offsetLeft + 'px';
+  slider.style.width = current.offsetWidth + 'px';
+
+  items.forEach(item => {
+    item.classList.remove('active');
+    item.querySelector('i').className = 'ph ph-' + item.dataset.icon;
+  });
+  clicked.classList.add('active');
+  clicked.querySelector('i').className = 'ph-fill ph-' + clicked.dataset.icon;
+
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    slider.style.transition = 'left .4s cubic-bezier(.34,1.56,.64,1), width .4s cubic-bezier(.34,1.56,.64,1)';
+    slider.style.left  = clicked.offsetLeft + 'px';
+    slider.style.width = clicked.offsetWidth + 'px';
+  }));
+}
+
+function slideToPage(url, direction, clickedEl) {
+  const container = document.querySelector('.page-content');
+  container.style.transition = 'transform .34s cubic-bezier(.22,.61,.36,1)';
+  if (direction === 'to-left') {
+    container.style.transform = 'translateX(-100%)';
+  } else if (direction === 'to-right') {
+    container.style.transform = 'translateX(100%)';
+  }
+  
+  let tabParam = '';
+  if (clickedEl) {
+    const icon = clickedEl.getAttribute('data-icon');
+    if (icon === 'magnifying-glass') {
+      tabParam = '&tab=esplora';
+    } else if (icon === 'heart') {
+      tabParam = '&tab=salvati';
+    } else if (icon === 'house') {
+      tabParam = '&tab=home';
+    }
+  }
+
+  setTimeout(() => {
+    window.location.href = url + '?slide=' + (direction === 'to-left' ? 'from-right' : 'from-left') + tabParam;
+  }, 240);
+}
+
+window.addEventListener('pageshow', (e) => {
+  // Fallback scroll restore when bfcache is not available
+  if (e.persisted) return;
+  const saved = parseInt(sessionStorage.getItem('browse_scroll') || '0');
+  const area = document.querySelector('.scroll-area');
+  if (area && saved > 0) area.scrollTop = saved;
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const slide = urlParams.get('slide');
+  const tab   = urlParams.get('tab');
+  const container = document.querySelector('.page-content');
+  document.body.style.overflowX = 'hidden';
+
+  if (tab === 'salvati') {
+    const tabEl = document.querySelector('.nav-item[data-icon="heart"]');
+    if (tabEl) {
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+        item.querySelector('i').className = 'ph ph-' + item.dataset.icon;
+      });
+      tabEl.classList.add('active');
+      tabEl.querySelector('i').className = 'ph-fill ph-' + tabEl.dataset.icon;
+    }
+  } else if (tab === 'esplora') {
+    const tabEl = document.querySelector('.nav-item[data-icon="magnifying-glass"]');
+    if (tabEl) {
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+        item.querySelector('i').className = 'ph ph-' + item.dataset.icon;
+      });
+      tabEl.classList.add('active');
+      tabEl.querySelector('i').className = 'ph-fill ph-' + tabEl.dataset.icon;
+    }
+  }
+
+  if (slide === 'from-left') {
+    container.style.transition = 'none';
+    container.style.transform = 'translateX(-100%)';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        container.style.transition = 'transform .34s cubic-bezier(.22,.61,.36,1)';
+        container.style.transform = 'translateX(0)';
+      });
+    });
+  } else if (slide === 'from-right') {
+    container.style.transition = 'none';
+    container.style.transform = 'translateX(100%)';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        container.style.transition = 'transform .34s cubic-bezier(.22,.61,.36,1)';
+        container.style.transform = 'translateX(0)';
+      });
+    });
+  }
+
+  requestAnimationFrame(() => {
+    const active = document.querySelector('.nav-item.active');
+    const slider = document.getElementById('navSlider');
+    if (active && slider) {
+      slider.style.left  = active.offsetLeft + 'px';
+      slider.style.width = active.offsetWidth + 'px';
+    }
+  });
+
+  // Nudge entrance animation — fires once when scrolled into view
+  const nudge = document.querySelector('.find-nudge');
+  if (nudge) {
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        nudge.classList.add('nudge-visible');
+        obs.disconnect();
+      }
+    }, { root: document.querySelector('.scroll-area'), threshold: 0.25 });
+    obs.observe(nudge);
+  }
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#actionPanel') && !e.target.closest('.nav-add')) closeActionPanel();
+  });
+
+  // Close dropdown when tapping the event list
+  document.querySelector('.scroll-area').addEventListener('click', (e) => {
+    if (!e.target.closest('.filter-dropdown')) closeFilter();
+  });
+});
+
+// ── Transizioni fluide: reset bfcache + pulizia parametro slide ──
+window.addEventListener('pageshow', (e) => {
+  if (e.persisted) {
+    const c = document.querySelector('.page-content');
+    if (c) { c.style.transition = 'none'; c.style.transform = 'translateX(0)'; }
+  }
+});
+window.addEventListener('load', () => {
+  const u = new URL(window.location);
+  if (u.searchParams.has('slide')) {
+    u.searchParams.delete('slide');
+    history.replaceState(null, '', u.pathname + u.search);
+  }
+});
+</script>
+</body>
+</html>

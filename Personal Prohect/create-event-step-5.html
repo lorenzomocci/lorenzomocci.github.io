@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="immagini/icon-180.png">
+<link rel="icon" type="image/png" href="immagini/icon-180.png">
+<meta name="apple-mobile-web-app-title" content="Nite">
+<title>Crea serata — 5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+:root{--neutral-900:#100d12;--primary-600:#c22b00;--primary-700:#942000;--brand-sec:#7a3000;--brand-sec-h:#c24c00;--brand-sec-p:#943a00;--text-primary:#f7f6f8;--text-sec:#edeced;--attention:#e8b432;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{background:#0a080c;}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0a080c;font-family:'Plus Jakarta Sans',sans-serif;}
+.phone{width:390px;height:844px;background:var(--neutral-900);border-radius:44px;overflow:hidden;display:flex;flex-direction:column;padding:0 24px 0;box-shadow:0 0 0 10px #1a1a1a,0 32px 80px rgba(0,0,0,.8);}
+.status-bar{display:flex;justify-content:space-between;align-items:center;padding:21px 0 19px}
+.status-bar__time{font-family:system-ui,-apple-system,sans-serif;font-size:17px;font-weight:590;color:#fff;letter-spacing:-.3px;width:100px}
+.status-bar__icons{display:flex;align-items:center;gap:6px;justify-content:flex-end;width:100px}
+.status-bar__icons i{color:#fff;line-height:1}
+.icon-cellular,.icon-wifi{font-size:14px}.icon-battery{font-size:18px}
+.top-nav{position:relative;display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.btn-back{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s}
+.btn-back:hover{background:rgba(255,255,255,.12)}
+.btn-back:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px;}
+.btn-back i{font-size:18px;color:rgba(255,255,255,.7)}
+.top-nav__right{display:flex;align-items:center;gap:10px}
+.step-label{font-size:12px;font-weight:500;color:rgba(255,255,255,.65)}
+.step-label span{color:var(--brand-sec-h);font-weight:600}
+.nav-brand{position:absolute;left:50%;transform:translateX(-50%);font-family:'DM Serif Display',serif;font-size:22px;line-height:1;color:var(--text-primary);pointer-events:none}
+.nav-brand span{font-size:.6em;color:var(--brand-sec-h);position:relative;top:-.35em;margin-left:1px}
+.progress-segs{display:flex;gap:4px;margin-top:14px}
+.seg{flex:1;height:3px;border-radius:99px;background:rgba(255,255,255,.10)}
+.seg.done{background:var(--primary-600)}
+.seg.active{background:linear-gradient(to right,var(--primary-600) 60%,rgba(255,255,255,.10) 60%)}
+.scroll-area{flex:1;overflow-y:auto;scrollbar-width:none;padding-bottom:8px}
+.scroll-area::-webkit-scrollbar{display:none}
+.page-header{margin-top:28px}
+.page-eyebrow{font-size:11px;font-weight:600;letter-spacing:.8px;color:var(--attention);text-transform:uppercase;margin-bottom:10px}
+.page-title{font-family:'DM Serif Display',serif;font-size:26px;line-height:33px;color:var(--text-primary)}
+.page-sub{margin-top:8px;font-size:13px;line-height:19px;color:rgba(255,255,255,.65)}
+.field-group{margin-top:22px}
+.field-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px}
+.field-label{font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:rgba(255,255,255,.70)}
+.option-row{display:flex;align-items:center;gap:14px;padding:16px;border-radius:24px;background:#322f35;border:1px solid #413e44;cursor:pointer;transition:background .15s,border-color .18s;margin-bottom:10px}
+.option-row:last-child{margin-bottom:0}
+.option-row:active{transform:scale(.985);background:#282530}
+.option-row.selected{background:rgba(194,76,0,.18);border-color:#c24c00}
+.option-icon{width:42px;height:42px;border-radius:11px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px;color:rgba(255,255,255,.65);transition:background .18s,color .18s}
+.option-row.selected .option-icon{background:rgba(194,76,0,.20);color:#e05500}
+.option-body{flex:1}
+.option-title{font-size:15px;font-weight:500;color:rgba(255,255,255,.65);transition:color .18s;line-height:1.3}
+.option-row.selected .option-title{color:#fff}
+.option-desc{font-size:12px;line-height:18px;color:rgba(255,255,255,.20);margin-top:4px;transition:color .18s}
+.option-row.selected .option-desc{color:rgba(255,255,255,.42)}
+.radio-ring{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:border-color .18s}
+.option-row.selected .radio-ring{border-color:#c24c00}
+.radio-dot{width:10px;height:10px;border-radius:50%;background:#942000;transform:scale(0);transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+.option-row.selected .radio-dot{transform:scale(1)}
+.expand-box{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1)}
+.expand-box.open{max-height:200px}
+.price-wrap{padding-top:14px}
+.price-field-row{display:flex;align-items:center;gap:0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:12px;overflow:hidden;transition:border-color .15s,background .15s}
+.price-field-row:focus-within{border-color:rgba(148,32,0,.55);background:rgba(255,255,255,.07)}
+.price-prefix{padding:0 4px 0 16px;font-size:24px;font-weight:600;color:rgba(255,255,255,.60);line-height:1;user-select:none}
+.price-input{flex:1;background:none;border:none;outline:none;padding:16px 16px 16px 0;font-family:'Plus Jakarta Sans',sans-serif;font-size:24px;font-weight:600;color:var(--text-primary);caret-color:var(--primary-700);width:0}
+.price-input::placeholder{color:rgba(255,255,255,.18)}
+.price-info{font-size:11px;color:rgba(255,255,255,.55);margin-top:8px;line-height:16px}
+.footer{position:sticky;bottom:0;background:var(--neutral-900);padding:20px 0 32px}
+.btn-continue{width:100%;height:52px;border-radius:40px;background:#c24c00;border:1px solid #943a00;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:600;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,border-color .15s,transform .1s}
+.btn-continue i{font-size:18px}
+.btn-continue:hover{background:#c44e00;border-color:#b53700}
+.btn-continue:active{background:#943a00;border-color:#6b1800;transform:scale(.98)}
+.btn-continue:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px;}
+.btn-continue:disabled{background:rgba(255,255,255,.07);border-color:transparent;color:#9c9a9f;cursor:not-allowed;transform:none}
+
+@media (max-width: 430px) {
+  html, body { background: #0f0d12; }
+  body { align-items: flex-start; }
+  .phone {
+    width: 100%;
+    height: calc(100svh + env(safe-area-inset-top));
+    border-radius: 0;
+    box-shadow: none;
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-top: env(safe-area-inset-top);
+  }
+  .status-bar { display: none; }
+  /* fade above nav bar */
+  .nav-wrap { position: relative; }
+  .nav-wrap::before {
+    content: '';
+    position: absolute;
+    top: -52px; left: 0; right: 0; height: 52px;
+    background: linear-gradient(to bottom, transparent, #100d12);
+    pointer-events: none;
+    z-index: 4;
+  }
+}
+@media (max-width: 430px){ .footer{ padding-bottom: 8px; } }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <i class="ph-fill ph-cell-signal-full icon-cellular"></i>
+      <i class="ph-fill ph-wifi-high icon-wifi"></i>
+      <i class="ph-fill ph-battery-full icon-battery"></i>
+    </div>
+  </div>
+  <div class="top-nav">
+    <button class="btn-back" aria-label="Torna indietro" onclick="history.back()"><i class="ph ph-arrow-left" aria-hidden="true"></i></button>
+    <span class="nav-brand" aria-hidden="true">N<span>+</span></span>
+    <div class="top-nav__right"><span class="step-label">Step <span>5</span> di 8</span><button class="btn-back" aria-label="Chiudi" onclick="window.location.href='event-card.html'"><i class="ph ph-x" aria-hidden="true"></i></button></div>
+  </div>
+  <div class="progress-segs">
+    <div class="seg done"></div><div class="seg done"></div><div class="seg done"></div>
+    <div class="seg done"></div>
+    <div class="seg active"></div>
+    <div class="seg"></div><div class="seg"></div><div class="seg"></div>
+  </div>
+  <div class="scroll-area">
+    <div class="page-header">
+      <p class="page-eyebrow">Crea serata</p>
+      <h1 class="page-title">Quanto costa partecipare?</h1>
+      <p class="page-sub">Scegli se la serata è gratuita o a pagamento.</p>
+    </div>
+
+    <div class="field-group">
+      <div class="option-row" id="optFree" role="button" tabindex="0" onclick="selectPrice(this,'free')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+        <div class="option-icon"><i class="ph ph-smiley" aria-hidden="true"></i></div>
+        <div class="option-body">
+          <div class="option-title">Gratuita</div>
+          <div class="option-desc">Tutti partecipano senza pagare nulla</div>
+        </div>
+        <div class="radio-ring"><div class="radio-dot"></div></div>
+      </div>
+
+      <div class="option-row" id="optPaid" role="button" tabindex="0" onclick="selectPrice(this,'paid')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+        <div class="option-icon"><i class="ph ph-currency-eur" aria-hidden="true"></i></div>
+        <div class="option-body">
+          <div class="option-title">A pagamento</div>
+          <div class="option-desc">Gli invitati pagano per confermare la presenza</div>
+        </div>
+        <div class="radio-ring"><div class="radio-dot"></div></div>
+      </div>
+
+      <div class="expand-box" id="priceBox">
+        <div class="price-wrap">
+          <div class="price-field-row">
+            <span class="price-prefix">€</span>
+            <input class="price-input" id="priceInput" type="number" min="1" max="999"
+              placeholder="10" inputmode="decimal" oninput="checkCta()">
+          </div>
+          <p class="price-info">Il pagamento avviene tramite l'app al momento della conferma di partecipazione.</p>
+        </div>
+      </div>
+
+      <div class="option-row" id="optSplit" role="button" tabindex="0" onclick="selectPrice(this,'split')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+        <div class="option-icon"><i class="ph ph-hand-coins" aria-hidden="true"></i></div>
+        <div class="option-body">
+          <div class="option-title">Dividi le spese</div>
+          <div class="option-desc">Il costo totale viene diviso equamente tra tutti i partecipanti</div>
+        </div>
+        <div class="radio-ring"><div class="radio-dot"></div></div>
+      </div>
+
+      <div class="expand-box" id="splitBox">
+        <div class="price-wrap">
+          <div class="price-field-row">
+            <span class="price-prefix">€</span>
+            <input class="price-input" id="splitInput" type="number" min="1" max="9999"
+              placeholder="120" inputmode="decimal" oninput="updatePerPerson(); checkCta()">
+          </div>
+          <p class="price-info" id="splitInfo">Inserisci il costo totale della serata</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <button class="btn-continue" id="btnContinue" disabled onclick="goNext()">
+        Continua <i class="ph ph-arrow-right" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</div>
+<script>
+let mode = null;
+
+function selectPrice(row, m) {
+  document.querySelectorAll('.option-row').forEach(r => r.classList.remove('selected'));
+  row.classList.add('selected');
+  mode = m;
+  document.getElementById('priceBox').classList.toggle('open', m === 'paid');
+  document.getElementById('splitBox').classList.toggle('open', m === 'split');
+  if (m === 'paid')  setTimeout(() => document.getElementById('priceInput').focus(), 370);
+  if (m === 'split') { updatePerPerson(); setTimeout(() => document.getElementById('splitInput').focus(), 370); }
+  checkCta();
+}
+
+function updatePerPerson() {
+  const total = parseFloat(document.getElementById('splitInput').value) || 0;
+  const ppl   = parseInt(localStorage.getItem('create_event_ppl') || '10');
+  const info  = document.getElementById('splitInfo');
+  if (total > 0) {
+    const each = (total / ppl).toFixed(2);
+    info.textContent = `Circa €${each} a persona · basato su ${ppl} partecipanti previsti`;
+  } else {
+    info.textContent = 'Inserisci il costo totale della serata';
+  }
+}
+
+function checkCta() {
+  const price = document.getElementById('priceInput').value;
+  const split = document.getElementById('splitInput').value;
+  const ok = mode === 'free'
+    || (mode === 'paid'  && price && parseFloat(price) >= 1)
+    || (mode === 'split' && split && parseFloat(split) >= 1);
+  document.getElementById('btnContinue').disabled = !ok;
+}
+
+function goNext() {
+  localStorage.setItem('create_event_price_mode', mode);
+  if (mode === 'paid') {
+    localStorage.setItem('create_event_price', document.getElementById('priceInput').value);
+    localStorage.removeItem('create_event_split_total');
+  } else if (mode === 'split') {
+    localStorage.setItem('create_event_split_total', document.getElementById('splitInput').value);
+    localStorage.setItem('create_event_price', '0');
+  } else {
+    localStorage.setItem('create_event_price', '0');
+    localStorage.removeItem('create_event_split_total');
+  }
+  window.location.href = 'create-event-step-6.html';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const savedMode  = localStorage.getItem('create_event_price_mode');
+  const savedPrice = localStorage.getItem('create_event_price');
+  const savedSplit = localStorage.getItem('create_event_split_total');
+
+  if (savedMode === 'free')  selectPrice(document.getElementById('optFree'),  'free');
+  if (savedMode === 'paid')  { selectPrice(document.getElementById('optPaid'),  'paid');  if (savedPrice) document.getElementById('priceInput').value = savedPrice; }
+  if (savedMode === 'split') { selectPrice(document.getElementById('optSplit'), 'split'); if (savedSplit) { document.getElementById('splitInput').value = savedSplit; updatePerPerson(); } }
+  checkCta();
+});
+</script>
+</body>
+</html>

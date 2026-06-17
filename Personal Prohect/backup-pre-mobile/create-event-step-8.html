@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crea serata — 8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+:root{--neutral-900:#100d12;--primary-600:#c22b00;--primary-700:#942000;--primary-850:#4d1100;--brand-primary:#7b1b00;--brand-sec:#7a3000;--brand-sec-h:#c24c00;--brand-sec-p:#943a00;--border:#231f26;--text-primary:#f7f6f8;--text-sec:#edeced;--attention:#e8b432;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{background:#0a080c;}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0a080c;font-family:'Plus Jakarta Sans',sans-serif;}
+.phone{width:390px;height:844px;background:var(--neutral-900);border-radius:44px;overflow:hidden;display:flex;flex-direction:column;padding:0 24px 0;box-shadow:0 0 0 10px #1a1a1a,0 32px 80px rgba(0,0,0,.8);}
+.status-bar{display:flex;justify-content:space-between;align-items:center;padding:21px 0 19px}
+.status-bar__time{font-family:system-ui,-apple-system,sans-serif;font-size:17px;font-weight:590;color:#fff;letter-spacing:-.3px;width:100px}
+.status-bar__icons{display:flex;align-items:center;gap:6px;justify-content:flex-end;width:100px}
+.status-bar__icons i{color:#fff;line-height:1}
+.icon-cellular,.icon-wifi{font-size:14px}.icon-battery{font-size:18px}
+.top-nav{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.btn-back{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s}
+.btn-back:hover{background:rgba(255,255,255,.12)}
+.btn-back:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px;}
+.btn-back i{font-size:18px;color:rgba(255,255,255,.7)}
+.step-label{font-size:12px;font-weight:500;color:rgba(255,255,255,.65)}
+.step-label span{color:var(--attention);font-weight:600}
+.progress-segs{display:flex;gap:4px;margin-top:14px}
+.seg{flex:1;height:3px;border-radius:99px;background:rgba(255,255,255,.10)}
+.seg.done{background:var(--primary-600)}
+.seg.active{background:linear-gradient(to right,var(--primary-600) 60%,rgba(255,255,255,.10) 60%)}
+.scroll-area{flex:1;overflow-y:auto;scrollbar-width:none;padding-bottom:8px}
+.scroll-area::-webkit-scrollbar{display:none}
+.page-header{margin-top:24px}
+.page-eyebrow{font-size:11px;font-weight:600;letter-spacing:.8px;color:var(--attention);text-transform:uppercase;margin-bottom:10px}
+.page-title{font-family:'DM Serif Display',serif;font-size:26px;line-height:33px;color:var(--text-primary)}
+
+/* Ticket/Card style */
+.preview-card{position:relative;border:1px solid var(--border);border-radius:20px;overflow:hidden;margin-top:20px}
+.preview-card::before{content:'';position:absolute;inset:0;background:linear-gradient(-52.83deg, #000 38%, var(--primary-850) 73%, var(--brand-primary) 98%);z-index:0}
+.preview-card__photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.25;z-index:1;pointer-events:none}
+.preview-card__content{position:relative;z-index:2;padding:18px;display:flex;flex-direction:column;gap:10px}
+.preview-card__title{font-family:'DM Serif Display',serif;font-size:22px;line-height:27px;color:var(--text-primary)}
+.preview-card__date{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;padding:0 12px;height:26px;border-radius:9999px;background:var(--primary-700);font-size:12px;font-weight:500;color:#edeced}
+.preview-card__loc{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;color:rgba(255,255,255,.70)}
+.preview-card__chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:4px 9px;border-radius:9999px;font-size:11px;font-weight:600;color:#fff;background:rgba(255,255,255,.15)}
+.chip--crowd{background:rgba(255,178,26,.22)}
+
+/* Details Grid List */
+.details-section{margin-top:22px;display:flex;flex-direction:column;gap:10px}
+.detail-item{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
+.detail-item i{font-size:18px;color:#e05500;margin-top:2px;flex-shrink:0}
+.detail-body{flex:1;min-width:0}
+.detail-label{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.60);margin-bottom:2px}
+.detail-val{font-size:13px;font-weight:500;color:#fff;line-height:1.4}
+.detail-val strong{font-weight:600}
+
+.footer{position:sticky;bottom:0;background:var(--neutral-900);padding:20px 0 32px}
+.btn-publish{width:100%;height:52px;border-radius:40px;background:#c24c00;border:1px solid #943a00;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:600;color:var(--text-sec);display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,border-color .15s,transform .1s}
+.btn-publish i{font-size:18px}
+.btn-publish:hover{background:#d45500;border-color:#b53700}
+.btn-publish:active{background:#943a00;border-color:#6b1800;transform:scale(.98)}
+.btn-publish:disabled{background:rgba(255,255,255,.07);border-color:transparent;color:#9c9a9f;cursor:not-allowed;transform:none}
+.btn-publish:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px;}
+.spin{animation:spin .8s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.spin{animation:none;opacity:.6}}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <i class="ph-fill ph-cell-signal-full icon-cellular"></i>
+      <i class="ph-fill ph-wifi-high icon-wifi"></i>
+      <i class="ph-fill ph-battery-full icon-battery"></i>
+    </div>
+  </div>
+  <div class="top-nav">
+    <button class="btn-back" aria-label="Torna indietro" onclick="history.back()"><i class="ph ph-arrow-left" aria-hidden="true"></i></button>
+    <span class="step-label">Step <span>8</span> di 8</span>
+  </div>
+  <div class="progress-segs">
+    <div class="seg done"></div><div class="seg done"></div><div class="seg done"></div>
+    <div class="seg done"></div><div class="seg done"></div><div class="seg done"></div>
+    <div class="seg done"></div>
+    <div class="seg active"></div>
+  </div>
+  <div class="scroll-area">
+    <div class="page-header">
+      <p class="page-eyebrow">Riepilogo</p>
+      <h1 class="page-title">Controlla e pubblica</h1>
+    </div>
+
+    <!-- PREVIEW TICKET CARD -->
+    <div class="preview-card">
+      <img class="preview-card__photo" id="prevPhoto" src="https://www.figma.com/api/mcp/asset/8a923260-def2-4045-8df8-2d0bd62f7c8c" alt="">
+      <div class="preview-card__content">
+        <div class="preview-card__title" id="prevTitle">Marco's House Party</div>
+        <div class="preview-card__date" id="prevDate">
+          <i class="ph ph-calendar-blank"></i> Sabato 17 Giugno · 23:00
+        </div>
+        <div class="preview-card__loc" id="prevLoc">
+          <i class="ph ph-map-pin"></i> Navigli, Milano
+        </div>
+        <div class="preview-card__chips" id="prevChips">
+          <span class="chip" id="chipMood">Party</span>
+          <span class="chip chip--crowd" id="chipCrowd">Equilibrato</span>
+          <span class="chip" id="chipPrice">Free</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DETAIL LIST -->
+    <div class="details-section">
+      <!-- Location info details -->
+      <div class="detail-item">
+        <i class="ph ph-house"></i>
+        <div class="detail-body">
+          <div class="detail-label">Spazio e Capienza</div>
+          <div class="detail-val" id="detailSpace">Appartamento medio · max 25 persone</div>
+        </div>
+      </div>
+
+      <!-- Privacy & Invitations details -->
+      <div class="detail-item">
+        <i class="ph ph-users-three"></i>
+        <div class="detail-body">
+          <div class="detail-label">Visibilità e Invitati</div>
+          <div class="detail-val" id="detailPrivacy">Amici di amici (+1 ospite consentito) · 15 invitati</div>
+        </div>
+      </div>
+
+      <!-- Price details -->
+      <div class="detail-item">
+        <i class="ph ph-ticket"></i>
+        <div class="detail-body">
+          <div class="detail-label">Ingresso e Policy</div>
+          <div class="detail-val" id="detailPrice">Ingresso gratuito</div>
+        </div>
+      </div>
+
+      <!-- Playlist details -->
+      <div class="detail-item">
+        <i class="ph ph-music-note"></i>
+        <div class="detail-body">
+          <div class="detail-label">Musica</div>
+          <div class="detail-val" id="detailMusic">Nessuna playlist associata</div>
+        </div>
+      </div>
+
+      <!-- Deadlines details -->
+      <div class="detail-item">
+        <i class="ph ph-calendar-x"></i>
+        <div class="detail-body">
+          <div class="detail-label">Termine risposte</div>
+          <div class="detail-val" id="detailDeadline">Nessuna scadenza impostata</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <button class="btn-publish" id="btnPublish" onclick="publishEvent()">
+        Pubblica evento <i class="ph ph-paper-plane-tilt" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</div>
+<script>
+function publishEvent() {
+  const btn = document.getElementById('btnPublish');
+  btn.innerHTML = '<i class="ph ph-circle-notch spin"></i> Pubblicazione...';
+  btn.disabled = true;
+  
+  setTimeout(() => {
+    window.location.href = 'create-event-step-9.html';
+  }, 1800);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Read choices
+  const title = localStorage.getItem('create_event_title') || "Marco's House Party";
+  const desc = localStorage.getItem('create_event_desc') || "";
+  const img = localStorage.getItem('create_event_img') || "https://www.figma.com/api/mcp/asset/8a923260-def2-4045-8df8-2d0bd62f7c8c";
+  
+  const rawDate = localStorage.getItem('create_event_date');
+  const rawTime = localStorage.getItem('create_event_time');
+  const dur = localStorage.getItem('create_event_dur') || "3h";
+  const ppl = parseInt(localStorage.getItem('create_event_ppl') || '15');
+  const loc = localStorage.getItem('create_event_loc') || "Navigli, Milano";
+  const size = localStorage.getItem('create_event_size') || "Appartamento medio";
+  const mood = localStorage.getItem('create_event_mood') || "Festa";
+  
+  const privacy = localStorage.getItem('create_event_privacy') || "extended";
+  const porta = parseInt(localStorage.getItem('create_event_porta') || '1');
+  const friendsJson = localStorage.getItem('create_event_friends');
+  const friends = friendsJson ? JSON.parse(friendsJson) : [];
+  const cap = parseInt(localStorage.getItem('create_event_cap') || '25');
+  
+  const priceMode = localStorage.getItem('create_event_price_mode') || "free";
+  const priceVal = localStorage.getItem('create_event_price') || "0";
+  
+  const musicMode = localStorage.getItem('create_event_music_mode') || "none";
+  const playName = localStorage.getItem('create_event_playlist_name');
+  const playCollab = localStorage.getItem('create_event_playlist_collab');
+  
+  const deadType = localStorage.getItem('create_event_deadline_type') || "none";
+  const deadDate = localStorage.getItem('create_event_deadline_date');
+  const deadTime = localStorage.getItem('create_event_deadline_time');
+  const refund = localStorage.getItem('create_event_refund_enabled') === 'true';
+
+  // 1. Render Card Preview
+  document.getElementById('prevTitle').textContent = title;
+  document.getElementById('prevPhoto').src = img;
+  document.getElementById('prevLoc').innerHTML = '<i class="ph ph-map-pin"></i> ' + loc;
+  
+  if (rawDate && rawTime) {
+    const d = new Date(rawDate + 'T00:00:00');
+    const dateStr = d.toLocaleDateString('it-IT', { weekday:'long', day:'numeric', month:'short' });
+    document.getElementById('prevDate').innerHTML = `<i class="ph ph-calendar-blank"></i> ${dateStr.charAt(0).toUpperCase() + dateStr.slice(1)} · ${rawTime}`;
+  } else {
+    document.getElementById('prevDate').innerHTML = `<i class="ph ph-calendar-blank"></i> Sabato 17 Giugno · 23:00`;
+  }
+
+  // Chips
+  const chipMood = document.getElementById('chipMood');
+  chipMood.textContent = mood.split(',')[0];
+  
+  const chipCrowd = document.getElementById('chipCrowd');
+  const totalPot = porta > 0 ? ppl * (1 + porta) : ppl;
+  const pct = Math.round((totalPot / cap) * 100);
+  if (pct < 70) { chipCrowd.textContent = "Comodo"; chipCrowd.style.backgroundColor = "rgba(52,211,153,.22)"; chipCrowd.style.color = "#34d399"; }
+  else if (pct < 85) { chipCrowd.textContent = "Equilibrato"; chipCrowd.style.backgroundColor = "rgba(232,180,50,.22)"; chipCrowd.style.color = "var(--attention)"; }
+  else if (pct < 95) { chipCrowd.textContent = "Pieno"; chipCrowd.style.backgroundColor = "rgba(224,85,53,.22)"; chipCrowd.style.color = "#e05535"; }
+  else { chipCrowd.textContent = "Molto affollato"; chipCrowd.style.backgroundColor = "rgba(224,85,53,.25)"; chipCrowd.style.color = "#e05535"; }
+
+  const chipPrice = document.getElementById('chipPrice');
+  if (priceMode === 'paid') {
+    chipPrice.textContent = '€' + parseFloat(priceVal).toFixed(2);
+    chipPrice.style.backgroundColor = "rgba(255,255,255,.15)";
+  } else {
+    chipPrice.textContent = 'Gratis';
+    chipPrice.style.backgroundColor = "rgba(60,160,60,.25)";
+    chipPrice.style.color = "rgba(180,255,180,.85)";
+  }
+
+  // 2. Render details list
+  // Space
+  document.getElementById('detailSpace').innerHTML = `${size} · max <strong>${cap} persone</strong>`;
+  
+  // Privacy
+  let privacyStr = "";
+  if (privacy === 'friends') privacyStr = "Solo amici diretti";
+  else if (privacy === 'extended') privacyStr = "Amici di amici " + (porta > 0 ? `(+${porta} ospiti)` : "");
+  else privacyStr = "Aperta a tutti";
+  
+  const invitatiNum = friends.length > 0 ? friends.length : ppl;
+  document.getElementById('detailPrivacy').innerHTML = `${privacyStr} · <strong>${invitatiNum} invitati</strong>`;
+
+  // Price
+  if (priceMode === 'paid') {
+    document.getElementById('detailPrice').innerHTML = `Quota: <strong>€${parseFloat(priceVal).toFixed(2)}</strong> · ${refund ? "Rimborsabile" : "Non rimborsabile"}`;
+  } else {
+    document.getElementById('detailPrice').textContent = `Ingresso gratuito`;
+  }
+
+  // Music
+  if (musicMode === 'spotify' && playName) {
+    document.getElementById('detailMusic').innerHTML = `Playlist Spotify: <strong>${playName}</strong> ${playCollab === 'true' ? " (Collaborativa)" : ""}`;
+  } else {
+    document.getElementById('detailMusic').textContent = `Nessuna playlist associata`;
+  }
+
+  // Deadline
+  if (deadType === 'none') {
+    document.getElementById('detailDeadline').textContent = `Nessuna scadenza impostata`;
+  } else if (deadType === '24h') {
+    document.getElementById('detailDeadline').textContent = `Entro 24 ore prima dell'evento`;
+  } else if (deadType === '48h') {
+    document.getElementById('detailDeadline').textContent = `Entro 48 ore prima dell'evento`;
+  } else if (deadType === 'manual' && deadDate && deadTime) {
+    const d = new Date(deadDate);
+    const dStr = d.toLocaleDateString('it-IT', { day:'numeric', month:'short' });
+    document.getElementById('detailDeadline').innerHTML = `Risposte entro il <strong>${dStr} alle ${deadTime}</strong>`;
+  }
+});
+</script>
+</body>
+</html>

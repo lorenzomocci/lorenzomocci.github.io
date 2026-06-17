@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Serata creata! 🎉</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+:root{--neutral-900:#100d12;--primary-600:#c22b00;--primary-700:#942000;--primary-850:#4d1100;--brand-primary:#7b1b00;--brand-sec:#7a3000;--brand-sec-h:#c24c00;--brand-sec-p:#943a00;--border:#231f26;--text-primary:#f7f6f8;--text-sec:#edeced;--attention:#e8b432;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{background:#0a080c;}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0a080c;font-family:'Plus Jakarta Sans',sans-serif;}
+.phone{width:390px;height:844px;background:var(--neutral-900);border-radius:44px;overflow:hidden;display:flex;flex-direction:column;padding:0 24px 0;box-shadow:0 0 0 10px #1a1a1a,0 32px 80px rgba(0,0,0,.8);position:relative}
+.status-bar{display:flex;justify-content:space-between;align-items:center;padding:21px 0 19px}
+.status-bar__time{font-family:system-ui,-apple-system,sans-serif;font-size:17px;font-weight:590;color:#fff;letter-spacing:-.3px;width:100px}
+.status-bar__icons{display:flex;align-items:center;gap:6px;justify-content:flex-end;width:100px}
+.status-bar__icons i{color:#fff;line-height:1}
+.icon-cellular,.icon-wifi{font-size:14px}.icon-battery{font-size:18px}
+
+.scroll-area{flex:1;overflow-y:auto;scrollbar-width:none;padding-bottom:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.scroll-area::-webkit-scrollbar{display:none}
+
+/* Success Animation elements */
+.success-icon{width:80px;height:80px;border-radius:50%;background:rgba(52,211,153,.1);border:2px solid rgba(52,211,153,.25);display:flex;align-items:center;justify-content:center;margin-bottom:24px;box-shadow:0 0 30px rgba(52,211,153,.15);animation:pulse-green 2s infinite}
+.success-icon i{font-size:42px;color:#34d399}
+
+.page-title{font-family:'DM Serif Display',serif;font-size:28px;line-height:36px;color:#fff;margin-bottom:8px}
+.page-sub{font-size:13px;line-height:19px;color:rgba(255,255,255,.65);margin-bottom:30px;max-width:280px}
+
+/* Ticket Design */
+.ticket{width:100%;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:18px;overflow:hidden;margin-bottom:30px;display:flex;flex-direction:column;position:relative}
+.ticket__header{padding:16px;border-bottom:1px dashed rgba(255,255,255,.12);position:relative}
+/* Side notches on the ticket */
+.ticket__header::before,.ticket__header::after{content:'';width:14px;height:14px;background:#100d12;border-radius:50%;position:absolute;bottom:-7px;z-index:5;border:1px solid rgba(255,255,255,.07)}
+.ticket__header::before{left:-8px}
+.ticket__header::after{right:-8px}
+
+.ticket__photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.15;z-index:0;pointer-events:none}
+.ticket__title{font-family:'DM Serif Display',serif;font-size:20px;color:#fff;position:relative;z-index:1;margin-bottom:8px}
+.ticket__date{font-size:12px;font-weight:600;color:var(--attention);position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:5px}
+.ticket__body{padding:16px;display:flex;flex-direction:column;gap:8px;align-items:center}
+.ticket__loc{font-size:12px;color:rgba(255,255,255,.70);display:flex;align-items:center;gap:4px}
+.ticket__code{margin-top:8px;font-size:10px;font-weight:600;letter-spacing:1px;color:rgba(255,255,255,.55);text-transform:uppercase}
+.ticket__qr{margin-top:4px;font-size:32px;color:rgba(255,255,255,.60)}
+
+/* Share buttons */
+.share-section{width:100%;display:flex;flex-direction:column;gap:10px;margin-bottom:10px}
+.btn-whatsapp{width:100%;height:48px;border-radius:9999px;background:#25d366;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;color:#fff;transition:background .15s,border-color .15s,transform .1s}
+.btn-whatsapp:hover{background:#20ba56}
+.btn-whatsapp:active{transform:scale(.98)}
+.btn-whatsapp i{font-size:18px}
+
+.btn-link{width:100%;height:48px;border-radius:40px;background:#322f35;border:1px solid #413e44;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;color:rgba(255,255,255,.80);transition:background .15s,color .15s,transform .1s}
+.btn-link:hover{background:#3a3740;color:#fff}
+.btn-link:active{transform:scale(.98)}
+.btn-link i{font-size:18px}
+
+.footer{position:sticky;bottom:0;background:var(--neutral-900);padding:20px 0 32px;width:100%}
+.btn-home{width:100%;height:52px;border-radius:40px;background:#c24c00;border:1px solid #943a00;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:600;color:var(--text-sec);display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,border-color .15s,transform .1s}
+.btn-home:hover{background:#d45500;border-color:#b53700}
+.btn-home:active{background:#943a00;border-color:#6b1800;transform:scale(.98)}
+.btn-secondary{width:100%;height:44px;border-radius:9999px;background:none;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:500;color:#e05500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:opacity .15s;margin-top:10px;text-decoration:underline;text-underline-offset:2px}
+.btn-secondary:hover{opacity:.75}
+
+/* Toast Message */
+.toast{position:absolute;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(18,14,22,.9);border:1px solid var(--border);border-radius:30px;padding:10px 20px;font-size:12px;font-weight:600;color:#fff;display:flex;align-items:center;gap:8px;box-shadow:0 10px 25px rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .3s;z-index:99}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast i{color:#34d399;font-size:16px}
+
+@keyframes pulse-green{
+  0%{box-shadow:0 0 0 0 rgba(52,211,153,.4)}
+  70%{box-shadow:0 0 0 15px rgba(52,211,153,0)}
+  100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}
+}
+.btn-home:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+.btn-secondary:focus-visible{outline:2px solid #c24c00;outline-offset:2px;}
+.btn-whatsapp:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+.btn-link:focus-visible{outline:2px solid rgba(255,255,255,.6);outline-offset:2px;}
+@media(prefers-reduced-motion:reduce){.success-icon{animation:none}.spin{animation:none;opacity:.6}}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <i class="ph-fill ph-cell-signal-full icon-cellular"></i>
+      <i class="ph-fill ph-wifi-high icon-wifi"></i>
+      <i class="ph-fill ph-battery-full icon-battery"></i>
+    </div>
+  </div>
+
+  <div class="scroll-area">
+    <div class="success-icon" role="img" aria-label="Operazione completata con successo">
+      <i class="ph-fill ph-check" aria-hidden="true"></i>
+    </div>
+    
+    <h1 class="page-title">Serata creata! 🎉</h1>
+    <p class="page-sub">Grazie per aver organizzato con noi. Il tuo evento è pronto ed è online.</p>
+
+    <!-- TICKET CARD PREVIEW -->
+    <div class="ticket">
+      <div class="ticket__header">
+        <img class="ticket__photo" id="tickPhoto" src="https://www.figma.com/api/mcp/asset/8a923260-def2-4045-8df8-2d0bd62f7c8c" alt="">
+        <div class="ticket__title" id="tickTitle">Marco's House Party</div>
+        <div class="ticket__date" id="tickDate">
+          <i class="ph ph-calendar-blank"></i> Sabato 17 Giugno · 23:00
+        </div>
+      </div>
+      <div class="ticket__body">
+        <div class="ticket__loc" id="tickLoc">
+          <i class="ph ph-map-pin"></i> Navigli, Milano
+        </div>
+        <div class="ticket__code" id="tickCode">E-38491</div>
+        <div class="ticket__qr"><i class="ph ph-qr-code"></i></div>
+      </div>
+    </div>
+
+    <!-- SHARE UTILITIES -->
+    <div class="share-section">
+      <button class="btn-whatsapp" onclick="shareWhatsApp()">
+        <i class="ph-fill ph-whatsapp-logo" aria-hidden="true"></i> Condividi su WhatsApp
+      </button>
+      <button class="btn-link" onclick="copyLink()">
+        <i class="ph ph-link" aria-hidden="true"></i> Copia link invito
+      </button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <button class="btn-home" onclick="viewEvent()">
+      Vedi la serata <i class="ph ph-arrow-right" aria-hidden="true"></i>
+    </button>
+    <button class="btn-secondary" onclick="goHome()">Torna alla home</button>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">
+    <i class="ph-fill ph-check-circle" aria-hidden="true"></i> Link copiato negli appunti!
+  </div>
+</div>
+
+<script>
+function shareWhatsApp() {
+  const title = document.getElementById('tickTitle').textContent;
+  const text = `Ehi! Ho creato l'evento "${title}" su Antigravity. Entra per confermare la tua presenza ed entrare nel vibe!`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+}
+
+function copyLink() {
+  const toast = document.getElementById('toast');
+  toast.classList.add('show');
+  
+  // Try navigator clipboard
+  navigator.clipboard.writeText(window.location.origin + "/events-browse.html").catch(err => {});
+  
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 2000);
+}
+
+const CREATION_KEYS = [
+  'create_event_title', 'create_event_desc', 'create_event_img',
+  'create_event_date', 'create_event_time', 'create_event_dur',
+  'create_event_ppl', 'create_event_loc', 'create_event_size',
+  'create_event_mood', 'create_event_privacy', 'create_event_porta',
+  'create_event_friends', 'create_event_cap', 'create_event_price_mode',
+  'create_event_price', 'create_event_music_mode', 'create_event_playlist_connected',
+  'create_event_playlist_name', 'create_event_playlist_author',
+  'create_event_playlist_collab', 'create_event_deadline_type',
+  'create_event_deadline_date', 'create_event_deadline_time',
+  'create_event_refund_enabled'
+];
+
+function viewEvent() {
+  CREATION_KEYS.forEach(k => localStorage.removeItem(k));
+  window.location.href = 'event-card.html';
+}
+
+function goHome() {
+  CREATION_KEYS.forEach(k => localStorage.removeItem(k));
+  window.location.href = 'home-profile-done.html';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Populate from local storage
+  const title = localStorage.getItem('create_event_title') || "Marco's House Party";
+  const img = localStorage.getItem('create_event_img') || "https://www.figma.com/api/mcp/asset/8a923260-def2-4045-8df8-2d0bd62f7c8c";
+  const loc = localStorage.getItem('create_event_loc') || "Navigli, Milano";
+  const rawDate = localStorage.getItem('create_event_date');
+  const rawTime = localStorage.getItem('create_event_time');
+
+  document.getElementById('tickTitle').textContent = title;
+  document.getElementById('tickPhoto').src = img;
+  document.getElementById('tickLoc').innerHTML = '<i class="ph ph-map-pin"></i> ' + loc;
+  
+  if (rawDate && rawTime) {
+    const d = new Date(rawDate + 'T00:00:00');
+    const dateStr = d.toLocaleDateString('it-IT', { weekday:'long', day:'numeric', month:'short' });
+    document.getElementById('tickDate').innerHTML = `<i class="ph ph-calendar-blank"></i> ${dateStr.charAt(0).toUpperCase() + dateStr.slice(1)} · ${rawTime}`;
+  } else {
+    document.getElementById('tickDate').innerHTML = `<i class="ph ph-calendar-blank"></i> Sabato 17 Giugno · 23:00`;
+  }
+
+  // Generate a random-looking ticket ID
+  const randId = 'E-' + Math.floor(10000 + Math.random() * 90000);
+  document.getElementById('tickCode').textContent = randId;
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="immagini/icon-180.png">
+<link rel="icon" type="image/png" href="immagini/icon-180.png">
+<meta name="apple-mobile-web-app-title" content="Nite">
+<title>Serata pubblicata</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+:root {
+  --neutral-900: #100d12;
+  --primary-600: #c22b00;
+  --primary-700: #942000;
+  --primary-850: #4d1100;
+  --brand-primary: #7b1b00;
+  --brand-sec: #7a3000;
+  --brand-sec-h: #c24c00;
+  --brand-sec-p: #943a00;
+  --border: #231f26;
+  --text-primary: #f7f6f8;
+  --text-sec: #edeced;
+  --text-tertiary: #c4c2c7;
+  --attention: #e8b432;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: #0a080c; }
+body {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: #0a080c; font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.phone {
+  width: 390px; height: 844px;
+  background: var(--neutral-900);
+  border-radius: 44px; overflow: hidden;
+  display: flex; flex-direction: column;
+  box-shadow: 0 0 0 10px #1a1a1a, 0 32px 80px rgba(0,0,0,.8);
+  position: relative;
+}
+
+/* ── Status bar ── */
+.status-bar {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 20;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 21px 24px 16px;
+}
+.status-bar__time { font-family: system-ui,sans-serif; font-size: 17px; font-weight: 590; color: #fff; letter-spacing: -.3px; width: 100px; }
+.status-bar__icons { display: flex; align-items: center; gap: 6px; justify-content: flex-end; width: 100px; }
+.status-bar__icons i { color: #fff; line-height: 1; }
+.icon-cellular, .icon-wifi { font-size: 14px; } .icon-battery { font-size: 18px; }
+
+/* ── Scroll ── */
+.scroll-area { flex: 1; overflow-y: auto; scrollbar-width: none; }
+.scroll-area::-webkit-scrollbar { display: none; }
+
+/* ── Hero ── */
+.hero {
+  position: relative; width: 100%; height: 320px;
+  flex-shrink: 0; overflow: hidden;
+}
+.hero__img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero__gradient {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(16,13,18,.18) 0%,
+    rgba(16,13,18,.0)  30%,
+    rgba(16,13,18,.60) 68%,
+    rgba(16,13,18,1.0) 100%
+  );
+  pointer-events: none;
+}
+.hero__tint {
+  position: absolute; inset: 0;
+  background: linear-gradient(-52.83deg, rgba(0,0,0,0) 50%, var(--primary-850) 120%);
+  pointer-events: none; opacity: .5;
+}
+
+/* Success chip */
+.success-chip {
+  position: absolute; top: 68px; left: 50%; transform: translateX(-50%);
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 16px; border-radius: 9999px;
+  background: rgba(16,13,18,.70); border: 1px solid rgba(52,211,153,.45);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  font-size: 12px; font-weight: 700; color: #34d399; letter-spacing: .3px;
+  white-space: nowrap; z-index: 10;
+  animation: chip-in .55s cubic-bezier(.34,1.56,.64,1) .1s both;
+}
+.success-chip i { font-size: 15px; }
+@keyframes chip-in {
+  from { opacity: 0; transform: translateX(-50%) scale(.75); }
+  to   { opacity: 1; transform: translateX(-50%) scale(1); }
+}
+
+/* Hero bottom — title */
+.hero__bottom {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 0 20px 18px;
+}
+.hero__title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px; line-height: 34px; color: var(--text-primary);
+}
+
+/* ── Body ── */
+.body-content { padding: 16px 20px 0; }
+
+/* Date pills */
+.date-pill-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.date-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 34px; padding: 0 14px; border-radius: 9999px;
+  background: rgba(148,32,0,.46);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(16,13,18,.55);
+  font-size: 13px; font-weight: 500; color: var(--text-sec);
+}
+.countdown-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 34px; padding: 0 14px; border-radius: 9999px;
+  background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.13);
+  font-size: 13px; font-weight: 500; color: rgba(255,255,255,.60);
+}
+.date-pill i, .countdown-pill i { font-size: 13px; }
+
+/* Tags */
+.body-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; }
+.body-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: 9999px;
+  font-size: 11px; font-weight: 600;
+}
+.body-tag i { font-size: 12px; }
+.body-tag--orange { background: rgba(194,76,0,.20);    border: 1px solid rgba(194,76,0,.35);    color: #ff8040; }
+.body-tag--party  { background: rgba(245,160,35,.20);  border: 1px solid rgba(245,160,35,.34);  color: #f5b040; }
+.body-tag--blue   { background: rgba(80,140,255,.15);  border: 1px solid rgba(80,140,255,.30);  color: #7eb3ff; }
+.body-tag--green  { background: rgba(52,211,153,.15);  border: 1px solid rgba(52,211,153,.28);  color: #34d399; }
+.body-tag--night  { background: rgba(130,100,220,.18); border: 1px solid rgba(130,100,220,.30); color: #a990f5; }
+.body-tag--amber  { background: rgba(232,180,50,.18);  border: 1px solid rgba(232,180,50,.30);  color: var(--attention); }
+
+/* ── Share card ── */
+.share-card {
+  border-radius: 18px;
+  background: rgba(194,76,0,.08); border: 1px solid rgba(194,76,0,.20);
+  padding: 16px; margin-bottom: 26px;
+}
+.share-card__title { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+.share-card__sub   { font-size: 12px; color: var(--text-tertiary); margin-bottom: 14px; line-height: 17px; }
+.share-btns { display: flex; gap: 8px; }
+.btn-wa {
+  flex: 1; height: 44px; border-radius: 9999px;
+  background: #1a8a44; border: 1px solid #166e36; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 700; color: #fff;
+  transition: background .15s, transform .1s;
+}
+.btn-wa:hover  { background: #1e9e4e; }
+.btn-wa:active { transform: scale(.97); }
+.btn-wa i { font-size: 18px; }
+.btn-copy {
+  height: 44px; padding: 0 16px; border-radius: 9999px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12);
+  cursor: pointer; display: flex; align-items: center; gap: 7px;
+  font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 600; color: var(--text-sec);
+  transition: background .15s, transform .1s; flex-shrink: 0;
+}
+.btn-copy:hover  { background: rgba(255,255,255,.14); }
+.btn-copy:active { transform: scale(.97); }
+.btn-copy i { font-size: 16px; }
+
+/* ── Section ── */
+.section { margin-bottom: 26px; }
+.section__label {
+  font-size: 11px; font-weight: 700; letter-spacing: .8px;
+  text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 10px;
+}
+
+/* ── Info cards ── */
+.info-card {
+  display: flex; align-items: center; gap: 14px;
+  padding: 13px 14px; border-radius: 12px;
+  background: rgba(255,255,255,.04); border: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.info-card:last-child { margin-bottom: 0; }
+.info-card__icon { display: flex; align-items: center; flex-shrink: 0; }
+.info-card__icon i { font-size: 18px; color: #e05500; }
+.info-card__body { flex: 1; min-width: 0; }
+.info-card__label {
+  font-size: 10px; font-weight: 700; letter-spacing: .5px;
+  text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 2px;
+}
+.info-card__val { font-size: 13px; font-weight: 500; color: var(--text-primary); line-height: 1.4; }
+
+/* ── Organizer ── */
+.org-card {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 14px; border-radius: 12px;
+  background: rgba(255,255,255,.04); border: 1px solid var(--border);
+}
+.org-av {
+  width: 42px; height: 42px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+  background: rgba(255,255,255,.08);
+  display: flex; align-items: center; justify-content: center;
+}
+.org-av img { width: 100%; height: 100%; object-fit: cover; }
+.org-av i { font-size: 22px; color: rgba(255,255,255,.35); }
+.org-info { flex: 1; min-width: 0; }
+.org-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.org-role { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
+.org-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: 9999px;
+  background: rgba(232,180,50,.14); border: 1px solid rgba(232,180,50,.28);
+  font-size: 10px; font-weight: 700; color: var(--attention);
+}
+.org-badge i { font-size: 11px; }
+
+/* ── Footer ── */
+.footer {
+  flex-shrink: 0; padding: 16px 24px 36px;
+  background: var(--neutral-900);
+  border-top: 1px solid rgba(255,255,255,.05);
+}
+.btn-home {
+  width: 100%; height: 52px; border-radius: 40px;
+  background: #c24c00; border: 1px solid #943a00;
+  cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 16px; font-weight: 700; color:#fff;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: background .15s, transform .1s;
+}
+.btn-home:hover  { background: #c44e00; }
+.btn-home:active { background: #943a00; transform: scale(.98); }
+.btn-home i { font-size: 18px; }
+.btn-manage {
+  width: 100%; margin-top: 12px; background: none; border: none; padding: 0;
+  font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 500;
+  color: rgba(255,255,255,.35); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  transition: color .15s;
+}
+.btn-manage:hover { color: rgba(255,255,255,.65); }
+.btn-manage i { font-size: 15px; }
+
+/* ── Toast ── */
+.toast {
+  position: absolute; bottom: 112px; left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: rgba(18,14,22,.94); border: 1px solid var(--border);
+  border-radius: 30px; padding: 10px 20px;
+  font-size: 12px; font-weight: 600; color: #fff;
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.6);
+  opacity: 0; pointer-events: none; white-space: nowrap; z-index: 99;
+  transition: transform .32s cubic-bezier(.34,1.56,.64,1), opacity .28s;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast i { color: #34d399; font-size: 16px; }
+
+@media (prefers-reduced-motion: reduce) { .success-chip { animation: none; } }
+
+@media (max-width: 430px) {
+  html, body { background: #0f0d12; }
+  body { align-items: flex-start; }
+  .phone { width: 100%; height: calc(100svh + env(safe-area-inset-top)); border-radius: 0; box-shadow: none; padding-bottom: env(safe-area-inset-bottom); }
+  .status-bar { display: none; }
+  .success-chip { top: calc(env(safe-area-inset-top) + 12px); }
+}
+@media (max-width: 430px){ .footer{ padding-bottom: 8px; } }
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <i class="ph-fill ph-cell-signal-full icon-cellular"></i>
+      <i class="ph-fill ph-wifi-high icon-wifi"></i>
+      <i class="ph-fill ph-battery-full icon-battery"></i>
+    </div>
+  </div>
+
+  <div class="scroll-area">
+
+    <!-- Hero -->
+    <div class="hero">
+      <img class="hero__img" id="heroPhoto" src="immagini/456ed706d66dd4ee3da6dcaf299dcbd3.jpg" alt="">
+      <div class="hero__gradient"></div>
+      <div class="hero__tint"></div>
+
+      <div class="success-chip" aria-live="polite">
+        <i class="ph-fill ph-check-circle"></i> Serata pubblicata
+      </div>
+
+      <div class="hero__bottom">
+        <h1 class="hero__title" id="heroTitle">Marco's House Party</h1>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="body-content">
+
+      <div class="date-pill-row">
+        <div class="date-pill" id="datePill">
+          <i class="ph ph-calendar-blank"></i> Sab 17 Giu · 23:00
+        </div>
+        <div class="countdown-pill" id="countdownPill">
+          <i class="ph ph-clock"></i> tra 8 giorni
+        </div>
+      </div>
+
+      <div class="body-tags" id="bodyTags">
+        <span class="body-tag body-tag--party"><i class="ph-fill ph-confetti"></i> House Party</span>
+        <span class="body-tag body-tag--blue"><i class="ph ph-map-pin"></i> Navigli</span>
+        <span class="body-tag body-tag--green"><i class="ph-fill ph-ticket"></i> Gratis</span>
+      </div>
+
+      <!-- Share -->
+      <div class="share-card">
+        <div class="share-card__title">Invita i tuoi amici</div>
+        <div class="share-card__sub">Condividi il link per raccogliere le adesioni prima della serata</div>
+        <div class="share-btns">
+          <button class="btn-wa" onclick="shareWhatsApp()">
+            <i class="ph-fill ph-whatsapp-logo"></i> WhatsApp
+          </button>
+          <button class="btn-copy" onclick="shareNative()">
+            <i class="ph ph-paper-plane-tilt"></i> Condividi
+          </button>
+        </div>
+      </div>
+
+      <!-- Dettagli -->
+      <div class="section">
+        <div class="section__label">Dettagli</div>
+        <div class="info-card">
+          <div class="info-card__icon"><i class="ph ph-map-pin"></i></div>
+          <div class="info-card__body">
+            <div class="info-card__label">Location</div>
+            <div class="info-card__val" id="detLoc">Navigli, Milano</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-card__icon"><i class="ph ph-users-three"></i></div>
+          <div class="info-card__body">
+            <div class="info-card__label">Visibilità</div>
+            <div class="info-card__val" id="detPrivacy">Amici di amici · 15 invitati</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-card__icon"><i class="ph ph-ticket"></i></div>
+          <div class="info-card__body">
+            <div class="info-card__label">Ingresso</div>
+            <div class="info-card__val" id="detPrice">Gratuito</div>
+          </div>
+        </div>
+        <div class="info-card" id="detMusicCard" style="display:none">
+          <div class="info-card__icon"><i class="ph ph-music-note"></i></div>
+          <div class="info-card__body">
+            <div class="info-card__label">Musica</div>
+            <div class="info-card__val" id="detMusic">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Organizzatore -->
+      <div class="section">
+        <div class="section__label">Organizzatore</div>
+        <div class="org-card">
+          <div class="org-av">
+            <img id="orgAvImg" src="https://www.figma.com/api/mcp/asset/042a454b-975e-4ac2-b171-c0abc593a5fa" alt=""
+                 onerror="this.style.display='none';document.getElementById('orgAvIcon').style.display=''">
+            <i class="ph-fill ph-user" id="orgAvIcon" style="display:none"></i>
+          </div>
+          <div class="org-info">
+            <div class="org-name">Tu</div>
+            <div class="org-role">Organizzatore · Antigravity Pro</div>
+          </div>
+          <div class="org-badge"><i class="ph-fill ph-crown"></i> Pro</div>
+        </div>
+      </div>
+
+    </div><!-- /body-content -->
+
+    <div style="height:12px"></div>
+  </div><!-- /scroll-area -->
+
+  <!-- Sticky footer -->
+  <div class="footer">
+    <button class="btn-home" onclick="goHome()">
+      <i class="ph ph-house"></i> Torna alla home
+    </button>
+    <button class="btn-manage" onclick="viewEvent()">
+      Gestisci la serata <i class="ph ph-arrow-right"></i>
+    </button>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <i class="ph-fill ph-check-circle"></i> Link copiato negli appunti!
+  </div>
+
+</div><!-- /phone -->
+
+<script>
+const CREATION_KEYS = [
+  'create_event_title','create_event_desc','create_event_img',
+  'create_event_date','create_event_time','create_event_dur',
+  'create_event_ppl','create_event_loc','create_event_size',
+  'create_event_mood','create_event_privacy','create_event_porta',
+  'create_event_friends','create_event_cap','create_event_price_mode',
+  'create_event_price','create_event_music_mode','create_event_playlist_connected',
+  'create_event_playlist_name','create_event_playlist_author',
+  'create_event_playlist_collab','create_event_deadline_type',
+  'create_event_deadline_date','create_event_deadline_time',
+  'create_event_refund_enabled'
+];
+
+function shareWhatsApp() {
+  const title = document.getElementById('heroTitle').textContent;
+  const text = `Ehi! Ho organizzato "${title}" su Antigravity — conferma la tua presenza: ${window.location.href}`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+}
+
+async function shareNative() {
+  const title = document.getElementById('heroTitle').textContent;
+  const data = {
+    title: title,
+    text: `Sei invitato a "${title}" su Antigravity 🎉`,
+    url: window.location.href
+  };
+  if (navigator.share) {
+    try { await navigator.share(data); } catch (_) {}
+  } else {
+    navigator.clipboard.writeText(window.location.href).catch(() => {});
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2400);
+  }
+}
+
+function goHome() {
+  CREATION_KEYS.forEach(k => localStorage.removeItem(k));
+  window.location.href = 'event-card.html';
+}
+
+function viewEvent() {
+  window.location.href = 'event-detail.html';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const title     = localStorage.getItem('create_event_title') || "Marco's House Party";
+  const img       = localStorage.getItem('create_event_img')   || 'immagini/456ed706d66dd4ee3da6dcaf299dcbd3.jpg';
+  const loc       = localStorage.getItem('create_event_loc')   || 'Navigli, Milano';
+  const mood      = localStorage.getItem('create_event_mood')  || 'Festa';
+  const rawDate   = localStorage.getItem('create_event_date');
+  const rawTime   = localStorage.getItem('create_event_time');
+  const privacy   = localStorage.getItem('create_event_privacy')   || 'extended';
+  const porta     = parseInt(localStorage.getItem('create_event_porta') || '1');
+  const friendsJson = localStorage.getItem('create_event_friends');
+  const friends   = friendsJson ? JSON.parse(friendsJson) : [];
+  const ppl       = parseInt(localStorage.getItem('create_event_ppl') || '15');
+  const priceMode  = localStorage.getItem('create_event_price_mode')  || 'free';
+  const priceVal   = localStorage.getItem('create_event_price')       || '0';
+  const splitTotal = localStorage.getItem('create_event_split_total') || '0';
+  const musicMode = localStorage.getItem('create_event_music_mode') || 'none';
+  const playName  = localStorage.getItem('create_event_playlist_name');
+
+  // Hero
+  document.getElementById('heroTitle').textContent = title;
+  document.getElementById('heroPhoto').src = img;
+
+  // Date + countdown
+  if (rawDate && rawTime) {
+    const d = new Date(rawDate + 'T00:00:00');
+    const dateStr = d.toLocaleDateString('it-IT', { weekday:'short', day:'numeric', month:'short' });
+    document.getElementById('datePill').innerHTML =
+      `<i class="ph ph-calendar-blank"></i> ${dateStr.charAt(0).toUpperCase() + dateStr.slice(1)} · ${rawTime}`;
+    const diff = Math.round((d - new Date()) / 86400000);
+    const cp = document.getElementById('countdownPill');
+    if (diff > 1)      cp.innerHTML = `<i class="ph ph-clock"></i> tra ${diff} giorni`;
+    else if (diff === 1) cp.innerHTML = `<i class="ph ph-clock"></i> domani`;
+    else if (diff === 0) cp.innerHTML = `<i class="ph ph-clock"></i> stasera`;
+    else cp.style.display = 'none';
+  }
+
+  // Tags
+  const tagsEl = document.getElementById('bodyTags');
+  tagsEl.innerHTML = '';
+  const ml = mood.toLowerCase();
+  let mClass = 'body-tag--party', mIcon = 'ph-fill ph-confetti', mLabel = mood.split(',')[0];
+  if (ml.includes('aperit'))                       { mClass = 'body-tag--amber'; mIcon = 'ph-fill ph-wine';         mLabel = 'Aperitivo'; }
+  else if (ml.includes('club')||ml.includes('disco')) { mClass = 'body-tag--night'; mIcon = 'ph-fill ph-vinyl-record'; mLabel = 'Club'; }
+  else if (ml.includes('live'))                    { mClass = 'body-tag--green'; mIcon = 'ph-fill ph-microphone';   mLabel = 'Live'; }
+  tagsEl.innerHTML += `<span class="body-tag ${mClass}"><i class="${mIcon}"></i> ${mLabel}</span>`;
+  tagsEl.innerHTML += `<span class="body-tag body-tag--blue"><i class="ph ph-map-pin"></i> ${loc.split(',')[0]}</span>`;
+  if (priceMode === 'paid') {
+    tagsEl.innerHTML += `<span class="body-tag body-tag--orange"><i class="ph-fill ph-ticket"></i> €${parseFloat(priceVal).toFixed(2)}</span>`;
+  } else if (priceMode === 'split') {
+    tagsEl.innerHTML += `<span class="body-tag body-tag--amber"><i class="ph-fill ph-hand-coins"></i> Spese divise</span>`;
+  } else {
+    tagsEl.innerHTML += `<span class="body-tag body-tag--green"><i class="ph-fill ph-ticket"></i> Gratis</span>`;
+  }
+
+  // Details
+  document.getElementById('detLoc').textContent = loc;
+
+  let privStr = '';
+  if (privacy === 'friends')        privStr = 'Solo amici diretti';
+  else if (privacy === 'extended')  privStr = `Amici di amici${porta > 0 ? ` (+${porta} ospite)` : ''}`;
+  else                              privStr = 'Aperta a tutti';
+  const invNum = friends.length > 0 ? friends.length : ppl;
+  document.getElementById('detPrivacy').textContent = `${privStr} · ${invNum} invitati`;
+
+  if (priceMode === 'paid') {
+    document.getElementById('detPrice').textContent = `€${parseFloat(priceVal).toFixed(2)} a persona`;
+  } else if (priceMode === 'split') {
+    const ppl2 = parseInt(localStorage.getItem('create_event_ppl') || '10');
+    const each = (parseFloat(splitTotal) / ppl2).toFixed(2);
+    document.getElementById('detPrice').textContent = `Spese divise · €${each}/pers (tot. €${parseFloat(splitTotal).toFixed(2)})`;
+  } else {
+    document.getElementById('detPrice').textContent = 'Gratuito';
+  }
+
+  if (musicMode === 'spotify' && playName) {
+    document.getElementById('detMusicCard').style.display = '';
+    document.getElementById('detMusic').textContent = `Spotify · ${playName}`;
+  }
+});
+</script>
+</body>
+</html>
