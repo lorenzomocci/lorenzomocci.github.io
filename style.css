@@ -1125,46 +1125,64 @@ em {
     align-items: start;
 }
 
-/* ===== Mockup iPhone 16 ===== */
+/* ===== Mockup iPhone — render 3/4 realistico ===== */
 .device-figure {
     margin: 0;
     text-align: center;
+    perspective: 2000px;
+    perspective-origin: 50% 40%;
 }
 
 .device {
     position: relative;
     width: 100%;
-    max-width: 290px;
+    max-width: 280px;
     margin: 0 auto;
     aspect-ratio: 393 / 852;
-    background: linear-gradient(150deg, #3a3a3f 0%, #18181b 45%, #050506 100%);
-    border-radius: 16% / 7.4%;
-    padding: 2.4%;
+    border-radius: 17.5% / 8.2%;
+    /* scocca in titanio: luce sul bordo, corpo scuro */
+    background:
+        linear-gradient(135deg,
+            #6c6c74 0%, #3a3a40 14%, #161619 42%,
+            #0c0c0e 60%, #2c2c32 86%, #56565d 100%);
+    padding: 2.6%;
+    transform: rotateY(-17deg) rotateX(5deg) rotate(0.4deg);
+    transform-style: preserve-3d;
     box-shadow:
-        0 26px 55px rgba(28, 23, 18, 0.26),
-        0 4px 12px rgba(28, 23, 18, 0.14),
-        inset 0 0 0 1.5px rgba(255, 255, 255, 0.10);
+        /* ombra di contatto morbida e direzionale */
+        38px 50px 60px -28px rgba(22, 17, 12, 0.50),
+        14px 20px 28px -16px rgba(22, 17, 12, 0.32),
+        /* bordo metallico */
+        inset 0 0 0 1.5px rgba(255, 255, 255, 0.28),
+        inset 0 0 4px 2px rgba(255, 255, 255, 0.05);
+    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* tasti laterali */
+.device:hover {
+    transform: rotateY(-7deg) rotateX(2deg);
+}
+
+/* tasti laterali in rilievo */
 .device::before,
 .device::after {
     content: "";
     position: absolute;
-    width: 2px;
-    background: #0c0c0e;
-    border-radius: 2px;
+    width: 3px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #4a4a50, #18181b);
+    box-shadow: inset 0 0 1px rgba(255, 255, 255, 0.3);
 }
-.device::before { right: -2px; top: 26%; height: 9%; box-shadow: 0 0 0 0 transparent; }
-.device::after  { left: -2px; top: 22%; height: 5%; }
+.device::before { right: -2px; top: 27%; height: 11%; }   /* power */
+.device::after  { left: -2px; top: 21%; height: 6%; }     /* volume */
 
 .device__screen {
     position: relative;
     width: 100%;
     height: 100%;
-    border-radius: 13% / 6.1%;
+    border-radius: 14.5% / 6.6%;
     overflow: hidden;
     background: #000;
+    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.55);
 }
 
 .device__screen img {
@@ -1173,6 +1191,22 @@ em {
     object-fit: cover;
     object-position: top center;
     display: block;
+}
+
+/* riflesso lucido sul vetro */
+.device__screen::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        118deg,
+        rgba(255, 255, 255, 0.26) 0%,
+        rgba(255, 255, 255, 0.07) 16%,
+        rgba(255, 255, 255, 0) 34%,
+        rgba(255, 255, 255, 0) 82%,
+        rgba(255, 255, 255, 0.05) 100%);
+    pointer-events: none;
+    z-index: 3;
 }
 
 /* Dynamic Island */
@@ -1186,27 +1220,28 @@ em {
     min-height: 16px;
     background: #000;
     border-radius: 999px;
-    z-index: 2;
+    z-index: 4;
 }
 
 .device-figure figcaption {
     font-family: var(--font-mono);
     font-size: 0.72rem;
     color: var(--ink-soft);
-    margin-top: 0.9rem;
+    margin-top: 1.4rem;
 }
 
 /* Device dentro la card progetto in homepage */
 .project-visual--device {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: center;
-    padding: 1.8rem 1.8rem 0;
-    background: radial-gradient(120% 90% at 50% 0%, rgba(28, 23, 18, 0.06), transparent 70%);
+    padding: 2.2rem 1rem;
+    perspective: 2000px;
+    perspective-origin: 50% 45%;
+    background: radial-gradient(120% 90% at 50% 10%, rgba(28, 23, 18, 0.07), transparent 70%);
 }
 .project-visual--device .device {
-    max-width: 215px;
-    margin-bottom: -8%;
+    max-width: 210px;
 }
 
 /* Workflow AI (Nite) */
