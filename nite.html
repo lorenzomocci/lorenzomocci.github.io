@@ -35,7 +35,7 @@
             <p class="lead fade-in" style="--d: 0.2s">Personal project · Web app funzionante · Design AI-assisted</p>
 
             <div class="hero-actions fade-in" style="--d: 0.25s">
-                <a href="#" class="btn btn-solid">Prova Nite &rarr; <mark class="todo">[URL live]</mark></a>
+                <a href="https://nite-app.pages.dev/event-card" class="btn btn-solid" target="_blank" rel="noopener">Prova Nite &rarr;</a>
             </div>
 
             <dl class="case-meta fade-in" style="--d: 0.3s; margin-top: 2rem;">
@@ -147,8 +147,12 @@
                     <h2 class="section-title">Ricerca</h2>
                 </div>
                 <div class="prose reveal">
-                    <p>5 interviste, 35 risposte al sondaggio, desk research: 10 insight per capire come le persone scelgono davvero dove passare la serata.</p>
-                    <p><mark class="todo">[DA INSERIRE: 2&ndash;3 insight specifici emersi dalla ricerca, oltre al mismatch musicale]</mark></p>
+                    <p>5 interviste, 35 risposte al sondaggio, desk research: 10 insight per capire come le persone scelgono davvero dove passare la serata. I tre che hanno pesato di più sulle decisioni di design:</p>
+                    <ul>
+                        <li><strong>Il prezzo è la discriminante fondamentale</strong> nella scelta di una serata.</li>
+                        <li>Subito dopo contano <strong>la distanza</strong> del luogo e <strong>l&rsquo;affollamento</strong> — quanta gente c&rsquo;è, se è molto o poco affollato.</li>
+                        <li><strong>Il mismatch musicale</strong>: il genere dichiarato da un locale spesso non corrisponde a quello che viene davvero suonato.</li>
+                    </ul>
                 </div>
             </div>
         </section>
@@ -158,38 +162,57 @@
                 <div class="section-head reveal">
                     <span class="section-num">05</span>
                     <h2 class="section-title">Processo</h2>
-                    <p class="section-sub">Il doppio binario: processo UX classico per pensare, workflow AI per costruire.</p>
+                    <p class="section-sub">Non due binari separati. Un processo intrecciato, dove l&rsquo;AI e il mio giudizio si passano il lavoro di continuo: l&rsquo;AI esegue, io decido quando fidarmi e quando riprendere il controllo.</p>
                 </div>
 
                 <div class="workflow-strip reveal">
                     <div class="workflow-step">
                         <span class="card-num">Fase 1</span>
                         <h3>Discovery</h3>
-                        <p>Interviste e sondaggio; desk research su mercato, competitor e comportamenti.</p>
-                        <span class="workflow-tools">Perplexity</span>
+                        <p>Tutta la ricerca con Perplexity; scraping dei commenti su Reddit con Claude Code; interviste e sondaggi classici, analizzati con Perplexity guidato da una knowledge base sul metodo costruita dalle lezioni del master.</p>
+                        <span class="workflow-tools">Perplexity · Claude Code</span>
                     </div>
                     <div class="workflow-step">
                         <span class="card-num">Fase 2</span>
                         <h3>Design</h3>
-                        <p>Information architecture, user flow e UI. Il quiz a 5 domande nasce qui, come risposta diretta al problema dello scroll.</p>
-                        <span class="workflow-tools">Figma</span>
+                        <p>Moodboard e style tile (con l&rsquo;aiuto di Claude), poi wireframe e UI. Il quiz a 5 domande nasce qui, come risposta diretta al problema dello scroll.</p>
+                        <span class="workflow-tools">Figma · Claude</span>
                     </div>
                     <div class="workflow-step">
                         <span class="card-num">Fase 3</span>
                         <h3>Build AI-assisted</h3>
-                        <p>Dal design Figma alla web app reale. <mark class="todo">[DA INSERIRE: come ha funzionato davvero il workflow]</mark></p>
-                        <span class="workflow-tools">Claude Code · Antigravity</span>
+                        <p>Istruzioni dettagliate a Claude e una knowledge base che faceva da design system, regole WCAG incluse per passare i check. Quando non rendeva bene un&rsquo;interfaccia, gli passavo esempi o portavo il pezzo su Figma con html.to.design e MCP, per poi riportarlo nel codice.</p>
+                        <span class="workflow-tools">Claude Code · Antigravity · MCP</span>
                     </div>
                     <div class="workflow-step">
                         <span class="card-num">Fase 4</span>
                         <h3>Iterazione sul prodotto</h3>
-                        <p>Testare sul telefono, non sul prototipo. <mark class="todo">[DA INSERIRE: una decisione cambiata dopo il test reale]</mark></p>
+                        <p>Testare sul telefono, non sul prototipo: in mano, una cosa che in Figma sembrava chiara non lo era. L&rsquo;inserimento della musica sembrava promettere quelle canzoni all&rsquo;evento, mentre serve a indicare meglio il genere — l&rsquo;ho reso esplicito.</p>
                         <span class="workflow-tools">PWA</span>
                     </div>
                 </div>
 
+                <div class="solution-row reveal" style="border-top: 1px solid var(--line); margin-top: 1rem;">
+                    <div class="solution-text">
+                        <span class="card-num">La decisione chiave</span>
+                        <h3>La home che ho scartato</h3>
+                        <p>La prima home generata da Claude Code era una dashboard: prossimo impegno, invito in scadenza, eventi vicini, cosa fanno gli amici. Funzionale, ma banale. L&rsquo;ho scartata.</p>
+                        <p>Due ragioni: l&rsquo;AI non aveva ancora abbastanza contesto, e io non gli avevo spiegato bene cosa volevo. È lì che ho capito qualcosa sul lavorare con l&rsquo;AI — il risultato vale quanto l&rsquo;intenzione che gli dai. Ho ridiretto verso una home quiz-first (&laquo;Ciao Alex, cosa fai stasera?&raquo;, un CTA arancione, poche card): perché il quiz è ciò che distingue Nite, e la home deve portare lì, non mostrare tutto.</p>
+                    </div>
+                    <div class="ba-pair">
+                        <figure class="figure-shot">
+                            <img src="assets/nite/home-scartata.jpg" alt="La prima home generata: una dashboard densa di informazioni, poi scartata" loading="lazy">
+                            <figcaption>Scartata — dashboard</figcaption>
+                        </figure>
+                        <figure class="figure-shot">
+                            <img src="assets/nite/home-quiz-first.jpg" alt="La home scelta: quiz-first, con la domanda grande e il CTA arancione" loading="lazy">
+                            <figcaption>Scelta — quiz-first</figcaption>
+                        </figure>
+                    </div>
+                </div>
+
                 <blockquote class="pull-quote reveal">
-                    L&rsquo;AI non ha disegnato Nite. Mi ha permesso di costruirla.
+                    L&rsquo;AI ha generato la prima versione. Il giudizio su cosa tenere e cosa buttare è rimasto mio.
                 </blockquote>
             </div>
         </section>
@@ -208,8 +231,8 @@
                         <h3>Quiz &laquo;Trova la tua serata&raquo;</h3>
                         <p>Dalla home, cinque domande essenziali — luogo, attività, gruppo, budget, affollamento — costruiscono la proposta più adatta in pochi secondi. Zero fatica.</p>
                     </div>
-                    <figure class="figure-ph">
-                        <p>[DA INSERIRE: GIF/video del quiz completato in pochi secondi]</p>
+                    <figure class="figure-shot">
+                        <img src="assets/nite/quiz.jpg" alt="Una domanda del quiz «Trova la tua serata»: «Cosa ti va di fare stasera?» con opzioni a chip" loading="lazy">
                     </figure>
                 </div>
 
@@ -217,10 +240,11 @@
                     <div class="solution-text">
                         <span class="card-num">S.02</span>
                         <h3>Matching musicale</h3>
-                        <p>Collegando Spotify o Apple Music, il sistema confronta i gusti reali dell&rsquo;utente con la musica dell&rsquo;evento. La musica non mente: risposta diretta all&rsquo;insight sul mismatch musicale.</p>
+                        <p>Quando scegli un&rsquo;attività musicale, il quiz propone di collegare Spotify o Apple Music: il sistema confronta i tuoi gusti reali con la musica dell&rsquo;evento. Serve a indicare meglio il genere che cerchi, non a promettere quelle canzoni. Risposta diretta all&rsquo;insight sul mismatch musicale.</p>
+                        <p class="solution-origin">&larr; nata in fase di ideazione (Crazy 8), non dalla ricerca</p>
                     </div>
-                    <figure class="figure-ph">
-                        <p>[DA INSERIRE: screenshot del collegamento playlist]</p>
+                    <figure class="figure-shot">
+                        <img src="assets/nite/matching-musicale.jpg" alt="Schermata «Connetti la tua musica»: scelta tra Spotify e Apple Music per il matching del genere" loading="lazy">
                     </figure>
                 </div>
 
@@ -230,8 +254,8 @@
                         <h3>La sezione &laquo;Per te&raquo;</h3>
                         <p>Gli eventi più compatibili con le risposte al quiz. Già dalla card si leggono tag e segnali rapidi — genere, affollamento, data — con filtri e ordinamento per affinare la proposta.</p>
                     </div>
-                    <figure class="figure-ph">
-                        <p>[DA INSERIRE: screenshot della sezione &laquo;Per te&raquo;]</p>
+                    <figure class="figure-shot">
+                        <img src="assets/nite/per-te.jpg" alt="La sezione «Per te»: eventi compatibili con card, tag rapidi e filtri" loading="lazy">
                     </figure>
                 </div>
 
@@ -241,8 +265,8 @@
                         <h3>Dentro l&rsquo;evento</h3>
                         <p>Mood musicale raccontato dalla playlist, affollamento previsto, persone presenti, pagamento: tutto per decidere senza uscire dalla schermata.</p>
                     </div>
-                    <figure class="figure-ph">
-                        <p>[DA INSERIRE: screenshot della pagina evento]</p>
+                    <figure class="figure-shot">
+                        <img src="assets/nite/evento.jpg" alt="Pagina di un evento: data, tag, partecipanti, affollamento previsto e luogo" loading="lazy">
                     </figure>
                 </div>
 
@@ -252,8 +276,8 @@
                         <h3>Eventi creati dagli utenti</h3>
                         <p>Chiunque crea una serata: decide chi invitare, se renderla gratuita, a pagamento o con spesa condivisa, e la condivide con una card dedicata. I locali pubblicano tramite abbonamento — il modello di business.</p>
                     </div>
-                    <figure class="figure-ph">
-                        <p>[DA INSERIRE: screenshot della creazione serata e della card di condivisione]</p>
+                    <figure class="figure-shot">
+                        <img src="assets/nite/business-model.jpg" alt="La schermata abbonamento «N+»: eventi illimitati, analisi del pubblico, piani mensile/annuale — il modello di business" loading="lazy">
                     </figure>
                 </div>
 
@@ -263,8 +287,8 @@
                         <h3>Distribuita come PWA</h3>
                         <p>Niente App Store: si installa direttamente dal browser alla schermata Home, a tutto schermo come una vera app.</p>
                     </div>
-                    <figure class="figure-ph">
-                        <p>[DA INSERIRE: QR code funzionante — il reviewer prova Nite sul proprio telefono durante la lettura]</p>
+                    <figure class="figure-shot" style="display: flex; justify-content: center; align-items: center; background: #f7f6f8; padding: 1.8rem;">
+                        <img src="assets/nite/qr-prova.png" alt="QR code: inquadralo per aprire e installare Nite sul telefono" style="max-width: 240px; width: 100%;" loading="lazy">
                     </figure>
                 </div>
             </div>
@@ -278,7 +302,8 @@
                 </div>
                 <div class="prose reveal">
                     <ul>
-                        <li>Una web app funzionante e installabile, non un mockup. <mark class="todo">[DA INSERIRE: stato attuale — utenti, feedback raccolti]</mark></li>
+                        <li>Una web app funzionante e installabile, non un mockup, provata da 10 persone: il matching musicale è la funzione che ha colpito di più.</li>
+                        <li>I test (utenti + commissione) hanno indicato i prossimi passi: in &laquo;Esplora&raquo; la ricerca interna va distinta da quella in alto (serve un&rsquo;icona diversa), e per i locali serve un modo di fare il matching senza dover creare una playlist — che difficilmente faranno.</li>
                         <li>Un workflow ripetibile design &rarr; AI build che riduce la distanza tra idea e verifica.</li>
                     </ul>
                 </div>
@@ -293,9 +318,9 @@
                 </div>
                 <div class="prose reveal">
                     <ul>
-                        <li>Costruire il prodotto vero cambia le decisioni di design: cose che in Figma funzionano, in mano alle persone no. <mark class="todo">[DA INSERIRE: esempio concreto]</mark></li>
+                        <li>Costruire il prodotto vero cambia le decisioni di design: cose che in Figma funzionano, in mano alle persone no. Sul telefono ho scoperto che l&rsquo;inserimento della musica veniva letto come &laquo;avrò queste canzoni all&rsquo;evento&raquo;, non come &laquo;indico il genere che mi piace&raquo;: un fraintendimento che in Figma non sarebbe mai emerso, e che ho dovuto rendere esplicito.</li>
                         <li>L&rsquo;AI accelera l&rsquo;esecuzione solo se il design è già chiaro: il pensiero di prodotto resta il lavoro del designer.</li>
-                        <li><mark class="todo">[DA INSERIRE: learning su limiti/sorprese del workflow con Claude Code e Antigravity]</mark></li>
+                        <li>Il limite di Claude Code: su alcune interfacce non arrivava alla resa che volevo. La soluzione non era insistere a parole, ma cambiare medium — portare il pezzo su Figma con html.to.design e MCP, sistemarlo visivamente e riportarlo nel codice. Sapere quando smettere di promptare e prendere il controllo è parte del mestiere.</li>
                     </ul>
                 </div>
             </div>

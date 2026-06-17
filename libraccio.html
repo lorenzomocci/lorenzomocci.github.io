@@ -32,7 +32,7 @@
         <section class="case-hero container">
             <p class="kicker fade-in">Case study 01 — Project work</p>
             <h1 class="fade-in" style="--d: 0.1s">Libraccio — Ridisegnare l&rsquo;esperienza di vendita dei libri usati</h1>
-            <p class="lead fade-in" style="--d: 0.2s">Project work del Master UX/UI · Team di 5 · Il mio ruolo: <mark class="todo">[DA INSERIRE]</mark></p>
+            <p class="lead fade-in" style="--d: 0.2s">Project work del Master UX/UI · Team di 5 · Il mio ruolo: ideazione delle soluzioni di caricamento e prototipazione del post-vendita.</p>
 
             <dl class="case-meta fade-in" style="--d: 0.3s">
                 <div class="meta-item">
@@ -45,11 +45,11 @@
                 </div>
                 <div class="meta-item">
                     <dt>Il mio ruolo</dt>
-                    <dd><mark class="todo">[DA INSERIRE: contributo specifico]</mark></dd>
+                    <dd>Ideazione del doppio caricamento via scansione ISBN (desktop e mobile), logistica senza etichetta da stampare, wireframe delle istruzioni di vendita e prototipazione di tutto il post-vendita (spedizione, attesa, valutazione, esito).</dd>
                 </div>
                 <div class="meta-item">
                     <dt>Durata</dt>
-                    <dd><mark class="todo">[DA INSERIRE]</mark></dd>
+                    <dd>16 marzo &ndash; 3 maggio (circa 7 settimane)</dd>
                 </div>
                 <div class="meta-item">
                     <dt>Strumenti</dt>
@@ -87,7 +87,8 @@
                 </div>
                 <div class="prose reveal">
                     <p>Libraccio.it permette ai privati di vendere libri usati (modello C2B), ma il servizio è poco conosciuto e poco amato: il 31% degli intervistati non sapeva nemmeno che esistesse.</p>
-                    <p>Il brief iniziale chiedeva di riprogettare il flusso di vendita; la ricerca ci ha mostrato che il problema era più profondo: non solo usabilità, ma percezione e fiducia.</p>
+                    <p>Il brief chiedeva di riprogettare il flusso per renderlo più usabile. Leggendo le recensioni su Trustpilot abbiamo trovato il dettaglio che ha spostato la diagnosi: i libri giudicati non idonei non venivano restituiti, e l&rsquo;utente restava senza spiegazioni, in un buco nero. Una cosa che il servizio dichiara, ma sepolta nel flusso dove nessuno la legge.</p>
+                    <p>Da lì abbiamo riletto tutta la ricerca sotto un&rsquo;altra lente: il problema non era l&rsquo;usabilità, era la <strong>fiducia</strong>. Non è un dato che emerge da solo dai numeri — è un&rsquo;interpretazione, ed è la decisione che ha dato forma a tutto il resto del progetto.</p>
                 </div>
             </div>
         </section>
@@ -111,7 +112,7 @@
                     </article>
                 </div>
                 <blockquote class="pull-quote reveal">
-                    Il problema non era solo la piattaforma, ma come viene percepita.
+                    La prova: gli utenti sceglievano Vinted pur dovendo fare più lavoro, perché si fidavano di più. La frizione non era il problema — era amplificata dalla sfiducia.
                 </blockquote>
             </div>
         </section>
@@ -249,6 +250,9 @@
                     <span class="section-num">07</span>
                     <h2 class="section-title">Soluzione</h2>
                     <p class="section-sub">Due livelli: nuove funzionalità e chiarezza d&rsquo;uso. Ogni decisione nasce da un insight.</p>
+                    <p class="reveal" style="margin-top: 1.2rem;">
+                        <a href="https://bit.ly/4ubYT1y" class="btn btn-ghost" target="_blank" rel="noopener">Apri il prototipo Figma &rarr;</a>
+                    </p>
                 </div>
 
                 <h3 class="kicker reveal">Funzionalità — cosa abbiamo aggiunto</h3>
@@ -260,8 +264,8 @@
                         <p>Elimina l&rsquo;inserimento manuale del codice a 13 cifre, principale attrito tecnico del flusso attuale.</p>
                         <p class="solution-origin">&larr; risponde a: expert review, insight mobile-first</p>
                     </div>
-                    <figure class="figure-ph">
-                        <p>[DA INSERIRE: screenshot della schermata di scansione ISBN dal prototipo Figma]</p>
+                    <figure class="figure-shot">
+                        <img src="assets/libraccio/f01-scansione-isbn.jpg" alt="Schermata di scansione del codice ISBN, desktop e mobile" loading="lazy">
                     </figure>
                 </div>
 
@@ -272,8 +276,8 @@
                         <p>L&rsquo;utente indica lo stato del libro in fase di inserimento: la valutazione è chiara fin dall&rsquo;inizio, non una sorpresa a spedizione avvenuta.</p>
                         <p class="solution-origin">&larr; risponde a: insight &laquo;scatola nera&raquo;</p>
                     </div>
-                    <figure class="figure-ph">
-                        <p>[DA INSERIRE: screenshot della selezione condizioni]</p>
+                    <figure class="figure-shot">
+                        <img src="assets/libraccio/f02-condizioni-libri.jpg" alt="Selezione delle condizioni del libro in fase di inserimento" loading="lazy">
                     </figure>
                 </div>
 
@@ -284,8 +288,8 @@
                         <p>Lista libri &rarr; valutazione &rarr; spedizione &rarr; esito: l&rsquo;utente sa sempre a che punto è e cosa deve fare dopo.</p>
                         <p class="solution-origin">&larr; risponde a: insight &laquo;rifiuto silenzioso&raquo;, ansia logistica</p>
                     </div>
-                    <figure class="figure-ph">
-                        <p>[DA INSERIRE: screenshot del tracciamento]</p>
+                    <figure class="figure-shot">
+                        <img src="assets/libraccio/f03-tracciamento.jpg" alt="Tracciamento della vendita: lista libri, valutazione, spedizione, esito" loading="lazy">
                     </figure>
                 </div>
 
@@ -293,11 +297,13 @@
                     <div class="solution-text">
                         <span class="card-num">F.04</span>
                         <h3>Gestione dei libri rifiutati</h3>
-                        <p>L&rsquo;utente riprende il controllo su cosa succede ai libri non accettati, eliminando la percezione di &laquo;sequestro&raquo;.</p>
+                        <p>Per i libri non accettati l&rsquo;utente sceglie cosa farne: donarli, riciclarli, o riceverli indietro pagando la spedizione. Riprende il controllo &mdash; sparisce la sensazione di &laquo;sequestro&raquo; &mdash; e Libraccio non si fa carico della spedizione di ritorno automatica. La gerarchia delle opzioni nasce dall&rsquo;equilibrio tra bisogno dell&rsquo;utente e sostenibilità per il business, non dall&rsquo;ottimizzare un lato solo.</p>
+                        <p>Il mio contributo qui è stato porre due vincoli di realtà: non tutti i libri si possono donare (se un libro è illeggibile, l&rsquo;opzione non ha senso), e l&rsquo;identificazione delle condizioni deve restare semplice anche per chi valuta i libri dal lato operativo &mdash; una parte ragionata ma non prototipata, per limiti di tempo.</p>
                         <p class="solution-origin">&larr; risponde a: insight sul mancato reso</p>
+                        <p><strong>La soluzione più apprezzata del progetto:</strong> il committente ci ha detto che probabilmente l&rsquo;avrebbe &laquo;rubata&raquo;.</p>
                     </div>
-                    <figure class="figure-ph">
-                        <p>[DA INSERIRE: screenshot della gestione rifiutati]</p>
+                    <figure class="figure-shot">
+                        <img src="assets/libraccio/f04-libri-rifiutati.jpg" alt="Gestione dei libri rifiutati: scelta tra riciclo, donazione e restituzione" loading="lazy">
                     </figure>
                 </div>
 
@@ -308,8 +314,8 @@
                         <p>Il buono passa da vincolo percepito a incentivo reale, valorizzato nel momento giusto del flusso.</p>
                         <p class="solution-origin">&larr; risponde a: insight sul buono acquisto</p>
                     </div>
-                    <figure class="figure-ph">
-                        <p>[DA INSERIRE: screenshot del credito]</p>
+                    <figure class="figure-shot">
+                        <img src="assets/libraccio/f05-credito.jpg" alt="Valorizzazione del Credito Libraccio nel flusso di vendita" loading="lazy">
                     </figure>
                 </div>
 
@@ -321,8 +327,8 @@
                         <h3>Informazioni chiare e contestuali</h3>
                         <p>Costi, soglie e commissioni compaiono al momento giusto del flusso, non nascosti in pagine secondarie che nessuno visita.</p>
                     </div>
-                    <figure class="figure-ph">
-                        <p>[DA INSERIRE: screenshot delle info contestuali]</p>
+                    <figure class="figure-shot">
+                        <img src="assets/libraccio/u01-info-contestuali.jpg" alt="Informazioni su costi e commissioni mostrate in modo contestuale nel flusso" loading="lazy">
                     </figure>
                 </div>
 
@@ -332,8 +338,8 @@
                         <h3>Feedback trasparenti</h3>
                         <p>Niente sorprese: se la valutazione cambia, l&rsquo;utente vede il confronto tra stato dichiarato e stato riscontrato, con la motivazione.</p>
                     </div>
-                    <figure class="figure-ph">
-                        <p>[DA INSERIRE: screenshot &laquo;stato dichiarato vs riscontrato&raquo; — la soluzione più raccontabile]</p>
+                    <figure class="figure-shot">
+                        <img src="assets/libraccio/u02-feedback.jpg" alt="Feedback trasparente: confronto tra stato dichiarato e stato riscontrato del libro" loading="lazy">
                     </figure>
                 </div>
 
@@ -343,8 +349,8 @@
                         <h3>Rinforzo positivo</h3>
                         <p>Micro-feedback lungo il flusso che costruiscono il legame con l&rsquo;utente invece di accumulare ansia verso l&rsquo;esito finale.</p>
                     </div>
-                    <figure class="figure-ph">
-                        <p>[DA INSERIRE: screenshot del rinforzo positivo]</p>
+                    <figure class="figure-shot">
+                        <img src="assets/libraccio/u03-rinforzo-positivo.jpg" alt="Micro-feedback di rinforzo positivo lungo il flusso di vendita" loading="lazy">
                     </figure>
                 </div>
             </div>
@@ -357,7 +363,7 @@
                     <h2 class="section-title">Outcome</h2>
                 </div>
                 <div class="prose reveal">
-                    <p>Il progetto si è concluso con <mark class="todo">[DA INSERIRE: prototipo Figma navigabile / presentazione finale / feedback ricevuto]</mark>.</p>
+                    <p>Il progetto si è concluso con la presentazione finale al committente e un prototipo Figma del nuovo flusso di vendita. Il riscontro più forte è arrivato sulla gestione dei libri rifiutati: il committente ha detto che probabilmente l&rsquo;avrebbe &laquo;rubata&raquo;.</p>
                     <p>Non essendo stato implementato, non ci sono metriche di prodotto: il valore del progetto sta nella solidità del processo e nella tracciabilità ricerca &rarr; decisione.</p>
                 </div>
             </div>
@@ -373,7 +379,7 @@
                     <ul>
                         <li>Il brief è un punto di partenza, non la diagnosi: la ricerca ha spostato il problema da &laquo;usabilità&raquo; a &laquo;fiducia&raquo;.</li>
                         <li>I dati quantitativi (161 risposte) e qualitativi (9 interviste) raccontano cose diverse e servono entrambi.</li>
-                        <li><mark class="todo">[DA INSERIRE: learning personale sul lavoro in team]</mark></li>
+                        <li>Un team forte alza il livello del singolo: ho imparato molto dai miei compagni, in particolare da Greta sulla ricerca (di mestiere è ricercatrice per la IULM) e da Alessia sulla prototipazione (molto esperta di Figma). Riconoscere chi è più bravo di te in un&rsquo;area e farne tesoro è parte del lavoro.</li>
                     </ul>
                 </div>
             </div>

@@ -1,3 +1,8 @@
 # Materiali di lavoro — non pubblicare sul sito
 *.pdf
 presentazione.html
+PORTFOLIO_BRIEFING.md
+14.png
+
+# Eccezione: il CV va pubblicato
+!MocciLorenzo.pdf
