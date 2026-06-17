@@ -1,6 +1,6 @@
 # Claude Code Guidelines - Portfolio Project
 
-This is a personal portfolio website built with semantic HTML, vanilla JavaScript, and modern CSS featuring an editorial "paper and ink" aesthetic (warm paper background, Fraunces display serif, mono labels for research data, print grain, pressed-shadow cards, smooth animations).
+This is a personal portfolio website built with semantic HTML, vanilla JavaScript, and modern CSS featuring a Swiss/International minimal aesthetic (white background, rigorous grid, Inter grotesque, 1px hairline rules, generous whitespace, a single red accent used sparingly, Fragment Mono for technical labels, realistic 3/4 iPhone device mockups).
 
 ## Local Development & Testing
 

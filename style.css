@@ -1,38 +1,39 @@
 /* ==========================================================================
    Lorenzo Mocci — Portfolio
-   Estetica: editoriale "carta e inchiostro". Carta calda, serif Fraunces,
-   mono per i dati di ricerca, accento arancio bruciato, grana di stampa.
+   Estetica: minimal svizzero. Bianco, griglia rigorosa, grotesque Inter,
+   hairline 1px, tanta aria, un solo accento (rosso) usato con parsimonia.
+   Mono (Fragment Mono) per le etichette tecniche. Mockup iPhone 3/4 realistici.
    ========================================================================== */
 
 :root {
-    /* Colori */
-    --paper: #f6f1e7;
-    --paper-deep: #ede4d3;
-    --card: #fdfaf3;
-    --ink: #1c1712;
-    --ink-soft: #5f564a;
-    --line: #d8cdba;
-    --accent: #c2400a;
-    --accent-soft: rgba(194, 64, 10, 0.08);
-    --green: #20614e;
-    --green-soft: rgba(32, 97, 78, 0.08);
-    --night: #16101d;
-    --night-glow: #e2542b;
+    /* Colori — minimal svizzero: bianco, nero, grigi, un solo accento */
+    --paper: #ffffff;
+    --paper-deep: #f4f4f2;
+    --card: #ffffff;
+    --ink: #111111;
+    --ink-soft: #6e6e6e;
+    --line: #e6e6e3;
+    --accent: #e5462e;
+    --accent-soft: rgba(229, 70, 46, 0.07);
+    --green: #6e6e6e;
+    --green-soft: rgba(17, 17, 17, 0.04);
+    --night: #111111;
+    --night-glow: #e5462e;
     --todo-bg: #f5e36b;
 
-    /* Tipografia */
-    --font-display: 'Fraunces', Georgia, serif;
-    --font-body: 'Instrument Sans', 'Helvetica Neue', sans-serif;
+    /* Tipografia — un solo grotesque, mono per le etichette tecniche */
+    --font-display: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    --font-body: 'Inter', 'Helvetica Neue', Arial, sans-serif;
     --font-mono: 'Fragment Mono', 'Courier New', monospace;
 
     /* Spaziature e misure */
-    --section-pad: clamp(4.5rem, 10vw, 8rem);
-    --container: 1180px;
-    --radius: 4px;
+    --section-pad: clamp(5rem, 11vw, 9.5rem);
+    --container: 1200px;
+    --radius: 2px;
 
-    /* Effetti */
-    --shadow-press: 5px 5px 0 var(--ink);
-    --shadow-press-sm: 3px 3px 0 var(--ink);
+    /* Effetti — niente ombre dure */
+    --shadow-press: none;
+    --shadow-press-sm: none;
     --transition: 0.25s cubic-bezier(0.3, 0.9, 0.4, 1);
     --blur-glass: blur(10px);
 }
@@ -63,16 +64,7 @@ body {
     color: var(--paper);
 }
 
-/* Grana di stampa su tutta la pagina */
-body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    pointer-events: none;
-    opacity: 0.06;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
-}
+/* Grana rimossa per l'estetica minimal svizzera */
 
 img {
     max-width: 100%;
@@ -122,7 +114,7 @@ h1, h2, h3, h4 {
     align-items: baseline;
     gap: 1.25rem;
     margin-bottom: clamp(2rem, 5vw, 3.5rem);
-    border-bottom: 2px solid var(--ink);
+    border-bottom: 1px solid var(--line);
     padding-bottom: 1rem;
 }
 
@@ -180,7 +172,7 @@ em {
     letter-spacing: 0.08em;
     text-decoration: none;
     padding: 0.85rem 1.6rem;
-    border: 2px solid var(--ink);
+    border: 1px solid var(--line);
     border-radius: var(--radius);
     cursor: pointer;
     transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
@@ -321,15 +313,16 @@ em {
 }
 
 .hero-title {
-    font-size: clamp(2.6rem, 7.5vw, 5.6rem);
-    margin: 1.2rem 0 1.6rem;
-    max-width: 14em;
+    font-size: clamp(2.7rem, 7.8vw, 5.8rem);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1.02;
+    margin: 1.4rem 0 1.8rem;
+    max-width: 15em;
 }
 
 .hero-title .accent-line {
     display: block;
-    font-style: italic;
-    font-weight: 400;
     color: var(--accent);
 }
 
@@ -347,7 +340,7 @@ em {
 /* Indice dei case study in stile sommario editoriale */
 .hero-toc {
     margin-top: clamp(3rem, 7vw, 5rem);
-    border-top: 2px solid var(--ink);
+    border-top: 1px solid var(--line);
 }
 
 .toc-row {
@@ -402,7 +395,7 @@ em {
     grid-template-columns: 1.05fr 1fr;
     gap: 0;
     background: var(--card);
-    border: 2px solid var(--ink);
+    border: 1px solid var(--line);
     border-radius: var(--radius);
     box-shadow: var(--shadow-press);
     overflow: hidden;
@@ -422,13 +415,13 @@ em {
 .project-visual {
     min-height: 340px;
     position: relative;
-    border-right: 2px solid var(--ink);
+    border-right: 1px solid var(--line);
     overflow: hidden;
 }
 
 .project-card:nth-of-type(even) .project-visual {
     border-right: none;
-    border-left: 2px solid var(--ink);
+    border-left: 1px solid var(--line);
 }
 
 .project-shot {
@@ -630,7 +623,7 @@ em {
 .pillars {
     display: flex;
     flex-direction: column;
-    border-top: 2px solid var(--ink);
+    border-top: 1px solid var(--line);
 }
 
 .pillar {
@@ -671,7 +664,7 @@ em {
 
 .process-card {
     background: var(--card);
-    border: 2px solid var(--ink);
+    border: 1px solid var(--line);
     border-radius: var(--radius);
     padding: clamp(1.6rem, 3vw, 2.4rem);
     box-shadow: var(--shadow-press-sm);
@@ -791,7 +784,7 @@ em {
    -------------------------------------------------------------------------- */
 
 .footer {
-    border-top: 2px solid var(--ink);
+    border-top: 1px solid var(--line);
     padding: 1.8rem 0;
 }
 
@@ -836,7 +829,7 @@ em {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 0;
-    border: 2px solid var(--ink);
+    border: 1px solid var(--line);
     border-radius: var(--radius);
     background: var(--card);
     box-shadow: var(--shadow-press-sm);
@@ -868,8 +861,8 @@ em {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 2rem;
     padding: clamp(1.8rem, 4vw, 2.8rem) 0;
-    border-top: 2px solid var(--ink);
-    border-bottom: 2px solid var(--ink);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
 }
 
 .stat .stat-value {
@@ -992,7 +985,7 @@ em {
 
 .persona-card {
     background: var(--card);
-    border: 2px solid var(--ink);
+    border: 1px solid var(--line);
     border-radius: var(--radius);
     padding: 1.5rem;
     box-shadow: var(--shadow-press-sm);
@@ -1250,19 +1243,18 @@ em {
     flex-wrap: wrap;
     align-items: stretch;
     gap: 0;
-    border: 2px solid var(--ink);
+    border: 1px solid var(--line);
     border-radius: var(--radius);
-    background: var(--night);
-    color: #f3e9e2;
-    box-shadow: var(--shadow-press-sm);
+    background: var(--card);
+    color: var(--ink);
     overflow: hidden;
-    margin: 2rem 0;
+    margin: 2.5rem 0;
 }
 
 .workflow-step {
     flex: 1 1 200px;
-    padding: 1.6rem 1.4rem;
-    border-right: 1px solid rgba(243, 233, 226, 0.18);
+    padding: 1.8rem 1.5rem;
+    border-right: 1px solid var(--line);
     position: relative;
 }
 
@@ -1281,12 +1273,12 @@ em {
 .workflow-step h3 {
     font-size: 1.1rem;
     margin-bottom: 0.4rem;
-    color: #fdfaf3;
+    color: var(--ink);
 }
 
 .workflow-step p {
     font-size: 0.85rem;
-    color: rgba(243, 233, 226, 0.72);
+    color: var(--ink-soft);
 }
 
 .workflow-step .workflow-tools {
@@ -1299,7 +1291,7 @@ em {
 
 /* Navigazione tra case study */
 .case-next {
-    border-top: 2px solid var(--ink);
+    border-top: 1px solid var(--line);
     padding: clamp(3rem, 7vw, 5rem) 0;
 }
 
@@ -1409,7 +1401,7 @@ em {
         order: 0;
         border-right: none;
         border-left: none;
-        border-bottom: 2px solid var(--ink);
+        border-bottom: 1px solid var(--line);
         min-height: 260px;
     }
 
@@ -1453,7 +1445,7 @@ em {
         background: rgba(246, 241, 231, 0.97);
         backdrop-filter: var(--blur-glass);
         -webkit-backdrop-filter: var(--blur-glass);
-        border-bottom: 2px solid var(--ink);
+        border-bottom: 1px solid var(--line);
         flex-direction: column;
         padding: 2rem 0;
         gap: 1.5rem;
