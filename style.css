@@ -1121,7 +1121,92 @@ em {
 .ba-pair {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: clamp(0.8rem, 2vw, 1.4rem);
+    gap: clamp(1rem, 3vw, 2rem);
+    align-items: start;
+}
+
+/* ===== Mockup iPhone 16 ===== */
+.device-figure {
+    margin: 0;
+    text-align: center;
+}
+
+.device {
+    position: relative;
+    width: 100%;
+    max-width: 290px;
+    margin: 0 auto;
+    aspect-ratio: 393 / 852;
+    background: linear-gradient(150deg, #3a3a3f 0%, #18181b 45%, #050506 100%);
+    border-radius: 16% / 7.4%;
+    padding: 2.4%;
+    box-shadow:
+        0 26px 55px rgba(28, 23, 18, 0.26),
+        0 4px 12px rgba(28, 23, 18, 0.14),
+        inset 0 0 0 1.5px rgba(255, 255, 255, 0.10);
+}
+
+/* tasti laterali */
+.device::before,
+.device::after {
+    content: "";
+    position: absolute;
+    width: 2px;
+    background: #0c0c0e;
+    border-radius: 2px;
+}
+.device::before { right: -2px; top: 26%; height: 9%; box-shadow: 0 0 0 0 transparent; }
+.device::after  { left: -2px; top: 22%; height: 5%; }
+
+.device__screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 13% / 6.1%;
+    overflow: hidden;
+    background: #000;
+}
+
+.device__screen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+}
+
+/* Dynamic Island */
+.device__island {
+    position: absolute;
+    top: 2.6%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30%;
+    height: 3.1%;
+    min-height: 16px;
+    background: #000;
+    border-radius: 999px;
+    z-index: 2;
+}
+
+.device-figure figcaption {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    margin-top: 0.9rem;
+}
+
+/* Device dentro la card progetto in homepage */
+.project-visual--device {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 1.8rem 1.8rem 0;
+    background: radial-gradient(120% 90% at 50% 0%, rgba(28, 23, 18, 0.06), transparent 70%);
+}
+.project-visual--device .device {
+    max-width: 215px;
+    margin-bottom: -8%;
 }
 
 /* Workflow AI (Nite) */
