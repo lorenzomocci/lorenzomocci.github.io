@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Libraccio — Case study | Lorenzo Mocci</title>
-    <meta name="description" content="A whole new way to sell your books — redesigning the C2B used-book selling experience for Libraccio.it. UX/UI project work case study by Lorenzo Mocci.">
+    <meta name="description" content="Un nuovo modo di vendere i tuoi libri: ridisegnare l'esperienza di vendita C2B di libri usati su Libraccio.it. Case study UX/UI di Lorenzo Mocci.">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="libraccio">
     <header class="nav">
         <div class="container nav-inner">
             <a href="index.html" class="nav-logo">Lorenzo Mocci<span>.</span></a>
@@ -29,13 +29,199 @@
     </header>
 
     <main>
-        <div class="case-deck">
-            <img src="assets/libraccio/case/cover.webp" alt="Libraccio — A whole new way to sell your books (Talent Garden × Libraccio.it)" fetchpriority="high">
-            <img src="assets/libraccio/case/challenge.webp" alt="The challenge: redesigning the C2B selling process, mobile-first and easy to use" loading="lazy">
-            <img src="assets/libraccio/case/users.webp" alt="What users need: personas, the main issues and the research insights" loading="lazy">
-            <img src="assets/libraccio/case/solution.webp" alt="Our solution: ISBN scanning, book conditions, sales tracking, handling rejected books and Credito Libraccio" loading="lazy">
-            <img src="assets/libraccio/case/team.webp" alt="Our team" loading="lazy">
-        </div>
+        <!-- COVER -->
+        <section class="lib-cover">
+            <div class="container">
+                <p class="lib-eyebrow fade-in">Talent Garden Innovation School &times; Libraccio.it</p>
+                <h1 class="lib-cover-title fade-in" style="--d:.1s">Un nuovo modo di vendere i tuoi libri</h1>
+                <div class="lib-tags fade-in" style="--d:.2s">
+                    <span class="lib-tag">UX/UI Design</span>
+                    <span class="lib-tag">Website redesign</span>
+                    <span class="lib-tag">Project work</span>
+                </div>
+                <div class="lib-cover-devices reveal">
+                    <img src="assets/libraccio/f01-scansione-isbn-3d.webp" alt="Schermata di scansione ISBN" loading="eager">
+                    <img src="assets/libraccio/f03-tracciamento-3d.webp" alt="Schermata di tracciamento della vendita" loading="eager">
+                    <img src="assets/libraccio/f05-credito-3d.webp" alt="Schermata del Credito Libraccio" loading="eager">
+                </div>
+            </div>
+        </section>
+
+        <!-- META -->
+        <section class="lib-band">
+            <div class="container lib-meta">
+                <div><span class="lib-k">Ruolo</span><span class="lib-v">Ideazione del caricamento via scansione ISBN, logistica senza etichetta e prototipazione di tutto il post-vendita.</span></div>
+                <div><span class="lib-k">Team</span><span class="lib-v">5 designer · Master UX/UI</span></div>
+                <div><span class="lib-k">Durata</span><span class="lib-v">16 marzo – 3 maggio (~7 settimane)</span></div>
+                <div><span class="lib-k">Strumenti</span><span class="lib-v">Figma · interviste · survey · expert review · desk research</span></div>
+            </div>
+            <div class="container lib-stats reveal">
+                <div><b>9</b><span>interviste in profondità</span></div>
+                <div><b>161</b><span>risposte al questionario</span></div>
+                <div><b>6</b><span>pain point da expert review</span></div>
+                <div><b>11</b><span>insight di ricerca</span></div>
+            </div>
+        </section>
+
+        <!-- SFIDA -->
+        <section class="lib-section">
+            <div class="container lib-narrow">
+                <p class="lib-num">01 — La sfida</p>
+                <h2 class="lib-lead">Libraccio.it è sinonimo di libri accessibili a tutti. Il nostro compito era rendere accessibile anche l&rsquo;esperienza di vendita.</h2>
+                <p>Il brief chiedeva di riprogettare il flusso di vendita C2B per renderlo più usabile e mobile-first. Leggendo le recensioni su Trustpilot abbiamo trovato il dettaglio che ha <strong>spostato la diagnosi</strong>: i libri giudicati non idonei non venivano restituiti, e l&rsquo;utente restava senza spiegazioni, in un buco nero. Una cosa che il servizio dichiara, ma sepolta nel flusso dove nessuno la legge.</p>
+                <p>Da lì abbiamo riletto tutta la ricerca sotto un&rsquo;altra lente: il problema non era l&rsquo;usabilità, era la <strong>fiducia</strong>. Non è un dato che emerge da solo dai numeri — è un&rsquo;interpretazione, ed è la decisione che ha dato forma a tutto il resto del progetto.</p>
+            </div>
+        </section>
+
+        <!-- PERSONAS -->
+        <section class="lib-section lib-section--green">
+            <div class="container">
+                <p class="lib-num">02 — Cosa serve agli utenti</p>
+                <h2 class="lib-h2">Le voci di chi vende i propri libri usati.</h2>
+                <div class="lib-persona-grid reveal">
+                    <article class="lib-persona">
+                        <span class="lib-driver">Velocità</span>
+                        <h3>Davide, 22</h3>
+                        <p class="lib-role">Lo studente fuorisede</p>
+                        <blockquote>&laquo;Non mi serve? Lo vendo. Subito, al prezzo migliore.&raquo;</blockquote>
+                    </article>
+                    <article class="lib-persona">
+                        <span class="lib-driver">Facilità</span>
+                        <h3>Laura, 44</h3>
+                        <p class="lib-role">La madre di famiglia</p>
+                        <blockquote>&laquo;Devo liberare spazio, ma non ho tempo da perdere: se funziona, lo faccio.&raquo;</blockquote>
+                    </article>
+                    <article class="lib-persona">
+                        <span class="lib-driver">Etica</span>
+                        <h3>Marta, 30</h3>
+                        <p class="lib-role">La lettrice consapevole</p>
+                        <blockquote>&laquo;Non vendo per liberarmene, ma per dargli una seconda vita.&raquo;</blockquote>
+                    </article>
+                    <article class="lib-persona">
+                        <span class="lib-driver">Decluttering</span>
+                        <h3>Giorgio, 35</h3>
+                        <p class="lib-role">Il designer curioso</p>
+                        <blockquote>&laquo;Se non mi rappresenta più, lo rivendo: deve stare al passo con i miei interessi.&raquo;</blockquote>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- CRITICITÀ -->
+        <section class="lib-section">
+            <div class="container">
+                <p class="lib-num">03 — Le criticità</p>
+                <div class="lib-crit-grid">
+                    <article class="lib-card">
+                        <h3>Esperienza complessa</h3>
+                        <p>Alto carico cognitivo, attriti tecnici (ISBN digitato a mano), punto d&rsquo;ingresso invisibile, CTA senza gerarchia, vicoli ciechi nel flusso. Conseguenza: confusione prima ancora di iniziare.</p>
+                    </article>
+                    <article class="lib-card">
+                        <h3>Sfiducia nel brand</h3>
+                        <p>Valutazione percepita come &laquo;scatola nera&raquo;, rifiuti senza spiegazione, libri non restituiti, credito poco valorizzato. Conseguenza: sfiducia nel brand.</p>
+                    </article>
+                </div>
+                <blockquote class="lib-proof reveal">
+                    La prova: gli utenti sceglievano Vinted pur dovendo fare <strong>più lavoro</strong>, perché si fidavano di più. La frizione non era il problema — era amplificata dalla sfiducia.
+                </blockquote>
+            </div>
+        </section>
+
+        <!-- SOLUZIONE -->
+        <section class="lib-section lib-section--green">
+            <div class="container">
+                <p class="lib-num">04 — La soluzione</p>
+                <h2 class="lib-h2">Cinque interventi, ognuno nato da un insight.</h2>
+                <p class="lib-cta-row"><a href="https://bit.ly/4ubYT1y" class="btn btn-solid" target="_blank" rel="noopener">Apri il prototipo Figma &rarr;</a></p>
+
+                <div class="lib-feature reveal">
+                    <div class="lib-feature-text">
+                        <span class="lib-feat-num">Feature 1 / 5</span>
+                        <h3>Scansione ISBN</h3>
+                        <p>Il modo più semplice e veloce di mettere in vendita: apri la sezione vendita, scansiona il codice a barre e ottieni una valutazione immediata. Elimina la digitazione manuale del codice a 13 cifre, principale attrito tecnico del flusso.</p>
+                    </div>
+                    <figure class="lib-shot"><img src="assets/libraccio/f01-scansione-isbn-3d.webp" alt="Scansione ISBN" loading="lazy"></figure>
+                </div>
+
+                <div class="lib-feature reveal lib-feature--rev">
+                    <div class="lib-feature-text">
+                        <span class="lib-feat-num">Feature 2 / 5</span>
+                        <h3>Condizioni dei libri</h3>
+                        <p>L&rsquo;utente dichiara lo stato del libro già in fase di inserimento: la valutazione è chiara fin dall&rsquo;inizio, non una sorpresa a spedizione avvenuta. Una base equa che costruisce fiducia.</p>
+                    </div>
+                    <figure class="lib-shot"><img src="assets/libraccio/f02-condizioni-libri-3d.webp" alt="Condizioni dei libri" loading="lazy"></figure>
+                </div>
+
+                <div class="lib-feature reveal">
+                    <div class="lib-feature-text">
+                        <span class="lib-feat-num">Feature 3 / 5</span>
+                        <h3>Tracciamento e guida alla spedizione</h3>
+                        <p>Lista libri &rarr; valutazione &rarr; spedizione &rarr; esito: l&rsquo;utente sa sempre a che punto è e cosa fare dopo. Nessuna etichetta da stampare: basta il QR. Tempi chiari e libri accettati, rivalutati o rifiutati sempre visibili.</p>
+                    </div>
+                    <figure class="lib-shot"><img src="assets/libraccio/f03-tracciamento-3d.webp" alt="Tracciamento vendita" loading="lazy"></figure>
+                </div>
+
+                <div class="lib-feature reveal lib-feature--rev lib-feature--star">
+                    <div class="lib-feature-text">
+                        <span class="lib-feat-num">Feature 4 / 5 · la più apprezzata</span>
+                        <h3>Gestione dei libri rifiutati</h3>
+                        <p>Per i libri non accettati l&rsquo;utente sceglie cosa farne: <strong>donarli, riciclarli o riceverli indietro</strong> pagando la spedizione. Riprende il controllo — sparisce la sensazione di &laquo;sequestro&raquo; — e Libraccio non si fa carico della spedizione di ritorno automatica. La gerarchia delle opzioni nasce dall&rsquo;equilibrio tra bisogno dell&rsquo;utente e sostenibilità per il business, non dall&rsquo;ottimizzare un lato solo.</p>
+                        <p>Il mio contributo qui è stato porre due vincoli di realtà: non tutti i libri si possono donare (se un libro è illeggibile, l&rsquo;opzione non ha senso), e l&rsquo;identificazione delle condizioni deve restare semplice anche per chi valuta i libri dal lato operativo.</p>
+                    </div>
+                    <figure class="lib-shot"><img src="assets/libraccio/f04-libri-rifiutati-3d.webp" alt="Gestione dei libri rifiutati" loading="lazy"></figure>
+                </div>
+
+                <div class="lib-feature reveal">
+                    <div class="lib-feature-text">
+                        <span class="lib-feat-num">Feature 5 / 5</span>
+                        <h3>Valorizzazione del Credito Libraccio</h3>
+                        <p>Ricevere il pagamento in credito diventa un vantaggio reale: oltre a un bonus del 5%, include la spedizione gratuita. Il saldo è nel &laquo;Portafogli&raquo;, con consigli d&rsquo;acquisto personalizzati. Il buono passa da vincolo percepito a incentivo concreto.</p>
+                    </div>
+                    <figure class="lib-shot"><img src="assets/libraccio/f05-credito-3d.webp" alt="Credito Libraccio" loading="lazy"></figure>
+                </div>
+
+                <div class="lib-usab reveal">
+                    <article class="lib-card">
+                        <h3>Informazioni chiare e contestuali</h3>
+                        <p>Costi, soglie e commissioni compaiono al momento giusto del flusso, non nascosti in pagine secondarie.</p>
+                    </article>
+                    <article class="lib-card">
+                        <h3>Valutazione trasparente</h3>
+                        <p>A fine processo l&rsquo;utente vede l&rsquo;esito dettagliato, libro per libro: la &laquo;scatola nera&raquo; diventa un conto chiaro.</p>
+                    </article>
+                    <article class="lib-card">
+                        <h3>Rinforzo positivo</h3>
+                        <p>Micro-feedback lungo il flusso che costruiscono il legame con l&rsquo;utente invece di accumulare ansia.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- LEARNINGS -->
+        <section class="lib-section">
+            <div class="container lib-narrow">
+                <p class="lib-num">05 — Cosa ho imparato</p>
+                <ul class="lib-learn">
+                    <li>Il brief è un punto di partenza, non la diagnosi: la ricerca ha spostato il problema da &laquo;usabilità&raquo; a &laquo;fiducia&raquo;.</li>
+                    <li>I dati quantitativi (161 risposte) e qualitativi (9 interviste) raccontano cose diverse e servono entrambi.</li>
+                    <li>Un team forte alza il livello del singolo: ho imparato molto da ogni compagno, ciascuno con un punto di forza diverso — dalla ricerca alla prototipazione.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- TEAM -->
+        <section class="lib-section lib-section--green lib-team-sec">
+            <div class="container">
+                <p class="lib-num">06 — Il team</p>
+                <div class="lib-team">
+                    <div class="lib-member"><span class="lib-ava">AC</span><span>Alessia Ciccone</span></div>
+                    <div class="lib-member"><span class="lib-ava">GA</span><span>Giulia Adorno</span></div>
+                    <div class="lib-member"><span class="lib-ava">GR</span><span>Greta Rondi</span></div>
+                    <div class="lib-member"><span class="lib-ava">LM</span><span>Lorenzo Mocci</span></div>
+                    <div class="lib-member"><span class="lib-ava">LO</span><span>Luca Orsillo</span></div>
+                </div>
+            </div>
+        </section>
 
         <aside class="case-next">
             <div class="container">
