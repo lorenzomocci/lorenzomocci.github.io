@@ -1684,3 +1684,12 @@ em {
     .lib-cover-devices img:nth-child(2) { transform: none; }
     .lib-team { justify-content: space-between; }
 }
+
+/* Libraccio — asset reali dal Figma */
+.lib-cover-hero { margin-top: clamp(1rem, 3vw, 2rem); }
+.lib-cover-hero img { width: 100%; max-width: 1000px; margin: 0 auto; display: block; }
+.lib-wide-shot { margin: clamp(2rem, 5vw, 3.5rem) 0 0; text-align: center; }
+.lib-wide-shot img { width: 100%; max-width: 860px; margin: 0 auto; display: block; border-radius: 16px; }
+.lib-pers-photo { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 12px; margin-bottom: 1.1rem; }
+.lib-shot img { max-width: 100%; }
+.lib-ava { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; display: block; background: var(--lg-soft); }
