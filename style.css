@@ -1564,13 +1564,14 @@ em {
 .libraccio {
     --lg: #2f9e4f;
     --lg-dark: #1c7a3e;
-    --lg-soft: #ebf6ee;
-    --lg-line: #d6ebdb;
+    --lg-soft: #f1f8f3;
+    --lg-line: #dde9e0;
+    background: #f5faf6;
 }
 
 /* Cover */
 .lib-cover {
-    background: linear-gradient(180deg, #eef8f1 0%, #ffffff 100%);
+    background: transparent;
     padding: clamp(3rem, 8vw, 6rem) 0 0;
     text-align: center;
     overflow: hidden;
@@ -1629,7 +1630,7 @@ em {
 
 /* Sezioni */
 .lib-section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
-.lib-section--green { background: var(--lg-soft); }
+.lib-section--green { background: transparent; }
 .lib-narrow { max-width: 760px; }
 .lib-num { font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.06em; color: var(--lg-dark); margin-bottom: 1.2rem; }
 .lib-lead { font-size: clamp(1.5rem, 3.4vw, 2.3rem); font-weight: 400; line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 1.5rem; }
@@ -1699,12 +1700,12 @@ em {
 .lib-ui { margin: 0; display: flex; justify-content: center; }
 .lib-ui img {
     width: 100%;
-    max-width: 300px;
+    max-width: 330px;
     height: auto;
     display: block;
-    border-radius: 26px;
-    box-shadow: 0 18px 42px rgba(20, 40, 25, 0.16);
+    border-radius: 30px;
+    box-shadow: 0 18px 42px rgba(20, 40, 25, 0.14);
 }
 @media (max-width: 820px) {
-    .lib-ui img { max-width: 260px; }
+    .lib-ui img { max-width: 280px; }
 }
