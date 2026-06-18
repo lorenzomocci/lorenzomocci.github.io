@@ -420,8 +420,8 @@ em {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem 1rem;
-    background: var(--paper-deep);
+    padding: 1.5rem 1rem;
+    background: #ffffff;
 }
 
 .project-card:nth-of-type(even) .project-visual {
@@ -430,8 +430,8 @@ em {
 }
 
 .project-shot {
-    width: auto;
-    max-width: 235px;
+    width: 100%;
+    max-width: 340px;
     height: auto;
     display: block;
 }
@@ -443,7 +443,7 @@ em {
 }
 .mockup img {
     width: 100%;
-    max-width: 320px;
+    max-width: 380px;
     height: auto;
     display: block;
     margin: 0 auto;
