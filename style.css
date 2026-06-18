@@ -1354,6 +1354,17 @@ em {
 }
 
 /* Navigazione tra case study */
+/* Case study visivo a slide (deck Figma) */
+.case-deck {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 0 clamp(2.5rem, 6vw, 5rem);
+}
+.case-deck img {
+    width: 100%;
+    display: block;
+}
+
 .case-next {
     border-top: 1px solid var(--line);
     padding: clamp(3rem, 7vw, 5rem) 0;
