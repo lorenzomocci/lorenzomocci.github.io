@@ -463,6 +463,30 @@ em {
     margin-top: 0.9rem;
 }
 
+/* Mockup con frame iPhone 3/4 (non più immagini piatte) */
+.mockup--device {
+    padding: clamp(1.6rem, 4vw, 2.6rem) 1rem;
+    perspective: 1900px;
+    perspective-origin: 50% 40%;
+}
+.mockup--device .device {
+    max-width: 248px;
+}
+.mockup--device figcaption {
+    margin-top: 1.6rem;
+}
+/* Coppia prima/dopo: device più piccoli e meno inclinati per il confronto */
+.ba-pair .mockup--device {
+    padding: clamp(1rem, 3vw, 1.8rem) 0.5rem;
+}
+.ba-pair .mockup--device .device {
+    max-width: 188px;
+    transform: rotateY(-11deg) rotateX(4deg);
+}
+.ba-pair .mockup--device .device:hover {
+    transform: rotateY(-5deg) rotateX(2deg);
+}
+
 /* Griglia progetti stile Gabriel Valdivia */
 .project-grid {
     display: grid;
@@ -492,6 +516,24 @@ em {
     display: block;
 }
 .proj:hover .proj-panel { background: #ebebe8; }
+
+/* Variante con mockup iPhone 3/4 dentro la card */
+.proj-panel--device {
+    aspect-ratio: 4 / 3.5;
+    overflow: visible;
+    padding: clamp(1.8rem, 4vw, 2.8rem) 1rem clamp(1.4rem, 3vw, 2rem);
+    align-items: center;
+    perspective: 1600px;
+    perspective-origin: 50% 42%;
+}
+.proj-panel--device .device {
+    max-width: 184px;
+    transform: rotateY(-16deg) rotateX(5deg) rotate(0.4deg);
+}
+.proj:hover .proj-panel--device { background: #ebebe8; }
+.proj:hover .proj-panel--device .device {
+    transform: rotateY(-7deg) rotateX(2deg) translateY(-4px);
+}
 .proj-name {
     font-size: 1.3rem;
     font-weight: 500;
