@@ -1,4 +1,5 @@
 # Materiali di lavoro — non pubblicare sul sito
+.DS_Store
 *.pdf
 presentazione.html
 PORTFOLIO_BRIEFING.md
