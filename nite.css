@@ -1,0 +1,226 @@
+/* ============================================================================
+   Nite — tema "after dark"
+   Porta l'estetica dell'app dentro il case study: fondo quasi nero, accento
+   terracotta-brace, display serif (DM Serif Display) su Plus Jakarta Sans,
+   atmosfera con glow caldo + grana. Caricato DOPO style.css; tutto è scopato
+   sotto .theme-nite (classe sul <body>) per non toccare le altre pagine.
+   ============================================================================ */
+
+.theme-nite {
+    /* Palette */
+    --paper: #0a080c;
+    --paper-deep: #100d12;
+    --card: #15121b;
+    --panel: #15121b;
+    --ink: #f7f6f8;
+    --ink-soft: #b9b5bf;
+    --line: #2a2530;
+    --accent: #ff5e2e;
+    --accent-soft: rgba(255, 94, 46, 0.12);
+
+    /* Tipografia dell'app */
+    --font-display: 'DM Serif Display', Georgia, serif;
+    --font-body: 'Plus Jakarta Sans', 'Helvetica Neue', Arial, sans-serif;
+
+    background-color: var(--paper);
+}
+
+/* ── Atmosfera: brace + grana, fisse dietro al contenuto ── */
+.theme-nite::before,
+.theme-nite::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+.theme-nite::before {
+    background:
+        radial-gradient(55% 60% at 80% 10%, rgba(194, 43, 0, 0.22) 0%, rgba(194, 43, 0, 0.05) 45%, transparent 70%),
+        radial-gradient(48% 55% at 8% 94%, rgba(123, 27, 0, 0.18) 0%, transparent 65%);
+}
+.theme-nite::after {
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* Contenuto sopra l'atmosfera */
+.theme-nite main,
+.theme-nite footer {
+    position: relative;
+    z-index: 1;
+}
+
+/* ── Navbar scura ── */
+.theme-nite .nav.scrolled {
+    background: rgba(10, 8, 12, 0.82);
+    border-bottom-color: var(--line);
+}
+
+/* ── Titoli: serif con un alone caldo sull'h1 dell'hero ── */
+.theme-nite h1,
+.theme-nite h2 {
+    letter-spacing: -0.01em;
+}
+.theme-nite .case-hero h1 {
+    text-shadow: 0 0 70px rgba(194, 43, 0, 0.22);
+}
+
+/* ── Etichette tecniche in tinta brace (come .theme-green) ── */
+.theme-nite .kicker,
+.theme-nite .section-num,
+.theme-nite .card-num,
+.theme-nite .toc-num {
+    color: var(--accent);
+}
+
+/* ── Pulsanti ── */
+.theme-nite .btn-solid {
+    background: linear-gradient(135deg, #ff6a2e, #c22b00);
+    color: #fff;
+    border-color: transparent;
+}
+.theme-nite .btn-solid:hover {
+    background: linear-gradient(135deg, #ff7d45, #a82400);
+    transform: translate(2px, 2px);
+}
+.theme-nite .btn-ghost {
+    border-color: rgba(247, 246, 248, 0.2);
+    color: var(--ink);
+}
+.theme-nite .btn-ghost:hover {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+}
+
+/* ── Numeroni statistiche: brace ── */
+.theme-nite .stat .stat-value {
+    background: linear-gradient(135deg, #ff8a4c, #c22b00);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* ── Citazione a tutta pagina ── */
+.theme-nite .pull-quote {
+    border-left-color: var(--accent);
+    color: var(--ink);
+}
+
+/* ── Mockup telefoni: niente box, galleggiano sul fondo ── */
+.theme-nite .mockup,
+.theme-nite .mockup--device {
+    background: transparent;
+    border-radius: 0;
+}
+.theme-nite .device {
+    filter: drop-shadow(0 36px 60px rgba(0, 0, 0, 0.6));
+    animation: nite-float 7s ease-in-out infinite alternate;
+}
+.theme-nite .ba-pair .mockup--device:nth-child(2) .device { animation-delay: -3.5s; }
+.theme-nite .mockup figcaption {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+}
+@keyframes nite-float {
+    from { transform: translateY(6px); }
+    to   { transform: translateY(-10px); }
+}
+
+/* ── Muri di testo: più ariosi e leggibili ── */
+.theme-nite .prose { max-width: 64ch; }
+.theme-nite .case-section .prose p {
+    font-size: 1.16rem;
+    line-height: 1.78;
+    margin-bottom: 1.5rem;
+    color: #d6d3dc;
+}
+/* Primo paragrafo come occhiello: più grande e luminoso */
+.theme-nite .prose > p:first-child {
+    font-size: 1.34rem;
+    line-height: 1.6;
+    color: var(--ink);
+}
+.theme-nite .prose strong,
+.theme-nite .solution-text p strong,
+.theme-nite .workflow-step p strong { color: var(--accent); font-weight: 600; }
+.theme-nite .solution-text p {
+    font-size: 1.1rem;
+    line-height: 1.72;
+    color: #d6d3dc;
+}
+.theme-nite .case-section .prose li::marker { color: var(--accent); }
+.theme-nite .case-section .prose li { padding-left: 0.2rem; margin-bottom: 0.6rem; }
+
+/* ── Accompagnamento: riga brace che si disegna sotto i titoli di sezione ── */
+.theme-nite .section-head { position: relative; }
+.theme-nite .section-head::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    height: 2px;
+    width: clamp(80px, 12vw, 150px);
+    background: linear-gradient(90deg, var(--accent), transparent);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.8s cubic-bezier(0.5, 0, 0.2, 1) 0.15s;
+}
+.theme-nite .section-head.active::after { transform: scaleX(1); }
+
+/* ── Paragrafi che entrano sfalsati quando il blocco si rivela ── */
+.theme-nite .prose.reveal p,
+.theme-nite .solution-row.reveal .solution-text h3,
+.theme-nite .solution-row.reveal .solution-text p {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+.theme-nite .prose.reveal.active p,
+.theme-nite .solution-row.reveal.active .solution-text h3,
+.theme-nite .solution-row.reveal.active .solution-text p { opacity: 1; transform: none; }
+.theme-nite .solution-row.reveal.active .solution-text p { transition-delay: 0.12s; }
+.theme-nite .prose.reveal.active p:nth-child(2) { transition-delay: 0.14s; }
+.theme-nite .prose.reveal.active p:nth-child(3) { transition-delay: 0.28s; }
+
+/* ── Pull-quote: virgoletta brace decorativa ── */
+.theme-nite .pull-quote {
+    position: relative;
+    padding-left: 2rem;
+}
+.theme-nite .pull-quote::before {
+    content: '\201C';
+    position: absolute;
+    left: 0.4rem;
+    top: -0.35em;
+    font-family: var(--font-display);
+    font-size: 3.4em;
+    line-height: 1;
+    color: var(--accent);
+    opacity: 0.16;
+    pointer-events: none;
+}
+
+/* ── Glow ambientale che respira ── */
+.theme-nite::before { animation: nite-glow 16s ease-in-out infinite alternate; }
+@keyframes nite-glow {
+    from { transform: translateY(0) scale(1); }
+    to   { transform: translateY(-2%) scale(1.06); }
+}
+
+/* ── Selezione testo ── */
+.theme-nite ::selection {
+    background: rgba(255, 94, 46, 0.28);
+    color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .theme-nite .device,
+    .theme-nite::before { animation: none; }
+    .theme-nite .section-head::after { transition: none; transform: scaleX(1); }
+    .theme-nite .prose.reveal p,
+    .theme-nite .solution-row.reveal .solution-text p,
+    .theme-nite .solution-row.reveal .solution-text h3 { opacity: 1; transform: none; transition: none; }
+}
