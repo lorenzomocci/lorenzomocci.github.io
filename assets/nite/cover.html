@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{ --primary-600:#c22b00; --text-primary:#f7f6f8; --text-tertiary:#c4c2c7; }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{ background:#0a080c; color:var(--text-primary); font-family:'Plus Jakarta Sans',sans-serif; overflow:hidden; }
+
+  .glow{ position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(55% 60% at 78% 18%, rgba(194,43,0,.16) 0%, rgba(194,43,0,.05) 45%, transparent 70%),
+      radial-gradient(40% 50% at 12% 88%, rgba(123,27,0,.13) 0%, transparent 65%); }
+  .grain{ position:fixed; inset:0; pointer-events:none; z-index:1; opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  /* Stage fisso 1920×1080, scalato per riempire la cover (crop laterale, contenuto centrato) */
+  .stage{ position:fixed; top:50%; left:50%; width:1920px; height:1080px;
+    transform:translate(-50%,-50%) scale(var(--fit,1)); transform-origin:center; z-index:2; }
+  .slide{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:40px 80px 80px; }
+  .slide-inner{ display:flex; flex-direction:column; align-items:center; text-align:center; position:relative; z-index:1; }
+  h1{ font-family:'DM Serif Display',serif; font-weight:400 }
+
+  .hero-bg{ position:absolute; inset:0; z-index:0; display:flex; align-items:center; justify-content:center;
+    font-family:'DM Serif Display',serif; font-size:1100px; line-height:1; color:transparent;
+    background:linear-gradient(165deg, rgba(194,43,0,.22) 10%, rgba(123,27,0,.04) 75%);
+    -webkit-background-clip:text; background-clip:text; pointer-events:none; user-select:none;
+    opacity:0; transform:scale(1.12); transition:opacity 1.4s ease .1s, transform 1.4s ease .1s; }
+  .active .hero-bg{ opacity:1; transform:scale(1); animation:heroDrift 16s ease-in-out 1.5s infinite alternate }
+  @keyframes heroDrift{ 0%{transform:scale(1) translateY(0)} 100%{transform:scale(1.06) translateY(-14px)} }
+
+  .hero-glow{ position:absolute; z-index:0; left:50%; top:50%; width:1500px; height:950px; transform:translate(-50%,-50%);
+    background:radial-gradient(45% 42% at 50% 50%, rgba(194,43,0,.30) 0%, rgba(148,32,0,.10) 45%, transparent 72%);
+    pointer-events:none; opacity:0; transition:opacity 1.6s ease .3s; }
+  .active .hero-glow{ opacity:1; animation:glowPulse 5.5s ease-in-out 1.9s infinite alternate }
+  @keyframes glowPulse{ 0%{opacity:.7; transform:translate(-50%,-50%) scale(1)} 100%{opacity:1; transform:translate(-50%,-50%) scale(1.09)} }
+
+  .hero-title{ font-size:230px; line-height:1; letter-spacing:-2px;
+    text-shadow:0 20px 80px rgba(0,0,0,.55), 0 0 90px rgba(194,43,0,.45), 0 0 200px rgba(232,180,50,.18) }
+  .hero-title .ltr{ display:inline-block; opacity:0; transform:translateY(70px); filter:blur(14px);
+    transition:opacity .75s ease, transform .75s cubic-bezier(.22,.61,.36,1), filter .75s ease }
+  .active .hero-title .ltr{ opacity:1; transform:none; filter:blur(0) }
+  .active .hero-title .ltr:nth-child(1){ transition-delay:.30s }
+  .active .hero-title .ltr:nth-child(2){ transition-delay:.42s }
+  .active .hero-title .ltr:nth-child(3){ transition-delay:.54s }
+  .active .hero-title .ltr:nth-child(4){ transition-delay:.66s }
+
+  .hero-lead{ max-width:38ch; margin:34px 0 0; font-size:28px; line-height:1.5; color:var(--text-tertiary);
+    opacity:0; transform:translateY(16px); transition:opacity .5s ease 1.15s, transform .5s ease 1.15s }
+  .active .hero-lead{ opacity:1; transform:none }
+  em.red{ font-style:normal; color:var(--primary-600) }
+
+  @media (prefers-reduced-motion: reduce){
+    .hero-bg,.hero-glow,.hero-title .ltr,.hero-lead{ transition:none!important; animation:none!important; opacity:1!important; filter:none!important }
+    .active .hero-bg,.hero-title .ltr,.hero-lead{ transform:none!important }
+    .active .hero-glow{ transform:translate(-50%,-50%)!important }
+  }
+</style>
+</head>
+<body>
+  <div class="glow"></div>
+  <div class="grain"></div>
+  <div class="stage">
+    <section class="slide hero" id="s">
+      <div class="hero-bg" aria-hidden="true">N</div>
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="slide-inner">
+        <h1 class="hero-title"><span class="ltr">N</span><span class="ltr">i</span><span class="ltr">t</span><span class="ltr">e</span></h1>
+        <p class="hero-lead">L&rsquo;app che ti aiuta a trovare <em class="red" style="font-weight:600">la serata ideale per te</em> &mdash; senza scrollare all&rsquo;infinito.</p>
+      </div>
+    </section>
+  </div>
+  <script>
+    var s = document.getElementById('s');
+    function fit(){ document.querySelector('.stage').style.setProperty('--fit', Math.max(innerWidth/1920, innerHeight/1080)); }
+    fit(); addEventListener('resize', fit);
+    function play(){ s.classList.add('active'); }
+
+    // Con motion ridotto mostra subito lo stato finale; altrimenti aspetta il
+    // segnale del genitore (parte solo quando la cover entra in vista scrollando).
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      play();
+    } else {
+      addEventListener('message', function(e){ if (e.data === 'nite:play') play(); });
+      try { if (parent && parent !== window) parent.postMessage('nite:ready', '*'); } catch (_) {}
+    }
+  </script>
+</body>
+</html>

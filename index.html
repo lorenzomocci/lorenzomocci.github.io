@@ -29,20 +29,49 @@
     </header>
 
     <main>
-        <section class="hero container">
-            <p class="kicker fade-in">Lorenzo Mocci — UX/UI Designer</p>
-            <h1 class="hero-title fade-in" style="--d: 0.1s">
-                La parte difficile non &egrave; costruire la soluzione.
-                <span class="accent-line">&Egrave; decidere qual &egrave; quella giusta.</span>
-            </h1>
-            <p class="lead hero-sub fade-in" style="--d: 0.2s">
-                Tutto parte dalla decisione, il resto &egrave; una conseguenza. Non essendo
-                pi&ugrave; legato al costo di sbagliare, posso esplorare finch&eacute; la
-                soluzione non &egrave; davvero quella giusta.
-            </p>
-            <div class="hero-actions fade-in" style="--d: 0.3s">
-                <a href="#progetti" class="btn btn-solid">Guarda i progetti</a>
-                <a href="#contatti" class="btn btn-ghost">Scrivimi</a>
+        <section class="hero">
+            <div class="container hero-inner">
+                <div class="hero-meta fade-in">
+                    <span class="hero-meta__brand">Portfolio <span>/ Vol. 01</span></span>
+                    <span class="hero-meta__status" aria-label="Disponibile per nuovi progetti nel 2026">
+                        <i class="hero-dot" aria-hidden="true"></i> Disponibile per nuovi progetti &middot; 2026
+                    </span>
+                </div>
+
+                <div class="hero-grid">
+                    <div class="hero-main">
+                        <p class="kicker fade-in" style="--d: 0.05s">Lorenzo Mocci — UX/UI Designer</p>
+                        <h1 class="hero-title fade-in" style="--d: 0.12s">
+                            La parte difficile non &egrave; <em>costruire</em> la soluzione.
+                            <span class="accent-line">&Egrave; <span class="hl">decidere</span> qual &egrave; quella giusta.</span>
+                        </h1>
+                        <div class="hero-actions fade-in" style="--d: 0.34s">
+                            <a href="#progetti" class="btn btn-solid">Guarda i progetti</a>
+                            <a href="#contatti" class="btn btn-ghost">Scrivimi</a>
+                        </div>
+                    </div>
+
+                    <aside class="hero-rail fade-in" style="--d: 0.22s">
+                        <p class="hero-rail__lead">
+                            Tutto parte dalla decisione, il resto &egrave; una conseguenza. Non
+                            essendo pi&ugrave; legato al costo di sbagliare, posso esplorare
+                            finch&eacute; la soluzione non &egrave; davvero quella giusta.
+                        </p>
+                        <div class="hero-focus">
+                            <span class="hero-focus__label">Come lavoro</span>
+                            <ul class="hero-focus__list">
+                                <li>Ricerca &amp; insight</li>
+                                <li>Prototipazione in Figma</li>
+                                <li>Build AI-assisted</li>
+                            </ul>
+                        </div>
+                    </aside>
+                </div>
+
+                <a class="hero-cue fade-in" href="#progetti" style="--d: 0.5s" aria-label="Scorri ai progetti">
+                    <span>Scorri</span>
+                    <i class="hero-cue__line" aria-hidden="true"></i>
+                </a>
             </div>
         </section>
 
@@ -55,29 +84,19 @@
                 </div>
 
                 <div class="project-grid reveal">
-                    <a class="proj" href="libraccio.html">
-                        <div class="proj-panel proj-panel--device">
-                            <div class="device">
-                                <span class="device__island"></span>
-                                <div class="device__screen">
-                                    <img src="assets/libraccio/ui/scansione.webp" alt="Mockup Libraccio: la schermata di scansione del codice ISBN" loading="lazy">
-                                </div>
-                            </div>
+                    <a class="cover cover--libraccio" href="libraccio.html" aria-label="Libraccio — ridisegnare la vendita di libri usati">
+                        <img class="cover__img" src="assets/libraccio/feat/cover-home.webp" alt="" loading="lazy">
+                        <div class="cover__plate">
+                            <span class="cover__cta">Apri il case study <i aria-hidden="true">&rarr;</i></span>
+                            <span class="cover__meta">01 · 2026</span>
                         </div>
-                        <h3 class="proj-name">Libraccio</h3>
-                        <p class="proj-sub">Ridisegnare la vendita di libri usati</p>
                     </a>
-                    <a class="proj" href="nite.html">
-                        <div class="proj-panel proj-panel--device">
-                            <div class="device">
-                                <span class="device__island"></span>
-                                <div class="device__screen">
-                                    <img src="assets/nite/home-quiz-first.jpg" alt="Mockup Nite: la home quiz-first" loading="lazy">
-                                </div>
-                            </div>
+                    <a class="cover cover--nite" href="nite.html" aria-label="Nite — l'app che trova la serata giusta per te">
+                        <iframe class="cover__embed" src="assets/nite/cover.html" title="Nite" loading="lazy" tabindex="-1" aria-hidden="true" scrolling="no"></iframe>
+                        <div class="cover__plate">
+                            <span class="cover__cta">Apri il case study <i aria-hidden="true">&rarr;</i></span>
+                            <span class="cover__meta">02 · 2026</span>
                         </div>
-                        <h3 class="proj-name">Nite</h3>
-                        <p class="proj-sub">L&rsquo;app che trova la serata giusta per te</p>
                     </a>
                 </div>
             </div>

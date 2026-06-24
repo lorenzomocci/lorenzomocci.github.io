@@ -53,4 +53,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
         reveals.forEach(el => observer.observe(el));
     }
+
+    // Cover Nite: avvia l'animazione della slide embeddata solo quando entra in vista
+    const niteFrame = document.querySelector('.cover--nite .cover__embed');
+    if (niteFrame) {
+        let inView = false;
+        const play = () => {
+            try { niteFrame.contentWindow.postMessage('nite:play', '*'); } catch (e) {}
+        };
+        // L'iframe segnala quando è pronto: se la cover è già in vista, parte subito
+        window.addEventListener('message', e => {
+            if (e.data === 'nite:ready' && inView) play();
+        });
+        const trigger = () => { inView = true; play(); };
+
+        if (!('IntersectionObserver' in window)) {
+            trigger();
+        } else {
+            const niteObserver = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        trigger();
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.4 });
+            niteObserver.observe(niteFrame);
+        }
+    }
 });
