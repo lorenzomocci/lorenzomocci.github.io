@@ -82,6 +82,7 @@
                     <p class="stat-label">Web app funzionante</p>
                 </div>
             </div>
+            <p class="lead reveal" style="margin-top: 1.5rem;">Nite &egrave; stata costruita in 10 giorni come web app funzionante e installabile, poi condivisa per un primo ciclo di feedback con amici, colleghi e una commissione di designer dello studio Sketchin.</p>
         </div>
 
         <section class="case-section">
@@ -250,8 +251,8 @@
                     <div class="solution-text">
                         <span class="card-num">S.02</span>
                         <h3>Matching musicale</h3>
-                        <p>Quando scegli un&rsquo;attività musicale, il quiz propone di collegare Spotify o Apple Music: il sistema confronta i tuoi gusti reali con la musica dell&rsquo;evento. Serve a indicare meglio il genere che cerchi, non a promettere quelle canzoni. Risposta diretta all&rsquo;insight sul mismatch musicale.</p>
-                        <p class="solution-origin">&larr; nata in fase di ideazione (Crazy 8), non dalla ricerca</p>
+                        <p>Quando scegli un&rsquo;attività musicale, il quiz propone di collegare Spotify o Apple Music: il sistema confronta i tuoi gusti reali con la musica dell&rsquo;evento. Serve a indicare meglio il genere che cerchi, non a promettere quelle canzoni.</p>
+                        <p>Il matching musicale nasce come risposta progettuale a un insight emerso in ricerca: il mismatch tra genere dichiarato e musica realmente suonata. La forma specifica della soluzione — il collegamento con Spotify o Apple Music — è stata sviluppata in fase di ideazione per tradurre quel problema in un&rsquo;interazione concreta.</p>
                     </div>
                     <figure class="mockup mockup--device">
                         <div class="device">
@@ -323,11 +324,9 @@
                     <h2 class="section-title">Outcome</h2>
                 </div>
                 <div class="prose reveal">
-                    <ul>
-                        <li>Una web app funzionante e installabile, non un mockup, provata da 10 persone: il matching musicale è la funzione che ha colpito di più.</li>
-                        <li>I test (utenti + commissione) hanno indicato i prossimi passi: in &laquo;Esplora&raquo; la ricerca interna va distinta da quella in alto (serve un&rsquo;icona diversa), e per i locali serve un modo di fare il matching senza dover creare una playlist — che difficilmente faranno.</li>
-                        <li>Un workflow ripetibile design &rarr; AI build che riduce la distanza tra idea e verifica.</li>
-                    </ul>
+                    <p>Una web app funzionante e installabile, non un mockup, costruita in 10 giorni e condivisa per un primo ciclo di feedback con amici, colleghi e una commissione di designer dello studio Sketchin.</p>
+                    <p>I feedback hanno confermato interesse per l&rsquo;idea, ma hanno fatto emergere tre criticità chiare: il significato della playlist non era immediato e rischiava di essere interpretato come promessa di ascoltare proprio quelle canzoni; la doppia ricerca presente in Home e nella barra superiore andava differenziata con un simbolo più chiaro nella sezione &laquo;Esplora&raquo;; infine, per il lato organizzatore serve un modo più semplice di attivare il matching senza dover creare una playlist per ogni serata.</p>
+                    <p>Le correzioni non sono ancora state implementate, ma hanno già definito con chiarezza i prossimi passi di iterazione del prodotto.</p>
                 </div>
             </div>
         </section>
@@ -340,9 +339,10 @@
                 </div>
                 <div class="prose reveal">
                     <ul>
-                        <li>Costruire il prodotto vero cambia le decisioni di design: cose che in Figma funzionano, in mano alle persone no. Sul telefono ho scoperto che l&rsquo;inserimento della musica veniva letto come &laquo;avrò queste canzoni all&rsquo;evento&raquo;, non come &laquo;indico il genere che mi piace&raquo;: un fraintendimento che in Figma non sarebbe mai emerso, e che ho dovuto rendere esplicito.</li>
+                        <li>Costruire un prodotto funzionante ha reso visibili ambiguità che in Figma sarebbero rimaste invisibili. La playlist, per esempio, veniva letta come promessa di trovare esattamente quelle canzoni all&rsquo;evento, mentre l&rsquo;intenzione era usarla come indicatore di mood musicale.</li>
+                        <li>Un secondo apprendimento è stato sulla chiarezza dell&rsquo;interfaccia: nella sezione &laquo;Esplora&raquo; la presenza di due elementi legati alla ricerca crea confusione, quindi il livello visivo e semantico dei controlli va differenziato meglio.</li>
+                        <li>Infine, il matching musicale ha valore lato utente, ma lato organizzatore richiede un meccanismo più sostenibile: chiedere di creare una playlist per ogni serata è poco realistico, quindi il modello va ripensato.</li>
                         <li>L&rsquo;AI accelera l&rsquo;esecuzione solo se il design è già chiaro: il pensiero di prodotto resta il lavoro del designer.</li>
-                        <li>Il limite di Claude Code: su alcune interfacce non arrivava alla resa che volevo. La soluzione non era insistere a parole, ma cambiare medium — portare il pezzo su Figma con html.to.design e MCP, sistemarlo visivamente e riportarlo nel codice. Sapere quando smettere di promptare e prendere il controllo è parte del mestiere.</li>
                     </ul>
                 </div>
             </div>
