@@ -2,6 +2,32 @@
 
 This is a personal portfolio website built with semantic HTML, vanilla JavaScript, and modern CSS featuring a Swiss/International minimal aesthetic (white background, rigorous grid, Inter grotesque, 1px hairline rules, generous whitespace, a single red accent used sparingly, Fragment Mono for technical labels, realistic 3/4 iPhone device mockups).
 
+## Project Structure
+
+The repo is organized so the publishable site lives at the root and everything else is grouped by purpose:
+
+```
+Portfolio/
+├── index.html  libraccio.html  nite.html   ← LIVE SITE (must stay at root)
+├── style.css   nite.css        script.js   ← site styles + behaviour
+├── MocciLorenzo.pdf                         ← CV, linked from the site (published)
+├── assets/                                  ← site images, by project
+│   ├── libraccio/{feat,render,team,pers,ui}/
+│   ├── nite/                                ← captured screens + cover.html (iframe)
+│   └── _inbox/                              ← Lorenzo drops raw images here to be filed
+│
+│   ── everything below is NOT published (gitignored, except docs/*.md) ──
+├── docs/        ← planning & sources: PORTFOLIO-STRATEGY.md, PORTFOLIO_BRIEFING.md
+│                  (single source of truth for content), workshop & pitch PDFs
+├── source/nite-app/   ← original Nite prototype (HTML screens), kept for reference
+└── archive/     ← old/discarded files (presentazione.html, 14.png)
+```
+
+Rules of thumb:
+- Page-to-page links and `style.css`/`script.js`/`assets/` references are **relative from root** — keep the three site pages and their CSS/JS at the root, or those links break.
+- Edit content only against `docs/PORTFOLIO_BRIEFING.md`; never invent portfolio copy.
+- New raw images arrive in `assets/_inbox/`; convert, rename, file under the right `assets/<project>/` subfolder, then remove the source.
+
 ## Local Development & Testing
 
 Since this is a static front-end project, there are no build steps. 

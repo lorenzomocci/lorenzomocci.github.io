@@ -1,9 +1,9 @@
 # Materiali di lavoro — non pubblicare sul sito
 .DS_Store
 *.pdf
-presentazione.html
-PORTFOLIO_BRIEFING.md
-14.png
+archive/
+docs/PORTFOLIO_BRIEFING.md
+docs/review-screens/
 
-# Eccezione: il CV va pubblicato
+# Eccezione: il CV va pubblicato (resta in root, linkato dal sito)
 !MocciLorenzo.pdf
