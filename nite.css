@@ -108,15 +108,21 @@
 
 /* ── Mockup telefoni: niente box, galleggiano sul fondo ── */
 .theme-nite .mockup,
-.theme-nite .mockup--device {
+.theme-nite .mockup--render {
     background: transparent;
     border-radius: 0;
 }
-.theme-nite .device {
-    filter: drop-shadow(0 36px 60px rgba(0, 0, 0, 0.6));
+.theme-nite .mockup--render img {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    filter: drop-shadow(0 40px 70px rgba(0, 0, 0, 0.6));
     animation: nite-float 7s ease-in-out infinite alternate;
 }
-.theme-nite .ba-pair .mockup--device:nth-child(2) .device { animation-delay: -3.5s; }
+.theme-nite .ba-pair .mockup--render img { max-width: 240px; }
+.theme-nite .ba-pair .mockup--render:nth-child(2) img { animation-delay: -3.5s; }
 .theme-nite .mockup figcaption {
     font-family: var(--font-mono);
     font-size: 0.72rem;
@@ -217,7 +223,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .theme-nite .device,
+    .theme-nite .mockup--render img,
     .theme-nite::before { animation: none; }
     .theme-nite .section-head::after { transition: none; transform: scaleX(1); }
     .theme-nite .prose.reveal p,

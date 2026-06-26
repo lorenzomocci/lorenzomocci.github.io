@@ -656,28 +656,9 @@ em {
     margin-top: 0.9rem;
 }
 
-/* Mockup con frame iPhone 3/4 (non più immagini piatte) */
-.mockup--device {
+/* Render iPhone (immagini esportate) — vedi .mockup--render in nite.css */
+.mockup--render {
     padding: clamp(1.6rem, 4vw, 2.6rem) 1rem;
-    perspective: 1900px;
-    perspective-origin: 50% 40%;
-}
-.mockup--device .device {
-    max-width: 248px;
-}
-.mockup--device figcaption {
-    margin-top: 1.6rem;
-}
-/* Coppia prima/dopo: device più piccoli e meno inclinati per il confronto */
-.ba-pair .mockup--device {
-    padding: clamp(1rem, 3vw, 1.8rem) 0.5rem;
-}
-.ba-pair .mockup--device .device {
-    max-width: 188px;
-    transform: rotateY(-11deg) rotateX(4deg);
-}
-.ba-pair .mockup--device .device:hover {
-    transform: rotateY(-5deg) rotateX(2deg);
 }
 
 /* Griglia progetti stile Gabriel Valdivia */
@@ -710,23 +691,6 @@ em {
 }
 .proj:hover .proj-panel { background: #ebebe8; }
 
-/* Variante con mockup iPhone 3/4 dentro la card */
-.proj-panel--device {
-    aspect-ratio: 4 / 3.5;
-    overflow: visible;
-    padding: clamp(1.8rem, 4vw, 2.8rem) 1rem clamp(1.4rem, 3vw, 2rem);
-    align-items: center;
-    perspective: 1600px;
-    perspective-origin: 50% 42%;
-}
-.proj-panel--device .device {
-    max-width: 184px;
-    transform: rotateY(-16deg) rotateX(5deg) rotate(0.4deg);
-}
-.proj:hover .proj-panel--device { background: #ebebe8; }
-.proj:hover .proj-panel--device .device {
-    transform: rotateY(-7deg) rotateX(2deg) translateY(-4px);
-}
 .proj-name {
     font-size: 1.3rem;
     font-weight: 500;
@@ -1505,124 +1469,6 @@ em {
     align-items: start;
 }
 
-/* ===== Mockup iPhone — render 3/4 realistico ===== */
-.device-figure {
-    margin: 0;
-    text-align: center;
-    perspective: 2000px;
-    perspective-origin: 50% 40%;
-}
-
-.device {
-    position: relative;
-    width: 100%;
-    max-width: 280px;
-    margin: 0 auto;
-    aspect-ratio: 393 / 852;
-    border-radius: 17.5% / 8.2%;
-    /* scocca in titanio: luce sul bordo, corpo scuro */
-    background:
-        linear-gradient(135deg,
-            #6c6c74 0%, #3a3a40 14%, #161619 42%,
-            #0c0c0e 60%, #2c2c32 86%, #56565d 100%);
-    padding: 2.6%;
-    transform: rotateY(-17deg) rotateX(5deg) rotate(0.4deg);
-    transform-style: preserve-3d;
-    box-shadow:
-        /* ombra di contatto morbida e direzionale */
-        38px 50px 60px -28px rgba(22, 17, 12, 0.50),
-        14px 20px 28px -16px rgba(22, 17, 12, 0.32),
-        /* bordo metallico */
-        inset 0 0 0 1.5px rgba(255, 255, 255, 0.28),
-        inset 0 0 4px 2px rgba(255, 255, 255, 0.05);
-    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.device:hover {
-    transform: rotateY(-7deg) rotateX(2deg);
-}
-
-/* tasti laterali in rilievo */
-.device::before,
-.device::after {
-    content: "";
-    position: absolute;
-    width: 3px;
-    border-radius: 3px;
-    background: linear-gradient(90deg, #4a4a50, #18181b);
-    box-shadow: inset 0 0 1px rgba(255, 255, 255, 0.3);
-}
-.device::before { right: -2px; top: 27%; height: 11%; }   /* power */
-.device::after  { left: -2px; top: 21%; height: 6%; }     /* volume */
-
-.device__screen {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    border-radius: 14.5% / 6.6%;
-    overflow: hidden;
-    background: #000;
-    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.55);
-}
-
-.device__screen img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: top center;
-    display: block;
-}
-
-/* riflesso lucido sul vetro */
-.device__screen::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        118deg,
-        rgba(255, 255, 255, 0.26) 0%,
-        rgba(255, 255, 255, 0.07) 16%,
-        rgba(255, 255, 255, 0) 34%,
-        rgba(255, 255, 255, 0) 82%,
-        rgba(255, 255, 255, 0.05) 100%);
-    pointer-events: none;
-    z-index: 3;
-}
-
-/* Dynamic Island */
-.device__island {
-    position: absolute;
-    top: 2.6%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 30%;
-    height: 3.1%;
-    min-height: 16px;
-    background: #000;
-    border-radius: 999px;
-    z-index: 4;
-}
-
-.device-figure figcaption {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    color: var(--ink-soft);
-    margin-top: 1.4rem;
-}
-
-/* Device dentro la card progetto in homepage */
-.project-visual--device {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2.2rem 1rem;
-    perspective: 2000px;
-    perspective-origin: 50% 45%;
-    background: radial-gradient(120% 90% at 50% 10%, rgba(28, 23, 18, 0.07), transparent 70%);
-}
-.project-visual--device .device {
-    max-width: 210px;
-}
 
 /* Workflow AI (Nite) */
 .workflow-strip {
