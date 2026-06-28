@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 baBtn.setAttribute('aria-pressed', String(showingPrima));
                 baBtn.textContent = showingPrima ? 'Torna alla versione attuale' : 'Vedi le differenze';
                 if (baTag) {
-                    baTag.textContent = showingPrima ? 'Prima · tre step da leggere' : 'Dopo · schermata diretta';
+                    baTag.textContent = showingPrima ? 'Prima · tre step da leggere' : 'Ora · schermata diretta';
                 }
             });
         }
