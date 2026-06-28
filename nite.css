@@ -106,6 +106,68 @@
     color: var(--ink);
 }
 
+/* ── Outcome F.01: confronto prima/dopo cliccabile (frame device CSS) ── */
+.theme-nite .ba-flip-media { padding: 0.5rem 0 2.6rem; }
+.theme-nite .ba-flip-frame {
+    position: relative;
+    width: clamp(190px, 64%, 258px);
+    aspect-ratio: 1170 / 2532;
+    margin: 0 auto;
+    background: #050507;
+    border-radius: 13% / 6%;
+    box-shadow: 0 0 0 2px rgba(247, 246, 248, 0.07), 0 40px 70px rgba(0, 0, 0, 0.6);
+    animation: nite-float 7s ease-in-out infinite alternate;
+}
+.theme-nite .ba-flip-frame .ba-layer {
+    position: absolute;
+    top: 2.6%;
+    left: 2.6%;
+    width: 94.8%;
+    height: 94.8%;
+    max-width: none;
+    margin: 0;
+    border-radius: 10% / 4.6%;
+    object-fit: cover;
+    object-position: top center;
+    filter: none;
+    animation: none;
+    transition: opacity 0.45s ease;
+}
+.theme-nite .ba-flip-frame .ba-layer--prima { opacity: 0; }
+.theme-nite .ba-flip.show-prima .ba-layer--prima { opacity: 1; }
+.theme-nite .ba-flip.show-prima .ba-layer--dopo { opacity: 0; }
+/* Dynamic Island */
+.theme-nite .ba-flip-frame::after {
+    content: '';
+    position: absolute;
+    top: 4.4%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30%;
+    height: 3%;
+    background: #000;
+    border-radius: 99px;
+    z-index: 2;
+}
+.theme-nite .ba-flip-tag {
+    position: absolute;
+    left: 50%;
+    bottom: -2rem;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    transition: color 0.3s ease;
+}
+.theme-nite .ba-flip.show-prima .ba-flip-tag { color: var(--accent); }
+.theme-nite .ba-flip-btn { margin-top: 1.4rem; }
+.theme-nite .ba-flip-btn[aria-pressed="true"] {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+}
+@media (prefers-reduced-motion: reduce) {
+    .theme-nite .ba-flip-frame { animation: none; }
+    .theme-nite .ba-flip-frame .ba-layer { transition: none; }
+}
+
 /* ── Mockup telefoni: niente box, galleggiano sul fondo ── */
 .theme-nite .mockup,
 .theme-nite .mockup--render {

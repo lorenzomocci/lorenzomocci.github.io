@@ -54,6 +54,23 @@ document.addEventListener('DOMContentLoaded', () => {
         reveals.forEach(el => observer.observe(el));
     }
 
+    // Outcome Nite: confronto prima/dopo cliccabile (F.01 onboarding musica)
+    const baFlip = document.querySelector('[data-baflip]');
+    if (baFlip) {
+        const baBtn = baFlip.querySelector('.ba-flip-btn');
+        const baTag = baFlip.querySelector('[data-baflip-tag]');
+        if (baBtn) {
+            baBtn.addEventListener('click', () => {
+                const showingPrima = baFlip.classList.toggle('show-prima');
+                baBtn.setAttribute('aria-pressed', String(showingPrima));
+                baBtn.textContent = showingPrima ? 'Torna alla versione attuale' : 'Vedi le differenze';
+                if (baTag) {
+                    baTag.textContent = showingPrima ? 'Prima · tre step da leggere' : 'Dopo · schermata diretta';
+                }
+            });
+        }
+    }
+
     // Cover Nite: avvia l'animazione della slide embeddata solo quando entra in vista
     const niteFrame = document.querySelector('.cover--nite .cover__embed');
     if (niteFrame) {
