@@ -6,85 +6,182 @@
 <title>Nite</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Fragment+Mono:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{ --primary-600:#c22b00; --text-primary:#f7f6f8; --text-tertiary:#c4c2c7; }
+  :root{
+    --paper:#0a080c;
+    --ink:#f7f6f8;
+    --ink-soft:#c4c2c7;
+    --ember:#c22b00;
+    --accent:#ff5e2e;
+    --mono:'Fragment Mono',ui-monospace,monospace;
+  }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
-  body{ background:#0a080c; color:var(--text-primary); font-family:'Plus Jakarta Sans',sans-serif; overflow:hidden; }
+  body{ background:var(--paper); color:var(--ink); font-family:'Plus Jakarta Sans',sans-serif; overflow:hidden; }
 
-  .glow{ position:fixed; inset:0; pointer-events:none; z-index:0;
+  /* ── Atmosfera: niente glow pulsanti. Una sola luce calda radente in basso,
+       fissa, più una vignettatura che chiude i bordi. Grana fine sopra tutto. ── */
+  .wash{ position:fixed; inset:0; pointer-events:none; z-index:0;
     background:
-      radial-gradient(55% 60% at 78% 18%, rgba(194,43,0,.16) 0%, rgba(194,43,0,.05) 45%, transparent 70%),
-      radial-gradient(40% 50% at 12% 88%, rgba(123,27,0,.13) 0%, transparent 65%); }
-  .grain{ position:fixed; inset:0; pointer-events:none; z-index:1; opacity:.05;
+      radial-gradient(120% 80% at 50% 118%, rgba(194,43,0,.28) 0%, rgba(123,27,0,.06) 42%, transparent 66%);
+  }
+  .vignette{ position:fixed; inset:0; pointer-events:none; z-index:1;
+    background:radial-gradient(130% 120% at 50% 42%, transparent 52%, rgba(0,0,0,.55) 100%);
+  }
+  .grain{ position:fixed; inset:0; pointer-events:none; z-index:5; opacity:.055; mix-blend-mode:overlay;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"); }
 
-  /* Stage fisso 1920×1080, scalato per riempire la cover (crop laterale, contenuto centrato) */
+  /* Stage fisso 1920×1080, scalato per riempire la cover (la card è verticale:
+     resta visibile solo la colonna centrale, quindi tutto è centrato). */
   .stage{ position:fixed; top:50%; left:50%; width:1920px; height:1080px;
     transform:translate(-50%,-50%) scale(var(--fit,1)); transform-origin:center; z-index:2; }
-  .slide{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:40px 80px 80px; }
-  .slide-inner{ display:flex; flex-direction:column; align-items:center; text-align:center; position:relative; z-index:1; }
-  h1{ font-family:'DM Serif Display',serif; font-weight:400 }
+  .slide{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
 
-  .hero-bg{ position:absolute; inset:0; z-index:0; display:flex; align-items:center; justify-content:center;
-    font-family:'DM Serif Display',serif; font-size:1100px; line-height:1; color:transparent;
-    background:linear-gradient(165deg, rgba(194,43,0,.22) 10%, rgba(123,27,0,.04) 75%);
-    -webkit-background-clip:text; background-clip:text; pointer-events:none; user-select:none;
-    opacity:0; transform:scale(1.12); transition:opacity 1.4s ease .1s, transform 1.4s ease .1s; }
-  .active .hero-bg{ opacity:1; transform:scale(1); animation:heroDrift 16s ease-in-out 1.5s infinite alternate }
-  @keyframes heroDrift{ 0%{transform:scale(1) translateY(0)} 100%{transform:scale(1.06) translateY(-14px)} }
+  .lockup{ display:flex; flex-direction:column; align-items:center; text-align:center; width:880px; max-width:880px; }
 
-  .hero-glow{ position:absolute; z-index:0; left:50%; top:50%; width:1500px; height:950px; transform:translate(-50%,-50%);
-    background:radial-gradient(45% 42% at 50% 50%, rgba(194,43,0,.30) 0%, rgba(148,32,0,.10) 45%, transparent 72%);
-    pointer-events:none; opacity:0; transition:opacity 1.6s ease .3s; }
-  .active .hero-glow{ opacity:1; animation:glowPulse 5.5s ease-in-out 1.9s infinite alternate }
-  @keyframes glowPulse{ 0%{opacity:.7; transform:translate(-50%,-50%) scale(1)} 100%{opacity:1; transform:translate(-50%,-50%) scale(1.09)} }
+  /* ── Riga di stato: mono, come l'insegna di un locale ── */
+  .status{ display:inline-flex; align-items:center; gap:18px; font-family:var(--mono); font-size:25px;
+    letter-spacing:.26em; text-transform:uppercase; color:var(--ink-soft);
+    opacity:0; transform:translateY(-12px); transition:opacity .6s ease, transform .6s cubic-bezier(.2,.7,.3,1); }
+  .active .status{ opacity:1; transform:none; }
+  .status .sep{ color:rgba(247,246,248,.28); }
+  .status .live{ display:inline-flex; align-items:center; gap:11px; color:var(--ink); }
+  .status .bulb{ width:10px; height:10px; border-radius:50%; background:var(--accent);
+    box-shadow:0 0 14px rgba(255,94,46,.9); animation:beat 2.4s ease-in-out infinite; }
+  @keyframes beat{ 0%,100%{opacity:1} 50%{opacity:.32} }
+  .clock .colon{ animation:blink 1s step-end infinite; }
+  @keyframes blink{ 50%{opacity:.2} }
 
-  .hero-title{ font-size:230px; line-height:1; letter-spacing:-2px;
-    text-shadow:0 20px 80px rgba(0,0,0,.55), 0 0 90px rgba(194,43,0,.45), 0 0 200px rgba(232,180,50,.18) }
-  .hero-title .ltr{ display:inline-block; opacity:0; transform:translateY(70px); filter:blur(14px);
-    transition:opacity .75s ease, transform .75s cubic-bezier(.22,.61,.36,1), filter .75s ease }
-  .active .hero-title .ltr{ opacity:1; transform:none; filter:blur(0) }
-  .active .hero-title .ltr:nth-child(1){ transition-delay:.30s }
-  .active .hero-title .ltr:nth-child(2){ transition-delay:.42s }
-  .active .hero-title .ltr:nth-child(3){ transition-delay:.54s }
-  .active .hero-title .ltr:nth-child(4){ transition-delay:.66s }
+  /* ── Wordmark: serif, ogni lettera sale dietro una mascherina (taglio netto,
+       niente blur). Una luce calda attraversa le lettere una sola volta,
+       da sinistra a destra (clip sul singolo glifo, non sul contenitore). ── */
+  .hero-title{ font-family:'DM Serif Display',serif; font-weight:400; font-size:224px; line-height:.92;
+    letter-spacing:-2px; margin:34px 0 0; white-space:nowrap; }
 
-  .hero-lead{ max-width:38ch; margin:34px 0 0; font-size:28px; line-height:1.5; color:var(--text-tertiary);
-    opacity:0; transform:translateY(16px); transition:opacity .5s ease 1.15s, transform .5s ease 1.15s }
-  .active .hero-lead{ opacity:1; transform:none }
-  em.red{ font-style:normal; color:var(--primary-600) }
+  .msk{ display:inline-block; overflow:hidden; vertical-align:bottom; padding-top:.18em; }
+  .msk > span{ display:inline-block; transform:translateY(120%);
+    background:linear-gradient(100deg, var(--ink) 0%, var(--ink) 38%, #ffe6d4 50%, var(--ink) 62%, var(--ink) 100%);
+    background-size:300% 100%; background-position:130% 0;
+    -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent; color:transparent; }
+  .active .msk > span{ transition:transform .82s cubic-bezier(.16,1,.3,1);
+    transform:translateY(0); animation:sweep 1s ease forwards; }
+  .active .msk:nth-child(1) > span{ transition-delay:.34s; animation-delay:1.45s }
+  .active .msk:nth-child(2) > span{ transition-delay:.44s; animation-delay:1.55s }
+  .active .msk:nth-child(3) > span{ transition-delay:.54s; animation-delay:1.65s }
+  .active .msk:nth-child(4) > span{ transition-delay:.64s; animation-delay:1.75s }
+  @keyframes sweep{ from{background-position:130% 0} to{background-position:-30% 0} }
+
+  /* Il punto: la scintilla del marchio. Si accende dopo le lettere, una volta. */
+  .period{ font-family:'DM Serif Display',serif; font-size:.52em; color:var(--accent);
+    margin-left:.02em; display:inline-block; opacity:0; transform:translateY(-.1em) scale(.4);
+    text-shadow:0 0 0 rgba(255,94,46,0); }
+  .active .period{ animation:ignite .55s cubic-bezier(.2,1.5,.4,1) 1.05s forwards; }
+  @keyframes ignite{
+    0%{ opacity:0; transform:translateY(-.1em) scale(.4); text-shadow:0 0 0 rgba(255,94,46,0); }
+    60%{ text-shadow:0 0 34px rgba(255,94,46,.85); }
+    100%{ opacity:1; transform:none; text-shadow:0 0 18px rgba(255,94,46,.45); }
+  }
+
+  /* ── Filetto che si disegna ── */
+  .rule{ width:130px; height:2px; margin:46px 0 38px; transform:scaleX(0); transform-origin:center;
+    background:linear-gradient(90deg, transparent, var(--accent), transparent);
+    transition:transform .9s cubic-bezier(.5,0,.2,1) 1.1s; }
+  .active .rule{ transform:scaleX(1); }
+
+  /* ── Tagline: si rivela per riga con una mascherina ── */
+  .lead{ font-size:31px; line-height:1.5; max-width:30ch; color:var(--ink-soft); font-weight:400; }
+  .lead .line{ display:block; overflow:hidden; }
+  .lead .line > span{ display:block; transform:translateY(105%);
+    transition:transform .7s cubic-bezier(.16,1,.3,1); }
+  .active .lead .line:nth-child(1) > span{ transition-delay:1.25s; transform:translateY(0); }
+  .active .lead .line:nth-child(2) > span{ transition-delay:1.36s; transform:translateY(0); }
+  em.red{ font-style:normal; color:var(--ink); font-weight:600; }
+
+  /* ── Ticker a tutta larghezza: scorre di continuo, sborda ai lati (naturale
+       col crop). È l'unico movimento perpetuo: dà vita alla cover. ── */
+  .ticker{ position:absolute; left:0; bottom:62px; width:100%; overflow:hidden;
+    border-top:1px solid rgba(247,246,248,.10); border-bottom:1px solid rgba(247,246,248,.10);
+    padding:20px 0; opacity:0; transition:opacity .8s ease 1.5s; }
+  .active .ticker{ opacity:1; }
+  .ticker .track{ display:inline-flex; align-items:center; white-space:nowrap; will-change:transform;
+    animation:roll 26s linear infinite; }
+  .ticker .track.paused{ animation-play-state:paused; }
+  .ticker .item{ font-family:var(--mono); font-size:25px; letter-spacing:.22em; text-transform:uppercase;
+    color:rgba(247,246,248,.6); padding:0 6px; }
+  .ticker .dia{ color:var(--accent); padding:0 30px; font-size:14px; transform:translateY(-2px); }
+  @keyframes roll{ from{transform:translateX(0)} to{transform:translateX(-50%)} }
 
   @media (prefers-reduced-motion: reduce){
-    .hero-bg,.hero-glow,.hero-title .ltr,.hero-lead{ transition:none!important; animation:none!important; opacity:1!important; filter:none!important }
-    .active .hero-bg,.hero-title .ltr,.hero-lead{ transform:none!important }
-    .active .hero-glow{ transform:translate(-50%,-50%)!important }
+    .status,.rule,.ticker{ opacity:1!important; transform:none!important; transition:none!important; }
+    .msk > span{ animation:none!important; background-position:130% 0!important; }
+    .period{ animation:none!important; opacity:1!important; transform:none!important; text-shadow:0 0 18px rgba(255,94,46,.45)!important; }
+    .msk > span,.lead .line > span{ transform:none!important; transition:none!important; }
+    .ticker .track{ animation:none!important; }
+    .status .bulb,.clock .colon{ animation:none!important; }
   }
 </style>
 </head>
 <body>
-  <div class="glow"></div>
-  <div class="grain"></div>
+  <div class="wash"></div>
+  <div class="vignette"></div>
   <div class="stage">
-    <section class="slide hero" id="s">
-      <div class="hero-bg" aria-hidden="true">N</div>
-      <div class="hero-glow" aria-hidden="true"></div>
-      <div class="slide-inner">
-        <h1 class="hero-title"><span class="ltr">N</span><span class="ltr">i</span><span class="ltr">t</span><span class="ltr">e</span></h1>
-        <p class="hero-lead">L&rsquo;app che ti aiuta a trovare <em class="red" style="font-weight:600">la serata ideale per te</em> &mdash; senza scrollare all&rsquo;infinito.</p>
+    <section class="slide" id="s">
+      <div class="lockup">
+        <p class="status">
+          <span class="live"><span class="bulb" aria-hidden="true"></span> Aperto ora</span>
+          <span class="sep">/</span> Web app
+          <span class="sep">/</span> <span class="clock" id="clock">23<span class="colon">:</span>47</span>
+        </p>
+
+        <h1 class="hero-title" aria-label="Nite">
+          <span class="msk"><span>N</span></span><span class="msk"><span>i</span></span><span class="msk"><span>t</span></span><span class="msk"><span>e</span></span><span class="period">.</span>
+        </h1>
+
+        <div class="rule" aria-hidden="true"></div>
+
+        <p class="lead">
+          <span class="line"><span>L&rsquo;app che trova <em class="red">la serata ideale per te</em>.</span></span>
+          <span class="line"><span>Senza scrollare all&rsquo;infinito.</span></span>
+        </p>
+      </div>
+
+      <div class="ticker" aria-hidden="true">
+        <div class="track" id="track">
+          <span class="item">Dove</span><span class="dia">&#9670;</span><span class="item">Cosa si fa</span><span class="dia">&#9670;</span><span class="item">Con chi</span><span class="dia">&#9670;</span><span class="item">Che musica</span><span class="dia">&#9670;</span><span class="item">Budget</span><span class="dia">&#9670;</span><span class="item">Quanta gente</span><span class="dia">&#9670;</span><span class="item">Dove</span><span class="dia">&#9670;</span><span class="item">Cosa si fa</span><span class="dia">&#9670;</span><span class="item">Con chi</span><span class="dia">&#9670;</span><span class="item">Che musica</span><span class="dia">&#9670;</span><span class="item">Budget</span><span class="dia">&#9670;</span><span class="item">Quanta gente</span><span class="dia">&#9670;</span>
+        </div>
       </div>
     </section>
   </div>
+
+  <div class="grain"></div>
+
   <script>
     var s = document.getElementById('s');
-    function fit(){ document.querySelector('.stage').style.setProperty('--fit', Math.max(innerWidth/1920, innerHeight/1080)); }
+    var stage = document.querySelector('.stage');
+    var track = document.getElementById('track');
+    var clockEl = document.getElementById('clock');
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function fit(){ stage.style.setProperty('--fit', Math.max(innerWidth/1920, innerHeight/1080)); }
     fit(); addEventListener('resize', fit);
+
+    // Orologio reale che ticchetta: dettaglio "vivo", da insegna notturna.
+    function tick(){
+      var d = new Date();
+      var hh = String(d.getHours()).padStart(2,'0');
+      var mm = String(d.getMinutes()).padStart(2,'0');
+      clockEl.innerHTML = hh + '<span class="colon">:</span>' + mm;
+    }
+    tick();
+    if (!reduce) setInterval(tick, 1000 * 20);
+
     function play(){ s.classList.add('active'); }
 
     // Con motion ridotto mostra subito lo stato finale; altrimenti aspetta il
     // segnale del genitore (parte solo quando la cover entra in vista scrollando).
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (reduce) {
       play();
     } else {
       addEventListener('message', function(e){ if (e.data === 'nite:play') play(); });

@@ -189,7 +189,7 @@
                     <div class="workflow-step">
                         <span class="card-num">Fase 4</span>
                         <h3>Iterazione sul prodotto</h3>
-                        <p>Testare sul telefono, non sul prototipo: in mano, una cosa che in Figma sembrava chiara non lo era. L&rsquo;inserimento della musica sembrava promettere quelle canzoni all&rsquo;evento, mentre serve a indicare meglio il genere — l&rsquo;ho reso esplicito.</p>
+                        <p>Testare sul telefono, non sul prototipo: in mano emergono cose che a schermo non si notano. È così, per esempio, che ho corretto il modo in cui la musica veniva comunicata.</p>
                         <span class="workflow-tools">PWA</span>
                     </div>
                 </div>
@@ -199,7 +199,7 @@
                         <span class="card-num">La decisione chiave</span>
                         <h3>La home che ho scartato</h3>
                         <p>La prima home generata da Claude Code era una dashboard: prossimo impegno, invito in scadenza, eventi vicini, cosa fanno gli amici. Funzionale, ma banale. L&rsquo;ho scartata.</p>
-                        <p>Due ragioni: l&rsquo;AI non aveva ancora abbastanza contesto, e io non gli avevo spiegato bene cosa volevo. È lì che ho capito qualcosa sul lavorare con l&rsquo;AI — il risultato vale quanto l&rsquo;intenzione che gli dai. Ho ridiretto verso una home quiz-first (&laquo;Ciao Alex, cosa fai stasera?&raquo;, un CTA arancione, poche card): perché il quiz è ciò che distingue Nite, e la home deve portare lì, non mostrare tutto.</p>
+                        <p>Due ragioni: poco contesto all&rsquo;AI e un&rsquo;intenzione mia poco chiara — il risultato vale quanto l&rsquo;intenzione che gli dai. Ho ridiretto verso una home quiz-first: il quiz è ciò che distingue Nite, e la home deve portare lì, non mostrare tutto.</p>
                     </div>
                     <div class="ba-pair">
                         <figure class="mockup mockup--render">
@@ -243,7 +243,7 @@
                         <span class="card-num">S.02</span>
                         <h3>Matching musicale</h3>
                         <p>Quando scegli un&rsquo;attività musicale, il quiz propone di collegare Spotify o Apple Music: il sistema confronta i tuoi gusti reali con la musica dell&rsquo;evento. Serve a indicare meglio il genere che cerchi, non a promettere quelle canzoni.</p>
-                        <p>Il matching musicale nasce come risposta progettuale a un insight emerso in ricerca: il mismatch tra genere dichiarato e musica realmente suonata. La forma specifica della soluzione — il collegamento con Spotify o Apple Music — è stata sviluppata in fase di ideazione per tradurre quel problema in un&rsquo;interazione concreta.</p>
+                        <p>Nasce da un insight di ricerca — il mismatch tra genere dichiarato e musica realmente suonata — tradotto in fase di ideazione nel collegamento con Spotify o Apple Music.</p>
                     </div>
                     <figure class="mockup mockup--render">
                         <img src="assets/nite/render/matching-musicale.webp" alt="Schermata «Connetti la tua musica»: scelta tra Spotify e Apple Music per il matching del genere" loading="lazy">
@@ -303,9 +303,22 @@
                     <h2 class="section-title">Outcome</h2>
                 </div>
                 <div class="prose reveal">
-                    <p>Una web app funzionante e installabile, non un mockup, costruita in 10 giorni e condivisa per un primo ciclo di feedback con amici, colleghi e una commissione di designer dello studio Sketchin.</p>
-                    <p>I feedback hanno confermato interesse per l&rsquo;idea, ma hanno fatto emergere tre criticità chiare: il significato della playlist non era immediato e rischiava di essere interpretato come promessa di ascoltare proprio quelle canzoni; la doppia ricerca presente in Home e nella barra superiore andava differenziata con un simbolo più chiaro nella sezione &laquo;Esplora&raquo;; infine, per il lato organizzatore serve un modo più semplice di attivare il matching senza dover creare una playlist per ogni serata.</p>
-                    <p>Le correzioni non sono ancora state implementate, ma hanno già definito con chiarezza i prossimi passi di iterazione del prodotto.</p>
+                    <p>Non un mockup, ma una web app reale e installabile. I primi feedback hanno confermato interesse per l&rsquo;idea e fatto emergere due criticità chiare.</p>
+                </div>
+                <div class="card-grid reveal">
+                    <article class="info-card">
+                        <span class="card-num">F.01</span>
+                        <h3>Playlist ambigua</h3>
+                        <p>Rischiava di essere letta come promessa di ascoltare proprio quelle canzoni, invece che come indicatore di mood musicale.</p>
+                    </article>
+                    <article class="info-card">
+                        <span class="card-num">F.02</span>
+                        <h3>Matching lato organizzatore</h3>
+                        <p>Serve un modo più semplice di attivarlo, senza dover creare una playlist per ogni serata.</p>
+                    </article>
+                </div>
+                <div class="prose reveal" style="margin-top: 1.6rem;">
+                    <p>Le correzioni non sono ancora implementate, ma definiscono con chiarezza i prossimi passi di iterazione.</p>
                 </div>
             </div>
         </section>
@@ -318,10 +331,8 @@
                 </div>
                 <div class="prose reveal">
                     <ul>
-                        <li>Costruire un prodotto funzionante ha reso visibili ambiguità che in Figma sarebbero rimaste invisibili. La playlist, per esempio, veniva letta come promessa di trovare esattamente quelle canzoni all&rsquo;evento, mentre l&rsquo;intenzione era usarla come indicatore di mood musicale.</li>
-                        <li>Un secondo apprendimento è stato sulla chiarezza dell&rsquo;interfaccia: nella sezione &laquo;Esplora&raquo; la presenza di due elementi legati alla ricerca crea confusione, quindi il livello visivo e semantico dei controlli va differenziato meglio.</li>
-                        <li>Infine, il matching musicale ha valore lato utente, ma lato organizzatore richiede un meccanismo più sostenibile: chiedere di creare una playlist per ogni serata è poco realistico, quindi il modello va ripensato.</li>
-                        <li>L&rsquo;AI accelera l&rsquo;esecuzione solo se il design è già chiaro: il pensiero di prodotto resta il lavoro del designer.</li>
+                        <li>L&rsquo;AI ha accelerato anche ricerca e analisi, ma il pensiero di prodotto e il giudizio su cosa tenere sono rimasti il mio lavoro.</li>
+                        <li>Impostando l&rsquo;AI nel modo giusto — una knowledge base che fa da design system, regole WCAG incluse — ho potuto verificare che le regole del visual fossero applicate in modo coerente: meno errori di esecuzione e più libertà di esplorare più direzioni.</li>
                     </ul>
                 </div>
             </div>
