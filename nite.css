@@ -111,10 +111,10 @@
 .theme-nite .ba-flip-frame {
     position: relative;
     width: clamp(200px, 70%, 290px);
-    aspect-ratio: 1170 / 1440;
+    aspect-ratio: 1170 / 2532;
     margin: 0 auto;
     background: #050507;
-    border-radius: 11% / 9%;
+    border-radius: 14% / 6.5%;
     box-shadow: 0 0 0 2px rgba(247, 246, 248, 0.07), 0 40px 70px rgba(0, 0, 0, 0.6);
     animation: nite-float 7s ease-in-out infinite alternate;
 }
@@ -124,7 +124,7 @@
     left: 2.6%;
     width: 94.8%;
     height: 94.8%;
-    border-radius: 9% / 6.5%;
+    border-radius: 12% / 5.5%;
     overflow: hidden;
 }
 .theme-nite .ba-flip-frame .ba-layer {
@@ -147,11 +147,11 @@
 .theme-nite .ba-flip-frame::after {
     content: '';
     position: absolute;
-    top: 4.4%;
+    top: 4%;
     left: 50%;
     transform: translateX(-50%);
-    width: 30%;
-    height: 3%;
+    width: 27%;
+    height: 3.8%;
     background: #000;
     border-radius: 99px;
     z-index: 2;
